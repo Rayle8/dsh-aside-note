@@ -119,12 +119,12 @@ python3 tools/screenshots/crop.py --raw "$WORK/raw" --theme light --out docs/ass
 - [ ] 四张预览图与功能图出自同一批便笺（名称、计数、时间一致）；
 - [ ] 图里没有任何其它项目的信息（逐张过一遍）；
 - [ ] 四张预览图里没有账号头像、昵称或邮箱；
-- [ ] `npm test` 通过（`feature screenshots ship in both themes` 会校验 10 张功能图与两份 README 的引用）；
+- [ ] `npm test` 通过（`feature screenshots ship in both themes` 会校验 10 张功能图与两份 README 的引用，`the marketplace screenshot declaration points at shipped images` 会校验根目录 `screenshots.json`）；
 - [ ] `git status` 里没有 `.screenshots/`、`.pnpm-store/`、凭据文件。
 
 ## 9. 收尾
 
-1. 需要时同步 README 的「功能截图」表格（图片路径不变则无需改动）；
+1. 需要时同步 README 的「功能截图」表格与根目录 `screenshots.json`——插件市场按这个顺序展示，卡片只取前三张，所以封面永远是 `preview-right.png`。图片路径不变则两处都无需改动；
 2. 在 `CHANGELOG.md` 当前版本小节记一条；
 3. `npm test`；
 4. 提交并推送。

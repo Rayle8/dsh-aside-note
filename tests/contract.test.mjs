@@ -335,6 +335,24 @@ test('documentation and preview assets are present', () => {
   }
 })
 
+test('the marketplace screenshot declaration points at shipped images', () => {
+  // The plugin market reads screenshots.json from the repository root and shows
+  // these images in that order — the card strip only takes the first three.
+  const declared = JSON.parse(read('screenshots.json'))
+  assert.ok(Array.isArray(declared), 'screenshots.json must be a JSON array')
+  assert.ok(declared.length >= 1 && declared.length <= 8, 'the market accepts 1-8 screenshots')
+  for (const file of declared) {
+    assert.equal(typeof file, 'string')
+    assert.ok(file.length > 0, 'a declared screenshot path is empty')
+    assert.ok(!file.startsWith('/') && !file.split('/').includes('..'), `${file} must be a repo-relative path`)
+    assert.ok(/\.(png|jpe?g|webp)$/i.test(file), `${file} is not a bitmap the market accepts`)
+    assert.ok(exists(file), `screenshots.json declares a missing file: ${file}`)
+    assert.ok(fs.statSync(path.join(root, file)).size > 1000, `${file} looks empty`)
+  }
+  assert.equal(declared[0], 'docs/assets/preview-right.png', 'the card cover should stay the full-window preview')
+  assert.equal(new Set(declared).size, declared.length, 'screenshots.json repeats a file')
+})
+
 test('feature screenshots ship in both themes', () => {
   const features = ['panel', 'settings', 'actions', 'clear', 'empty']
   for (const name of features) {
