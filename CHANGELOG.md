@@ -4,6 +4,8 @@ The 1.0.0–2.0.1 iterations were development builds of the same plugin; the 2.x
 
 ## next-released
 
+## 1.1.0
+
 <!-- app-update-notes:en:start -->
 ### Added
 - **Workspace-shared notes:** sessions in one workspace now read and write a single list, so switching conversations keeps the same tasks in view. Notes already recorded per session are folded in once on first open; sessions outside a workspace keep their own list.
