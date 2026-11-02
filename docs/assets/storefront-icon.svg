@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="540" height="540" viewBox="0 0 180 180">
+  <!--
+    商店图标母版：插件市场只收位图，所以这里按 540px 渲染（3× 于 180）后缩到
+    180×180，输出到仓库根目录的 icon.png。卡片里按 16px 圆形裁切显示，
+    改动图形后务必在 16px 下再看一眼。
+  -->
+  <defs>
+    <linearGradient id="tile" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#F7C661"/>
+      <stop offset="1" stop-color="#E29A2C"/>
+    </linearGradient>
+  </defs>
+  <rect width="180" height="180" rx="40" fill="url(#tile)"/>
+  <path d="M62 38H106L128 60V134A10 10 0 0 1 118 144H62A10 10 0 0 1 52 134V48A10 10 0 0 1 62 38Z" fill="#2A2216"/>
+  <rect x="68" y="90" width="44" height="9" rx="4.5" fill="#F8D488"/>
+  <rect x="68" y="109" width="30" height="9" rx="4.5" fill="#F8D488"/>
+</svg>

@@ -21,8 +21,11 @@
 | `docs/assets/preview-badge.png` / `-dark.png` | 入口按钮特写，带未完成数 | 920×352（README 按 460 宽显示） |
 | `docs/assets/features/{panel,settings,actions,clear,empty}.png` | 功能图（明色） | 1080 宽 |
 | `docs/assets/features/{…}-dark.png` | 功能图（暗色） | 1080 宽 |
+| `docs/assets/storefront-icon.svg` → `icon.png` | 市场卡片图标（卡片里按 16px 圆形裁切） | 180×180 |
 
 > 一次 `run.sh` 重写全部 14 张图：10 张功能图 + 4 张预览图（`preview-right*`、`preview-badge*`）。预览图由 `capture.mjs` 的 `PREVIEW=1` 分支拍整窗与头部条，再由 `crop.py --preview` 缩放、裁切，构图见第 6 节。旧的 `preview.png` / `preview-dark.png`（面板特写商店素材）已下线，不再产出。
+
+> 市场图标不在 `run.sh` 里：它是仓库根目录的 `icon.png`，由 `docs/assets/storefront-icon.svg` 按 540px 渲染后缩到 180×180（插件市场只收 GitHub 上的位图）。`icon.svg` 仍是插件自身的界面图标，两者不要混用。
 
 ## 2. 前置条件
 
@@ -119,15 +122,16 @@ python3 tools/screenshots/crop.py --raw "$WORK/raw" --theme light --out docs/ass
 - [ ] 四张预览图与功能图出自同一批便笺（名称、计数、时间一致）；
 - [ ] 图里没有任何其它项目的信息（逐张过一遍）；
 - [ ] 四张预览图里没有账号头像、昵称或邮箱；
-- [ ] `npm test` 通过（`feature screenshots ship in both themes` 会校验 10 张功能图与两份 README 的引用，`the marketplace screenshot declaration points at shipped images` 会校验根目录 `screenshots.json`）；
+- [ ] `npm test` 通过（`feature screenshots ship in both themes` 会校验 10 张功能图与两份 README 的引用，`the marketplace screenshot declaration points at shipped images` 会校验根目录 `screenshots.json`，`the marketplace icon is a shipped square bitmap` 会校验 `icon.png` 是 180×180 的 PNG）；
 - [ ] `git status` 里没有 `.screenshots/`、`.pnpm-store/`、凭据文件。
 
 ## 9. 收尾
 
 1. 需要时同步 README 的「功能截图」表格与根目录 `screenshots.json`——插件市场按这个顺序展示，卡片只取前三张，所以封面永远是 `preview-right.png`。图片路径不变则两处都无需改动；
-2. 在 `CHANGELOG.md` 当前版本小节记一条；
-3. `npm test`；
-4. 提交并推送。
+2. 改过市场图标时，重新从 `docs/assets/storefront-icon.svg` 渲染 `icon.png`（540 → 180，做法见第 1 节），并在 16px 下确认还认得出来；
+3. 在 `CHANGELOG.md` 当前版本小节记一条；
+4. `npm test`；
+5. 提交并推送。
 
 ## 10. 故障排查
 

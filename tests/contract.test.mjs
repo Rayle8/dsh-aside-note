@@ -353,6 +353,23 @@ test('the marketplace screenshot declaration points at shipped images', () => {
   assert.equal(new Set(declared).size, declared.length, 'screenshots.json repeats a file')
 })
 
+test('the marketplace icon is a shipped square bitmap', () => {
+  // awesome-dsh-plugin only accepts a GitHub-hosted raster icon, and the plugin
+  // card crops it into a 16px circle. The SVG kept in docs/assets is the master
+  // that regenerates icon.png; the market reads the PNG at the repository root.
+  assert.ok(exists('docs/assets/storefront-icon.svg'), 'missing docs/assets/storefront-icon.svg')
+  assert.ok(exists('icon.png'), 'missing icon.png')
+  const bytes = fs.readFileSync(path.join(root, 'icon.png'))
+  assert.ok(bytes.length > 1000, 'icon.png looks empty')
+  assert.ok(bytes.length <= 256 * 1024, `icon.png is ${bytes.length} bytes, over the 256 KiB icon budget`)
+  const signature = [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]
+  assert.deepEqual([...bytes.subarray(0, 8)], signature, 'icon.png does not start with a PNG signature')
+  const width = bytes.readUInt32BE(16)
+  const height = bytes.readUInt32BE(20)
+  assert.equal(width, height, 'the card crops the icon into a circle, so icon.png must be square')
+  assert.equal(width, 180, 'icon.png ships at 180px; regenerating it at another size needs a look at 16px')
+})
+
 test('feature screenshots ship in both themes', () => {
   const features = ['panel', 'settings', 'actions', 'clear', 'empty']
   for (const name of features) {
