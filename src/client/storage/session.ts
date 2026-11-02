@@ -1,15 +1,23 @@
-/** Session-scoped notes: the only store the panel renders. */
+/**
+ * Session-scoped notes in one localStorage record.
+ *
+ * The shape stays at v1: workspace notes now live under
+ * `WORKSPACE_STORAGE_KEY`, so the session key existing users already have is
+ * never rewritten into a new schema.
+ */
 import { SESSION_STORAGE_KEY } from '../constants'
 import { normalizeItems } from '../domain/items'
 import { storage } from './codec'
 import { notifyTodoChange } from './events'
 
-/** Empty session-scoped store. */
+/** Empty note store. */
 export function emptySessionStore() {
   return { version: 1, sessions: {} }
 }
 
-/** Read the whole session memo store; corrupt or unavailable reads as empty. */
+const bucket = value => (value && typeof value === 'object' && !Array.isArray(value) ? value : {})
+
+/** Read the whole note store; corrupt or unavailable reads as empty. */
 export function readSessionStore() {
   const ls = storage()
   if (!ls) return emptySessionStore()
@@ -18,11 +26,25 @@ export function readSessionStore() {
     if (!raw) return emptySessionStore()
     const parsed = JSON.parse(raw)
     if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) return emptySessionStore()
-    const sessions = parsed.sessions
-    if (!sessions || typeof sessions !== 'object' || Array.isArray(sessions)) return emptySessionStore()
-    return { version: 1, sessions }
+    return { version: 1, sessions: bucket(parsed.sessions) }
   } catch {
     return emptySessionStore()
+  }
+}
+
+/** Persist the whole session store; the single writer for this key. */
+export function writeSessionStore(store) {
+  const ls = storage()
+  if (!ls) return false
+  try {
+    ls.setItem(SESSION_STORAGE_KEY, JSON.stringify({
+      version: 1,
+      sessions: bucket(store && store.sessions),
+    }))
+    notifyTodoChange()
+    return true
+  } catch {
+    return false
   }
 }
 
@@ -39,20 +61,13 @@ export function readSessionRecord(sessionId) {
 
 /** Persist one session's memo record. */
 export function writeSessionRecord(sessionId, record) {
-  const ls = storage()
   const key = sessionId ? String(sessionId) : ''
-  if (!ls || !key) return false
+  if (!key) return false
   const store = readSessionStore()
   store.sessions[key] = {
     sessionId: key,
     updatedAt: record.updatedAt || Date.now(),
     items: normalizeItems(record.items),
   }
-  try {
-    ls.setItem(SESSION_STORAGE_KEY, JSON.stringify(store))
-    notifyTodoChange()
-    return true
-  } catch {
-    return false
-  }
+  return writeSessionStore(store)
 }

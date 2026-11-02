@@ -4,6 +4,22 @@ The 1.0.0–2.0.1 iterations were development builds of the same plugin; the 2.x
 
 ## next-released
 
+<!-- app-update-notes:en:start -->
+### Added
+- **Workspace-shared notes:** sessions in one workspace now read and write a single list, so switching conversations keeps the same tasks in view. Notes already recorded per session are folded in once on first open; sessions outside a workspace keep their own list.
+- **Forward to the open conversation:** forwarding a shared note appends it to the composer of the conversation currently on screen, not the one the panel was opened from.
+- **Workspace / session switch:** the panel header switches between the workspace list and the current session's list; the choice is remembered across panel openings.
+- **Separate storage keys:** session notes stay under `dsh.aside-note` with their original shape, while workspace notes live under `dsh.aside-note.workspaces`; adding the workspace list never rewrites existing session data.
+<!-- app-update-notes:en:end -->
+
+<!-- app-update-notes:zh:start -->
+### 新增
+- **工作区共享：** 同一工作区的会话现在共用一份清单，切换会话也能接着看同一批事项；首次打开时会把各会话已有的便笺合并一次，工作区之外的会话仍各自独立。
+- **转发到当前会话：** 共享便笺会追加到当前屏幕上打开的会话输入框，而不是面板最初打开时所在的会话。
+- **工作区 / 会话切换：** 面板顶部可在工作区清单与当前会话清单之间切换，选择会被记住，下次打开沿用。
+- **独立存储键：** 会话便笺仍保存在 `dsh.aside-note`，结构不变；工作区清单使用 `dsh.aside-note.workspaces`，新增工作区不会改写原有会话数据。
+<!-- app-update-notes:zh:end -->
+
 ## 1.0.3
 
 <!-- app-update-notes:en:start -->

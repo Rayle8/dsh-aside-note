@@ -1,24 +1,28 @@
-/** Which notes were forwarded in this session, plus the toggle-off bookkeeping. */
+/** Which notes of this list were forwarded, plus the toggle-off bookkeeping. */
 import React from 'react'
 import { forgetForwarded, markForwarded, readForwardedIds } from '../storage/forwarded'
 
-export function useForwardMarks(sessionId) {
-  const [forwardedIds, setForwardedIds] = React.useState(() => readForwardedIds(sessionId))
-  const sessionRef = React.useRef(sessionId ? String(sessionId) : '')
+/**
+ * Forward marks belong to the list, not to the conversation: the same note
+ * stays marked while the user moves between sessions of one workspace.
+ */
+export function useForwardMarks(scopeKey) {
+  const key = scopeKey ? String(scopeKey) : ''
+  const [forwardedIds, setForwardedIds] = React.useState(() => readForwardedIds(key))
+  const keyRef = React.useRef(key)
 
-  // Only a genuine session switch re-reads the flags; parent re-renders keep this state.
+  // Only a genuine list switch re-reads the flags; parent re-renders keep this state.
   React.useEffect(() => {
-    const key = sessionId ? String(sessionId) : ''
-    if (sessionRef.current === key) return
-    sessionRef.current = key
+    if (keyRef.current === key) return
+    keyRef.current = key
     setForwardedIds(readForwardedIds(key))
-  }, [sessionId])
+  }, [key])
 
   /** Drop forwarded flags for notes that no longer render (deleted or cleared). */
   const forgetForwardedItems = itemIds => {
     const ids = (Array.isArray(itemIds) ? itemIds : [itemIds]).filter(Boolean)
     if (!ids.length) return
-    forgetForwarded(sessionId, ids)
+    forgetForwarded(key, ids)
     setForwardedIds(current => {
       if (!ids.some(id => current[id])) return current
       const next = { ...current }
@@ -31,7 +35,7 @@ export function useForwardMarks(sessionId) {
   const rememberForwarded = item => {
     const id = item && item.id ? String(item.id) : ''
     if (!id) return
-    markForwarded(sessionId, id)
+    markForwarded(key, id)
     setForwardedIds(current => (current[id] ? current : { ...current, [id]: true }))
   }
 

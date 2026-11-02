@@ -1,5 +1,22 @@
-/** Append a note to the conversation composer (Lexical contenteditable or textarea). */
 /** Append one note to the conversation composer (Lexical contenteditable or textarea). */
+
+/** Session whose conversation is on screen; the dock keeps this current. */
+let targetSessionId = ''
+
+/** Point forwarding at the conversation the user currently has open. */
+export function setForwardTarget(sessionId) {
+  targetSessionId = sessionId ? String(sessionId) : ''
+}
+
+/** The visible conversation root of the target session, when the host marks one. */
+function conversationRoot() {
+  if (!targetSessionId) return null
+  for (const node of document.querySelectorAll('[data-conversation-session]')) {
+    if (node.getAttribute('data-conversation-session') === targetSessionId) return node
+  }
+  return null
+}
+
 export function appendToConversation(text, prefix = '') {
   const note = String(text || '').replace(/^\s+|\s+$/g, '')
   if (!note) return false
@@ -10,10 +27,14 @@ export function appendToConversation(text, prefix = '') {
     const rect = node.getBoundingClientRect()
     return rect.width > 0 && rect.height > 0
   }
-  const specific = [...document.querySelectorAll('[data-composer-input]')].filter(visible)
+  // Scope the lookup to the open conversation so a workspace-shared note never
+  // lands in another session's composer; fall back to the document when the
+  // host does not expose the marker.
+  const root = conversationRoot() || document
+  const specific = [...root.querySelectorAll('[data-composer-input]')].filter(visible)
   const editor = (specific.length
     ? specific
-    : [...document.querySelectorAll('[contenteditable="true"][role="textbox"], textarea[role="textbox"]')].filter(visible))[0] as
+    : [...root.querySelectorAll('[contenteditable="true"][role="textbox"], textarea[role="textbox"]')].filter(visible))[0] as
     | HTMLTextAreaElement
     | HTMLInputElement
     | HTMLElement

@@ -1,14 +1,18 @@
 /**
  * The floating notes panel.
  *
- * State, handlers and effects for one session's notes; the markup lives in the
+ * State, handlers and effects for the list in view; the markup lives in the
  * sibling components, the geometry in usePanelGeometry and the store in
  * useSessionMemoStore.
  */
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { PANEL_DEFAULT_WIDTH } from '../constants'
-import { useSessionMemoStore } from './useSessionMemoStore'
+import { PANEL_DEFAULT_WIDTH, SCOPE_MODE_KEY } from '../constants'
+import { scopeForSession, scopeKey, workspaceScopeForSession } from '../scope'
+import { notifyTodoChange } from '../storage/events'
+import { readScopeMode, writeScopeMode } from '../storage/prefs'
+import { ensureWorkspaceRecord } from '../storage/workspace'
+import { useMemoStore } from './useSessionMemoStore'
 import { usePanelGeometry } from './usePanelGeometry'
 
 import { useSections } from './useSections'
@@ -35,11 +39,22 @@ export function MemoPopover(props) {
   const say = props.say
   const localeId = props.localeId
   const sessionId = props.sessionId || ''
+  /** The header switch remembers its choice; a workspace-less session stays session-scoped. */
+  const [mode, setMode] = React.useState(() => readScopeMode())
+  React.useEffect(() => {
+    const onStorage = event => {
+      if (event && event.key === SCOPE_MODE_KEY) setMode(readScopeMode())
+    }
+    window.addEventListener('storage', onStorage)
+    return () => window.removeEventListener('storage', onStorage)
+  }, [])
+  const canUseWorkspace = Boolean(workspaceScopeForSession(sessionId))
+  const scope = scopeForSession(sessionId, mode)
   /** Settled outcomes go to the frame-wide toast host, not to inline marks. */
   const report = typeof props.onToast === 'function' ? props.onToast : () => {}
-  const { record, syncError, commit } = useSessionMemoStore(props.sessionId)
+  const { record, syncError, commit } = useMemoStore(scope)
   const { sectionsRef, showOpen, showDone, toggleOpen, toggleDone, applySections } = useSections()
-  const { forwardedIds, rememberForwarded, unrememberForwarded, forgetForwardedItems } = useForwardMarks(sessionId)
+  const { forwardedIds, rememberForwarded, unrememberForwarded, forgetForwardedItems } = useForwardMarks(scopeKey(scope))
   const { showSettings, setShowSettings, sendShortcut, chooseShortcut, forwardPrefix, changeForwardPrefix, prefixRef } = usePanelSettings()
   // Version check, release notes and the in-app update share one hook; the
   // registry answer is cached for an hour across panel opens.
@@ -76,6 +91,23 @@ export function MemoPopover(props) {
   const total = items.length
   const { listRef, listHasMore, syncListEdge } = useListEdge({ items, showOpen, showDone })
   useOutsideDismiss(panelRef, props.anchorRef, props.onClose)
+
+  const chooseScope = next => {
+    if (next === mode) return
+    if (next === 'workspace' && !canUseWorkspace) return
+    // The workspace may not have been seeded yet if the panel opened while the
+    // session list was selected; fold member notes in before reading it.
+    if (next === 'workspace') {
+      const workspace = scopeForSession(sessionId, 'workspace')
+      if (workspace.kind === 'workspace') ensureWorkspaceRecord(workspace.id, workspace.sessionIds)
+    }
+    // Leaving a list abandons its inline editors and pending clear confirmation.
+    writeScopeMode(next)
+    setMode(next)
+    cancelEdit()
+    dismissClearConfirm()
+    notifyTodoChange()
+  }
 
   const clearDone = () => {
     // Capture the completed items before the commit so their forward flags can be cleared.
@@ -157,6 +189,9 @@ export function MemoPopover(props) {
       onToggleSettings: () => setShowSettings(value => !value),
       onClose: props.onClose,
       newerVersion,
+      scopeMode: mode,
+      canUseWorkspace,
+      onScopeChange: chooseScope,
     }),
     showSettings
       ? h(SettingsPanel, {
@@ -207,7 +242,9 @@ export function MemoPopover(props) {
     h(
       'div',
       { className: 'dsh-an-popFoot', role: 'status' },
-      h('span', { className: syncError ? 'dsh-an-error' : undefined }, say(syncError ? 'storage.failed' : 'popover.storage')),
+      h('span', { className: syncError ? 'dsh-an-error' : undefined }, say(syncError
+        ? 'storage.failed'
+        : scope.kind === 'workspace' ? 'popover.shared' : 'popover.storage')),
     ),
   )
 

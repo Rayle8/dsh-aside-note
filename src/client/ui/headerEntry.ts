@@ -4,9 +4,12 @@
  * It is a plain DOM node beside the shell's utilities row: a React portal there
  * would be reconciled away. The glyph is inlined for the same reason.
  */
-import { SESSION_STORAGE_KEY } from '../constants'
+import { SCOPE_MODE_KEY, SESSION_STORAGE_KEY, WORKSPACE_STORAGE_KEY } from '../constants'
 import { normalizeItems } from '../domain/items'
+import { scopeForSession, scopeKey } from '../scope'
 import { readSessionStore } from '../storage/session'
+import { readScopeMode } from '../storage/prefs'
+import { readWorkspaceRecord } from '../storage/workspace'
 import { TODO_LISTENERS } from '../storage/events'
 
 const HEADER_ICON = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round" aria-hidden="true"><path d="M3.25 2.75h6.5l3 3v7.5c0 .55-.45 1-1 1H3.25c-.55 0-1-.45-1-1V3.75c0-.55.45-1 1-1Z"/><path d="M9.75 2.75v3h3"/><path d="M4.9 7.6h5.4M4.9 9.9h3.6" stroke-linecap="round"/></svg>'
@@ -20,8 +23,11 @@ export function createHeaderEntry({ getSessionId, getActiveAnchor, getLocaleId, 
       if (button) button.remove()
       return
     }
+    const scope = scopeForSession(sessionId, readScopeMode())
     const store = readSessionStore()
-    const items = normalizeItems(store.sessions[sessionId] && store.sessions[sessionId].items)
+    const items = scope.kind === 'workspace'
+      ? readWorkspaceRecord(scope.id).items
+      : normalizeItems(store.sessions[sessionId] && store.sessions[sessionId].items)
     const open = items.filter(item => !item.done).length
     if (!button) {
       button = document.createElement('button')
@@ -31,12 +37,15 @@ export function createHeaderEntry({ getSessionId, getActiveAnchor, getLocaleId, 
       button.addEventListener('click', event => {
         event.preventDefault()
         event.stopPropagation()
-        onOpen(sessionId, button)
+        // The dock can switch conversations while this button stays mounted, so
+        // resolve the open session at click time instead of capturing the first.
+        onOpen(getSessionId(), button)
       })
       host.appendChild(button)
     }
     button.dataset.active = getActiveAnchor() === button ? 'true' : 'false'
-    const signature = `${getLocaleId()}:${sessionId}:${open}`
+    button.dataset.scope = scope.kind
+    const signature = `${getLocaleId()}:${scopeKey(scope)}:${open}`
     if (button.dataset.signature !== signature) {
       const icon = document.createElement('span')
       icon.className = 'dsh-an-headerIcon'
@@ -72,7 +81,7 @@ export function createHeaderEntry({ getSessionId, getActiveAnchor, getLocaleId, 
       })
     }
     const onStorage = event => {
-      if (event.key === SESSION_STORAGE_KEY) schedule()
+      if (event.key === SESSION_STORAGE_KEY || event.key === WORKSPACE_STORAGE_KEY || event.key === SCOPE_MODE_KEY) schedule()
     }
     TODO_LISTENERS.add(schedule)
     window.addEventListener('storage', onStorage)

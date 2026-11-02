@@ -10,6 +10,8 @@ export const NS = 'dsh-aside-note'
 export const PANEL_ID = 'dsh-aside-note'
 /** Session-scoped memo store used by the popover and the session-header entry. */
 export const SESSION_STORAGE_KEY = 'dsh.aside-note'
+/** Notes shared by every session of one workspace; kept beside the session key. */
+export const WORKSPACE_STORAGE_KEY = 'dsh.aside-note.workspaces'
 /** Unsaved add/edit drafts, restored when the panel is reopened. */
 export const DRAFT_STORAGE_KEY = 'dsh.aside-note.drafts'
 /** Notes already forwarded to the composer, per session; marks the forward button. */
@@ -39,6 +41,9 @@ export const MOD_LABEL = IS_MAC ? '⌘' : 'Ctrl'
 export function isSendModifier(event) {
   return IS_MAC ? event.metaKey === true : event.ctrlKey === true
 }
+/** Last chosen list scope: the workspace list or the session list. */
+export const SCOPE_MODE_KEY = 'dsh.aside-note.scope-mode'
+export const SCOPE_MODE_DEFAULT = 'workspace'
 /** Remembered expand/collapse state of the open/completed sections. */
 export const SECTION_STATE_KEY = 'dsh.aside-note.sections'
 export const SECTION_STATE_DEFAULT = { open: true, done: false }

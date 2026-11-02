@@ -12,6 +12,10 @@ import ReactDOMClient from 'react-dom/client'
 import CSS from './styles/panel.css?inline'
 import { NS, PANEL_ID } from './constants'
 import { DICT, fill, makeSay } from './i18n'
+import { bindWorkspace, scopeForSession } from './scope'
+import { setForwardTarget } from './domain/forward'
+import { readScopeMode } from './storage/prefs'
+import { ensureWorkspaceRecord } from './storage/workspace'
 import { createToastSeat } from './ui/toastSeat'
 import { createHeaderEntry } from './ui/headerEntry'
 import { MemoPopover } from './ui/MemoPopover'
@@ -63,6 +67,9 @@ const h = React.createElement
 
 
 
+
+/** Hosts without ui-workspace (and the bundle test) keep the session list. */
+const useNoWorkspace = () => null
 
 /** Compact floating memo list, anchored to the entry that opened it. */
 function apply(ctx: DshClientCtx) {
@@ -128,6 +135,11 @@ function apply(ctx: DshClientCtx) {
       return
     }
     closeMemoPopover()
+    // A workspace list must already contain its members' older notes before
+    // the panel reads it; the first open is where that merge happens.
+    const scope = scopeForSession(sessionId, readScopeMode())
+    if (scope.kind === 'workspace') ensureWorkspaceRecord(scope.id, scope.sessionIds)
+    setForwardTarget(sessionId)
     const container = document.createElement('div')
     container.dataset.dshMemoPopoverRoot = 'true'
     document.body.appendChild(container)
@@ -158,13 +170,31 @@ function apply(ctx: DshClientCtx) {
 
   function BoundSessionCapture(props) {
     const sessionId = props.sessionId || ''
+    // `useWorkspaces` is a global standard prop from ui-workspace; a host
+    // without it (or a test harness) leaves the panel on the session list.
+    const useWorkspaces = typeof props.useWorkspaces === 'function' ? props.useWorkspaces : useNoWorkspace
+    const snapshot = useWorkspaces(state => state)
+    const workspace = React.useMemo(() => {
+      const items = snapshot && Array.isArray(snapshot.items) ? snapshot.items : []
+      return items.find(candidate => (
+        candidate && Array.isArray(candidate.sessionIds) && candidate.sessionIds.includes(sessionId)
+      )) || null
+    }, [snapshot, sessionId])
+
     React.useEffect(() => {
+      const changed = bindWorkspace(sessionId, workspace)
       if (activeSessionId !== sessionId) {
         activeSessionId = sessionId
+        setForwardTarget(sessionId)
+        closeMemoPopover()
+      } else if (changed) {
+        // The same conversation gained (or lost) a workspace: the open panel
+        // was reading the other list, so reopen it against the right one.
         closeMemoPopover()
       }
+      if (workspace) ensureWorkspaceRecord(workspace.workspaceId, workspace.sessionIds)
       refreshHeaderEntry()
-    }, [sessionId])
+    }, [sessionId, workspace])
     return null
   }
 

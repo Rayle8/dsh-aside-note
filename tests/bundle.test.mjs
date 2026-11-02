@@ -404,3 +404,195 @@ test('the built bundle boots, applies, and seats its slots', async t => {
     'the stylesheet must be removed when the plugin is disposed')
   dom.window.close()
 })
+
+test('one workspace shares its notes and forwards into the visible session', async t => {
+  const dom = new JSDOM(
+    '<!doctype html><html><body>' +
+      '<div class="_headerUtilities"></div>' +
+      '<div data-conversation-session="session-1"><textarea data-composer-input></textarea></div>' +
+      '<div data-conversation-session="session-2"><textarea data-composer-input></textarea></div>' +
+    '</body></html>',
+    { url: 'https://example.test/', pretendToBeVisual: true, runScripts: 'outside-only' },
+  )
+  const { window } = dom
+  t.after(() => window.close())
+  globalThis.window = window
+  globalThis.document = window.document
+  globalThis.IS_REACT_ACT_ENVIRONMENT = true
+
+  // jsdom returns a zero rect for every node; the composer and panel both treat
+  // a zero-size node as invisible, so give them a layout box.
+  window.HTMLElement.prototype.getBoundingClientRect = () => ({
+    width: 320, height: 24, top: 0, left: 0, right: 320, bottom: 24, x: 0, y: 0,
+    toJSON: () => ({}),
+  })
+
+  // Two sessions in one workspace, each with a note written before the list
+  // was shared. Both must be folded into the workspace list exactly once.
+  window.localStorage.setItem('dsh.aside-note', JSON.stringify({
+    version: 1,
+    sessions: {
+      'session-1': { items: [{ id: 'seed-1', text: '会话一的事项', done: false, createdAt: 1, updatedAt: 1 }] },
+      'session-2': { items: [{ id: 'seed-2', text: '会话二的事项', done: false, createdAt: 2, updatedAt: 2 }] },
+    },
+  }))
+  window.fetch = async () => ({ ok: false, status: 404, json: async () => ({}) })
+
+  const React = await import('react')
+  const ReactDOMClient = await import('react-dom/client')
+  const { act } = React
+
+  let loaded = null
+  window.__ModuleLoader__ = { load: spec => { loaded = spec } }
+  window.eval(bundle)
+
+  const moduleTable = {
+    react: React,
+    'react-dom': await import('react-dom'),
+    'react-dom/client': ReactDOMClient,
+    '@deepseek-ai/dsh-client-ui-primitives': {},
+  }
+  const exported = loaded.factory(id => {
+    if (!(id in moduleTable)) throw new Error(`module table cannot answer ${id}`)
+    return moduleTable[id]
+  })
+
+  const disposers = []
+  const registered = []
+  const locale = {
+    bind: () => key => key,
+    register: () => {},
+    getLocale: () => ({ id: 'zh' }),
+  }
+  const ctx = {
+    get: name => (name === 'locale' ? locale : undefined),
+    effect: fn => {
+      const dispose = fn()
+      if (typeof dispose === 'function') disposers.push(dispose)
+    },
+    slots: {
+      inject: (name, factory) => factory(),
+      register: (meta, component) => {
+        registered.push({ meta, component })
+        return () => {}
+      },
+    },
+  }
+  await act(async () => { exported.apply(ctx) })
+
+  const capture = registered.find(entry => entry.meta.name === 'conversation.composer.dock').component
+  const workspace = {
+    workspaceId: 'ws-1',
+    path: '/repo',
+    title: '共享工作区',
+    sessionIds: ['session-1', 'session-2'],
+    createdAt: '',
+    updatedAt: '',
+  }
+  // Stand-in for the global standard prop ui-workspace publishes on every slot.
+  const useWorkspaces = selector => selector({ items: [workspace], archivedSessionIds: [], pinnedSessionIds: [], state: 'idle', phase: 'ready', error: null })
+
+  const host = document.createElement('div')
+  document.body.appendChild(host)
+  const firstRoot = ReactDOMClient.createRoot(host)
+  await act(async () => {
+    firstRoot.render(React.createElement(capture, { sessionId: 'session-1', useWorkspaces }))
+  })
+
+  const sessionStore = JSON.parse(window.localStorage.getItem('dsh.aside-note'))
+  assert.equal(sessionStore.version, 1, 'the session key keeps its original shape')
+  assert.equal(sessionStore.workspaces, undefined, 'workspace data does not leak into the session key')
+  const workspaceStore = JSON.parse(window.localStorage.getItem('dsh.aside-note.workspaces'))
+  assert.equal(workspaceStore.version, 1)
+  const shared = workspaceStore.workspaces['ws-1']
+  assert.ok(shared, 'the workspace list must be created on first sight')
+  assert.deepEqual(shared.items.map(item => item.text).sort(), ['会话二的事项', '会话一的事项'].sort())
+  assert.deepEqual(shared.seededSessionIds.sort(), ['session-1', 'session-2'])
+  assert.equal(window.localStorage.getItem('dsh.aside-note.migrated'), null,
+    'the fold is recorded in the store, not with a second marker key')
+
+  const header = document.querySelector('.dsh-an-headerBtn')
+  await act(async () => { header.click() })
+  const popover = document.querySelector('.dsh-an-popover')
+  assert.ok(popover, 'the shared list opens from the header entry')
+  const scopeButtons = () => [...popover.querySelectorAll('.dsh-an-scopeBtn')]
+  assert.deepEqual(scopeButtons().map(node => node.textContent), ['工作区', '会话'])
+  assert.equal(scopeButtons()[0].getAttribute('aria-pressed'), 'true',
+    'the workspace list is the default scope')
+  assert.match(popover.querySelector('.dsh-an-popFoot').textContent, /工作区共享/)
+
+  // The header switch can drop to this session's own list without reopening.
+  await act(async () => { popover.querySelector('[data-scope-mode="session"]').click() })
+  assert.match(popover.querySelector('.dsh-an-popFoot').textContent, /按会话隔离/)
+  assert.deepEqual(
+    [...popover.querySelectorAll('.dsh-an-text')].map(node => node.textContent),
+    ['会话一的事项'],
+    'the session list holds only this session note',
+  )
+  assert.equal(window.localStorage.getItem('dsh.aside-note.scope-mode'), 'session')
+  await act(async () => { await new Promise(resolve => window.setTimeout(resolve, 40)) })
+  assert.equal(header.querySelector('.dsh-an-headerCount').textContent, '1',
+    'the header count follows the chosen scope')
+
+  // Switching back restores the shared list and remembers the choice.
+  await act(async () => { popover.querySelector('[data-scope-mode="workspace"]').click() })
+  assert.equal(window.localStorage.getItem('dsh.aside-note.scope-mode'), 'workspace')
+  assert.match(popover.querySelector('.dsh-an-popFoot').textContent, /工作区共享/)
+  assert.deepEqual(
+    [...popover.querySelectorAll('.dsh-an-text')].map(node => node.textContent).sort(),
+    ['会话二的事项', '会话一的事项'].sort(),
+  )
+  await act(async () => { await new Promise(resolve => window.setTimeout(resolve, 40)) })
+  assert.equal(header.querySelector('.dsh-an-headerCount').textContent, '2')
+
+  // A note added in session-1 lands in the workspace list, not the session list.
+  const setter = Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, 'value').set
+  const field = popover.querySelector('.dsh-an-input')
+  await act(async () => {
+    setter.call(field, '新增的共享事项')
+    field.dispatchEvent(new window.Event('input', { bubbles: true }))
+  })
+  await act(async () => { popover.querySelector('.dsh-an-addBtn').click() })
+  const afterAdd = JSON.parse(window.localStorage.getItem('dsh.aside-note.workspaces'))
+  assert.equal(afterAdd.workspaces['ws-1'].items.length, 3)
+  const sessionAfterAdd = JSON.parse(window.localStorage.getItem('dsh.aside-note'))
+  assert.equal(sessionAfterAdd.sessions['session-1'].items.length, 1,
+    'the old per-session bucket stays as history and is not written again')
+
+  await act(async () => { popover.querySelector('.dsh-an-popClose').click() })
+  await act(async () => { firstRoot.unmount() })
+
+  // Open the same workspace from session-2: it reads the same list.
+  const secondHost = document.createElement('div')
+  document.body.appendChild(secondHost)
+  const secondRoot = ReactDOMClient.createRoot(secondHost)
+  await act(async () => {
+    secondRoot.render(React.createElement(capture, { sessionId: 'session-2', useWorkspaces }))
+  })
+  await act(async () => { document.querySelector('.dsh-an-headerBtn').click() })
+  const secondPopover = document.querySelector('.dsh-an-popover')
+  assert.ok(secondPopover, 'the panel opens in the second session')
+  const texts = [...secondPopover.querySelectorAll('.dsh-an-text')].map(node => node.textContent).sort()
+  assert.deepEqual(texts, ['会话二的事项', '会话一的事项', '新增的共享事项'].sort())
+
+  // Forwarding writes into session-2's composer only: session-1's stays empty,
+  // proving the shared note follows the conversation currently on screen.
+  const row = [...secondPopover.querySelectorAll('.dsh-an-row')]
+    .find(node => node.querySelector('.dsh-an-text').textContent === '新增的共享事项')
+  const forward = row.querySelector('.dsh-an-iconBtn[aria-label="转发到会话"]')
+  assert.ok(forward, 'the open note offers forward')
+  await act(async () => { forward.click() })
+  const composers = [...window.document.querySelectorAll('[data-conversation-session]')]
+  const valueOf = id => composers
+    .find(node => node.getAttribute('data-conversation-session') === id)
+    .querySelector('[data-composer-input]').value
+  assert.match(valueOf('session-2'), /- 新增的共享事项/, 'the note lands in the visible composer')
+  assert.equal(valueOf('session-1'), '', 'the hidden session composer is untouched')
+
+  const marks = JSON.parse(window.localStorage.getItem('dsh.aside-note.forwarded'))
+  assert.ok(marks.sessions['ws:ws-1'], 'forward marks belong to the workspace list')
+
+  await act(async () => { secondRoot.unmount() })
+  for (const dispose of disposers) dispose()
+  dom.window.close()
+})

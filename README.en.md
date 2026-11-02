@@ -76,9 +76,9 @@ A few small tasks should not need a whole management system. Capture a thought, 
 
 Click the **AsideNote** button at the top right of the conversation to open the right-side panel. Record tasks, ideas, and details to revisit. The button shows the unfinished count; check off each item as you finish it.
 
-### Keep it with the session and pick it up later
+### Keep it in the workspace and pick it up later
 
-Notes are saved independently for each session. Even within the same workspace, each conversation keeps its own tasks and context.
+Sessions in one workspace share a single list by default: whichever session you open, you see the same tasks. The panel header also switches between **Workspace** and **Session** — workspace covers the whole workspace, session covers only the current conversation. Sessions outside a workspace have no workspace scope and always stay per-session. On first open, notes already recorded in member sessions are folded into the workspace list once, so nothing is lost.
 
 ### Bring it back when you are ready
 
@@ -98,11 +98,11 @@ Click a note's forward button to append it to the current chat input as a list i
 
 ## Features
 
-- **Per-session notes**: data is keyed by session ID, so sessions in one workspace stay independent, and tabs in the same browser stay in sync.
+- **Workspace-level notes**: one list is shared by every session in a workspace by default, so switching conversations keeps it in view; the panel header switches between **Workspace** and **Session**, and sessions outside a workspace only have the session scope. Tabs in the same browser stay in sync.
 - **Entry and panel**: an icon button at the top right badges the open count; clicking it opens a fixed panel aligned to the entry, which shifts left of the DSH right sidebar and closes when you switch sessions.
 - **Note actions**: add, complete, copy, edit by double-click or pencil, and delete; clearing completed notes asks for confirmation, and completed notes expand for review.
-- **One-click forward**: each note is appended to the composer as a `-` item, with the customizable prefix written only when the composer is empty — nothing is sent automatically. The forward button gains a check per session, and clicking it again removes the mark.
-- **Remembered state**: add and edit drafts are saved per session and restored when the panel reopens; the open/completed expand state is remembered too.
+- **One-click forward**: each note is appended to the **currently open conversation's** composer as a `-` item, with the customizable prefix written only when the composer is empty — nothing is sent automatically. The forward button gains a check per list, and clicking it again removes the mark.
+- **Remembered state**: add and edit drafts are saved per session and restored when the panel reopens; the open/completed expand state and the Workspace/Session scope choice are remembered too.
 - **Panel size**: drag the left edge for width and the bottom handle for height, double-click either to reset; both persist in the browser.
 - **List regions**: **Open** and **Completed** each keep a sticky header and its own scroll, and expanding completed never compresses open; completed notes show creation and completion times, newest completion first.
 - **Settings**: send shortcut (Enter or ⌘/Ctrl+Enter), forward prefix, and About (version, check, author, source), saved automatically.
@@ -166,7 +166,7 @@ Feedback reuses product surfaces too: copy, forward, delete, clear-completed, an
 
 ## Usage
 
-1. Click the **AsideNote** button at the top right of the conversation to open the right-side panel. Its badge shows the unfinished count when there are open notes.
+1. Click the **AsideNote** button at the top right of the conversation to open the right-side panel. Its badge shows the unfinished count when there are open notes; the **Workspace / Session** switch in the panel header moves between the whole workspace and the current conversation.
 2. Write one concrete follow-up in the panel and use your configured add shortcut or click **Add**.
 3. When you are ready to continue, click the note's forward button to append it to the chat input, then review and send it yourself.
 4. Click the circle to mark it complete; expand **Completed** to look back.
@@ -174,7 +174,7 @@ Feedback reuses product surfaces too: copy, forward, delete, clear-completed, an
 
 ## Where data lives
 
-Notes live in the browser's `localStorage` under `dsh.aside-note`:
+Session notes live in the browser's `localStorage` under `dsh.aside-note`, in the original v1 shape:
 
 ```json
 {
@@ -189,12 +189,30 @@ Notes live in the browser's `localStorage` under `dsh.aside-note`:
 }
 ```
 
+The list shared by one workspace lives separately under `dsh.aside-note.workspaces`:
+
+```json
+{
+  "version": 1,
+  "workspaces": {
+    "workspace-…": {
+      "workspaceId": "workspace-…",
+      "updatedAt": 0,
+      "items": [],
+      "seededSessionIds": ["session-…"]
+    }
+  }
+}
+```
+
+`workspaces` holds the list shared by one workspace; `seededSessionIds` remembers which member sessions were already folded in, so notes are merged once and never resurrect after a delete. Session data stays under the original `dsh.aside-note` key and workspace data is never written back into it; sessions without a workspace only use their `sessions` record. The panel header's scope choice lives separately under `dsh.aside-note.scope-mode` (`workspace` or `session`, default `workspace`).
+
 Therefore:
 
 - Refreshing, restarting DSH, or switching sessions keeps the records.
 - Nothing is written into the project or synced to another machine/browser.
 - Clearing site data clears the notes.
-- Storage keys carry no version suffix and follow the `dsh-aside-note` package name; old keys are neither read nor migrated. If your data still sits under the old `dsh.aside-notes.*.v2` keys, rename them to the matching `dsh.aside-note.*` keys and reload.
+- Reading old data never rewrites the shape of `dsh.aside-note`; workspace lists are read from `dsh.aside-note.workspaces`, and the first visit to a workspace folds its member-session notes in once. Keys like `dsh.aside-notes.*` from earlier builds are not read. If your data still sits under the old `dsh.aside-notes.*.v2` keys, rename them to the matching `dsh.aside-note.*` keys and reload.
 
 ## Update notice
 
@@ -269,7 +287,7 @@ Loaded in an isolated DSH profile and driven through headless Chrome:
 - clicking it opens the panel on the right, aligned with the entry;
 - adding updates both the badge and the panel count;
 - complete, edit, copy, forward, delete, and clear-completed work in the panel;
-- records survive a refresh and stay session-scoped;
+- records survive a refresh, and the panel header switches between the workspace list and the current session's list;
 - the npmjs → npmmirror → GitHub Release fallback, the one-hour cache, and the version comparison are covered by the contract tests, and the jsdom test drives the visible update notice; the live notice needs a published npm package or a GitHub Release.
 
-`npm run check` passes: lint, typecheck, build, and 90 tests, including jsdom integration tests that drive the whole panel, expand the release notes, run an update through a mocked market, and check the busy/no-market fallback.
+`npm run check` passes: lint, typecheck, build, and 95 tests, including jsdom integration tests that drive the whole panel, expand the release notes, run an update through a mocked market, and check the busy/no-market fallback.

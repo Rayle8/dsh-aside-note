@@ -1,10 +1,12 @@
-/** Panel geometry, send shortcut, forward prefix and section state. */
+/** Panel geometry, list scope, send shortcut, forward prefix and section state. */
 import {
   PANEL_DEFAULT_WIDTH,
   PANEL_HEIGHT_KEY,
   PANEL_MAX_WIDTH,
   PANEL_MIN_WIDTH,
   PANEL_WIDTH_KEY,
+  SCOPE_MODE_DEFAULT,
+  SCOPE_MODE_KEY,
   SECTION_STATE_DEFAULT,
   SECTION_STATE_KEY,
   SEND_SHORTCUT_DEFAULT,
@@ -56,6 +58,25 @@ export function writePanelHeight(height) {
   try {
     if (height > 0) ls.setItem(PANEL_HEIGHT_KEY, String(Math.round(height)))
     else ls.removeItem(PANEL_HEIGHT_KEY)
+  } catch {
+    /* storage is best effort */
+  }
+}
+
+/** Read the last chosen list scope; "workspace" is the default. */
+export function readScopeMode(): 'workspace' | 'session' {
+  try {
+    const saved = storage() && storage().getItem(SCOPE_MODE_KEY)
+    return saved === 'session' ? 'session' : SCOPE_MODE_DEFAULT
+  } catch {
+    return SCOPE_MODE_DEFAULT
+  }
+}
+
+export function writeScopeMode(mode) {
+  try {
+    const ls = storage()
+    if (ls) ls.setItem(SCOPE_MODE_KEY, mode === 'session' ? 'session' : 'workspace')
   } catch {
     /* storage is best effort */
   }

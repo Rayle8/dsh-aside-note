@@ -37,7 +37,7 @@ let react_dom = require("react-dom");
 react_dom = __toESM(react_dom, 1);
 
 // \0dsh-css:src/client/styles/panel.css.mjs
-var panel_css_default = "/*\n * Panel, composer dock, header entry and toast styles.\n *\n * Only DSH semantic aliases and the shared scale are used here — no palette of\n * its own. The entry point injects this sheet once for the whole frame, because\n * the dock mounts outside the panel tree.\n */\n/* ── 1 令牌 · 只映射 DSH 语义别名与共享尺度，不新建调色板 ─────────── */\nbody{--an-space-1:4px;--an-space-2:8px;--an-space-3:12px;--an-space-4:16px;--an-space-5:24px;--an-space-6:32px;--an-radius-pill:999px;--an-fs-caption:12px;--an-lh-caption:20px;--an-fs-row:13px;--an-lh-row:20px;--an-fs-title:14px;--an-lh-title:20px;--an-hover:var(--dsw-alias-interactive-bg-hover);--an-active:var(--dsw-alias-interactive-bg-active);--an-field:var(--dsw-alias-bg-layer-1);--an-field-line:var(--dsw-alias-border-l4);--an-divider:var(--dsw-alias-border-l2);--an-dur-fast:var(--ds-transition-duration-fast);--an-dur-base:var(--ds-transition-duration);--an-dur-spin:700ms;--an-ease:var(--ds-ease-in-out);--an-transition:background-color var(--an-dur-fast) var(--an-ease),border-color var(--an-dur-fast) var(--an-ease),color var(--an-dur-fast) var(--an-ease),opacity var(--an-dur-fast) var(--an-ease),transform var(--an-dur-fast) var(--an-ease),box-shadow var(--an-dur-fast) var(--an-ease)}\n\n/* ── 2 浮层 · 菜单材质 + 三层阴影，边框为 0（发丝线在阴影第一层） ── */\n.dsh-an-popover{position:fixed;z-index:1000;box-sizing:border-box;display:flex;flex-direction:column;gap:var(--an-space-3);min-height:0;padding:var(--an-space-4);border:0;border-radius:var(--dsw-radius-panel);background:var(--dsh-an-panelSurface);box-shadow:var(--dsw-elevation-panel);color:var(--dsw-alias-label-primary);font-size:var(--an-fs-row);line-height:var(--an-lh-row);--dsw-elevation-stroke-color:var(--dsw-alias-border-l2);--dsh-scrollbar-thumb:var(--dsw-alias-scrollbar-bg-l2,var(--an-divider));--dsh-scrollbar-thumb-hover:var(--dsw-alias-scrollbar-hover-l2,var(--dsw-alias-scrollbar-bg-l2,var(--an-divider)));--dsh-an-panelSurface:var(--dsw-alias-bg-layer-2);--dsh-an-listGutter:var(--an-space-4);--dsh-an-scrollRail:9px;--dsh-an-scrollInset:2px;overflow:hidden;animation:dsh-an-pop-in var(--an-dur-base) var(--an-ease) both}\n.dsh-an-popoverRight{padding-left:var(--an-space-4)}\n\n/* ── 3 面板头 · 标题与计数同一行，动作收在右侧 ───────────────────── */\n.dsh-an-popHead{display:flex;align-items:center;justify-content:space-between;gap:var(--an-space-3);min-width:0}\n.dsh-an-popTitleLine{display:flex;align-items:center;gap:var(--an-space-3);flex:1 1 auto;min-width:0}\n.dsh-an-popTitle{min-width:0;overflow:hidden;font-size:var(--an-fs-title);line-height:var(--an-lh-title);font-weight:500;color:var(--dsw-alias-label-primary);white-space:nowrap;text-overflow:ellipsis}\n.dsh-an-popMeta{min-width:0;margin:0;overflow:hidden;font-size:var(--an-fs-caption);line-height:16px;color:var(--dsw-alias-label-secondary);font-weight:400;font-variant-numeric:tabular-nums;white-space:nowrap;text-overflow:ellipsis}\n.dsh-an-popActions{display:flex;align-items:center;flex:none;gap:var(--an-space-2)}\n.dsh-an-popClose,.dsh-an-settingsBtn{display:grid;place-items:center;flex:none;width:24px;height:24px;padding:0;border:0;border-radius:var(--dsw-radius-sm);background:transparent;color:var(--dsw-alias-label-secondary);font:inherit;cursor:pointer;transition:var(--an-transition)}\n.dsh-an-popClose:active,.dsh-an-settingsBtn:active{background:var(--an-active)}\n.dsh-an-settingsBtn[data-active=\"true\"]{background:var(--an-hover);color:var(--dsw-alias-label-primary)}\n.dsh-an-settingsBtn{position:relative}\n.dsh-an-updateDot{position:absolute;top:3px;right:3px;width:6px;height:6px;border-radius:var(--an-radius-pill);corner-shape:round;background:var(--dsw-alias-brand-primary);box-shadow:0 0 0 2px var(--dsh-an-panelSurface)}\n\n/* ── 4 添加区 · 嵌套表单组 R16，字段 0.5px 发丝线 ──────────────────── */\n.dsh-an-add{display:flex;flex-direction:column;gap:var(--an-space-2);padding:var(--an-space-3);border:0.5px solid var(--dsw-alias-settings-card-stroke);border-radius:var(--dsw-radius-lg);background:var(--dsw-alias-settings-card-fill);transition:var(--an-transition)}\n.dsh-an-add:focus-within{border-color:var(--dsw-alias-state-business-primary)}\n.dsh-an-input{display:block;flex:0 0 auto;width:100%;min-width:0;box-sizing:border-box;min-height:var(--an-lh-row);max-height:120px;padding:0;border:0;outline:0;background:transparent;color:var(--dsw-alias-label-primary);font:inherit;font-size:var(--an-fs-row);line-height:var(--an-lh-row);resize:none;overflow-y:auto;overflow-x:hidden}\n.dsh-an-input::placeholder{color:var(--dsw-alias-label-secondary)}\n.dsh-an-addFoot{display:flex;align-items:center;justify-content:space-between;gap:var(--an-space-2);width:100%;min-width:0}\n.dsh-an-addShortcut{min-width:0;overflow:hidden;font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);color:var(--dsw-alias-label-secondary);white-space:nowrap;text-overflow:ellipsis}\n.dsh-an-addBtn{display:inline-flex;align-items:center;justify-content:center;flex:none;height:28px;padding:0 var(--an-space-2);border:0;border-radius:var(--dsw-radius-sm);background:var(--dsw-alias-button-primary-fill);color:var(--dsw-alias-label-primary-foreground);font:inherit;font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);font-weight:500;cursor:pointer;transition:var(--an-transition)}\n.dsh-an-addBtn:active{background:var(--dsw-alias-button-primary-dimmed);transform:scale(.97)}\n.dsh-an-addBtn[disabled]{background:transparent;color:var(--dsw-alias-label-secondary);box-shadow:inset 0 0 0 0.5px var(--an-field-line);cursor:not-allowed}\n\n/* ── 5 分区与列表 · 9px 轨道内嵌 2px，底部羽化只盖内容不盖滚动条 ──── */\n/* The viewport grows into the popover padding so the 9px rail does not steal from the cards; the list pays the padding back minus the rail, so cards and the add field keep one content width at every panel size. */\n.dsh-an-listViewport{position:relative;display:flex;flex-direction:column;flex:1 1 auto;min-height:0;margin-right:calc(var(--dsh-an-listGutter) * -1)}\n/* Bottom edge treatment: a viewport-fixed alpha mask over the scroller itself, exactly like the DSH scroll areas. The first gradient fades the last 48px to transparent; the second keeps the 9px scrollbar rail opaque so the thumb stays crisp. There is no backdrop-filter layer, so there is no hard compositing edge to see. */\n.dsh-an-listViewport[data-bottom=\"true\"] .dsh-an-listArea{--dsh-an-fadeHeight:calc(var(--an-space-6) + var(--an-space-4));-webkit-mask-image:linear-gradient(to bottom,currentColor 0,currentColor calc(100% - var(--dsh-an-fadeHeight)),transparent 100%),linear-gradient(to right,transparent calc(100% - var(--dsh-an-scrollRail)),currentColor calc(100% - var(--dsh-an-scrollRail)));mask-image:linear-gradient(to bottom,currentColor 0,currentColor calc(100% - var(--dsh-an-fadeHeight)),transparent 100%),linear-gradient(to right,transparent calc(100% - var(--dsh-an-scrollRail)),currentColor calc(100% - var(--dsh-an-scrollRail)));-webkit-mask-composite:source-over;mask-composite:add}\n/* Geometry only: the shared DSH skin paints the thumb, so the plugin declares no scrollbar pseudo-elements. The popover already binds the l2 thumb pair for the menu material. */\n.dsh-an-listArea{--dsh-scrollbar-width:var(--dsh-an-scrollRail);--dsh-scrollbar-thumb-border:var(--dsh-an-scrollInset);display:flex;flex-direction:column;flex:1 1 auto;min-height:0;padding-right:calc(var(--dsh-an-listGutter) - var(--dsh-an-scrollRail));overflow-x:hidden;overflow-y:auto;scrollbar-gutter:stable}\n.dsh-an-listSection{display:flex;flex-direction:column;gap:var(--an-space-2);min-width:0}\n.dsh-an-listSection+.dsh-an-listSection{margin-top:var(--an-space-2)}\n.dsh-an-sectionHead,.dsh-an-doneHead{position:sticky;top:0;z-index:3;display:flex;align-items:center;justify-content:space-between;gap:var(--an-space-3);min-height:28px;margin:0;padding:var(--an-space-1) 0;background:transparent;transition:background-color var(--an-dur-fast) var(--an-ease)}\n.dsh-an-sectionHead[data-stuck],.dsh-an-doneHead[data-stuck]{background:var(--dsh-an-panelSurface,var(--dsw-alias-bg-layer-2))}\n.dsh-an-doneToggle{display:flex;align-items:center;gap:var(--an-space-2);flex:none;min-width:0;margin:0;padding:var(--an-space-1) var(--an-space-2) var(--an-space-1) 0;border:0;border-radius:var(--dsw-radius-sm);background:transparent;color:var(--dsw-alias-label-secondary);font:inherit;font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);font-weight:500;text-align:left;cursor:pointer;transition:var(--an-transition)}\n.dsh-an-doneToggle:active{background:var(--an-active)}\n.dsh-an-doneToggle[disabled]{color:var(--dsw-alias-label-tertiary);cursor:not-allowed;pointer-events:none}\n.dsh-an-chevron{display:flex;align-items:center;justify-content:center;flex:none;width:16px;height:16px;color:var(--dsw-alias-label-secondary);transition:transform var(--an-dur-fast) var(--an-ease)}\n.dsh-an-chevron[data-open=\"true\"]{transform:rotate(90deg)}\n.dsh-an-sectionCount{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;padding:0 var(--an-space-1);border:0.5px solid var(--dsw-alias-border-l3);border-radius:var(--an-radius-pill);corner-shape:round;background:var(--dsw-alias-interactive-bg-hover-solid);color:var(--dsw-alias-label-primary);font-size:var(--an-fs-caption);line-height:16px;font-weight:500;font-variant-numeric:tabular-nums}\n.dsh-an-clear{display:inline-flex;align-items:center;flex:none;height:24px;margin-left:auto;padding:0 var(--an-space-2);border:0;border-radius:var(--dsw-radius-sm);background:transparent;color:var(--dsw-alias-label-secondary);font:inherit;font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);font-weight:500;cursor:pointer;transition:var(--an-transition)}\n.dsh-an-clear:active{background:var(--an-active);color:var(--dsw-alias-label-primary)}\n.dsh-an-clearConfirm{display:flex;align-items:center;justify-content:space-between;gap:var(--an-space-2);min-width:0;margin-top:var(--an-space-1);padding:var(--an-space-2);border:0.5px solid var(--dsw-alias-settings-card-stroke);border-radius:var(--dsw-radius-lg);background:var(--dsw-alias-settings-card-fill)}\n.dsh-an-clearConfirmText{flex:1 1 auto;min-width:0;margin:0;font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);color:var(--dsw-alias-label-primary);overflow-wrap:anywhere}\n.dsh-an-clearConfirmActions{display:flex;align-items:center;flex:none;gap:var(--an-space-1)}\n.dsh-an-doneRows{margin-top:var(--an-space-2)}\n.dsh-an-rows{list-style:none;margin:0;padding:0;border:0.5px solid var(--dsw-alias-settings-card-stroke);border-radius:var(--dsw-radius-lg);background:var(--dsw-alias-settings-card-fill);overflow:hidden}\n.dsh-an-row{display:flex;align-items:flex-start;gap:var(--an-space-2);padding:var(--an-space-2);border-top:0.5px solid var(--an-divider);transition:var(--an-transition)}\n.dsh-an-row:first-child{border-top:0}\n\n/* ── 6 一行便笺 · 勾选圈 14px，命中区 24px ─────────────────────────── */\n.dsh-an-check{display:flex;align-items:center;justify-content:center;flex:none;width:24px;height:24px;margin:-2px 0 0;padding:0;border:0;border-radius:var(--an-radius-pill);corner-shape:round;background:transparent;color:transparent;font:inherit;cursor:pointer;transition:var(--an-transition)}\n.dsh-an-checkCircle{display:flex;align-items:center;justify-content:center;width:14px;height:14px;box-sizing:border-box;border:0.5px solid var(--dsw-alias-label-tertiary);border-radius:var(--an-radius-pill);corner-shape:round;background:transparent;color:transparent;transition:border-color var(--an-dur-fast) var(--an-ease),background-color var(--an-dur-fast) var(--an-ease),color var(--an-dur-fast) var(--an-ease),transform var(--an-dur-fast) var(--an-ease)}\n.dsh-an-check:active .dsh-an-checkCircle{transform:scale(.9)}\n.dsh-an-check[aria-checked=\"true\"] .dsh-an-checkCircle{border-color:var(--dsw-alias-brand-primary);background:var(--dsw-alias-brand-primary);color:var(--dsw-alias-label-primary-foreground)}\n.dsh-an-itemBody{display:flex;flex:1;flex-direction:column;gap:var(--an-space-1);min-width:0}\n.dsh-an-text{display:block;width:100%;margin:0;padding:0;border:0;background:transparent;color:var(--dsw-alias-label-primary);font:inherit;font-size:var(--an-fs-row);line-height:var(--an-lh-row);text-align:left;white-space:pre-wrap;overflow-wrap:anywhere;cursor:text;user-select:text;-webkit-user-select:text}\n.dsh-an-rowDone .dsh-an-text{color:var(--dsw-alias-label-secondary);text-decoration:line-through;text-decoration-thickness:1px;text-decoration-color:var(--dsw-alias-label-tertiary)}\n.dsh-an-rowFoot{display:flex;align-items:center;justify-content:space-between;gap:var(--an-space-2);min-height:24px}\n.dsh-an-meta{flex:0 1 auto;min-width:0;overflow:hidden;font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);color:var(--dsw-alias-label-secondary);font-variant-numeric:tabular-nums;white-space:nowrap;text-overflow:ellipsis}\n\n/* ── 7 行操作 · 图标按钮 H24/R8，触摸端常显 ────────────────────────── */\n.dsh-an-actions{display:flex;flex:none;gap:var(--an-space-1)}\n.dsh-an-iconBtn{position:relative;display:flex;align-items:center;justify-content:center;width:24px;height:24px;padding:0;border:0;border-radius:var(--dsw-radius-sm);background:transparent;color:var(--dsw-alias-label-secondary);font:inherit;cursor:pointer;transition:var(--an-transition)}\n.dsh-an-iconBtn:active{background:var(--an-active);color:var(--dsw-alias-label-primary);transform:scale(.94)}\n.dsh-an-iconBtn:disabled,.dsh-an-iconBtn[disabled]{color:var(--dsw-alias-label-tertiary);cursor:not-allowed;pointer-events:none}\n.dsh-an-forwardMark{position:absolute;right:0;bottom:0;display:flex;align-items:center;justify-content:center;width:10px;height:10px;border-radius:var(--an-radius-pill);corner-shape:round;background:var(--dsw-alias-label-secondary);color:var(--dsw-alias-label-primary-foreground);pointer-events:none}\n\n/* ── 8 就地编辑 · 保存/取消为紧凑描边按钮 ──────────────────────────── */\n.dsh-an-edit{display:flex;flex-direction:column;gap:var(--an-space-1);width:100%}\n.dsh-an-editInput{display:block;width:100%;box-sizing:border-box;min-height:var(--an-lh-row);max-height:160px;padding:var(--an-space-1) var(--an-space-2);border:0.5px solid var(--an-field-line);border-radius:var(--dsw-radius-sm);background:var(--an-field);color:var(--dsw-alias-label-primary);font:inherit;font-size:var(--an-fs-row);line-height:var(--an-lh-row);outline:0;resize:none;overflow-y:auto;overflow-x:hidden;transition:var(--an-transition)}\n.dsh-an-editInput:focus{border-color:var(--dsw-alias-state-business-primary)}\n.dsh-an-editActions{display:flex;align-items:center;gap:var(--an-space-1)}\n.dsh-an-editHint{flex:1 1 auto;min-width:0;margin-left:auto;overflow:hidden;font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);text-align:right;color:var(--dsw-alias-label-secondary);white-space:nowrap;text-overflow:ellipsis}\n.dsh-an-mini{display:inline-flex;align-items:center;justify-content:center;flex:none;height:24px;padding:0 var(--an-space-2);border:0.5px solid var(--dsw-alias-border-l3);border-radius:var(--dsw-radius-sm);background:transparent;color:var(--dsw-alias-label-primary);font:inherit;font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);font-weight:500;cursor:pointer;transition:var(--an-transition)}\n.dsh-an-mini:active{background:var(--an-active)}\n.dsh-an-mini[disabled]{color:var(--dsw-alias-label-tertiary);cursor:not-allowed;pointer-events:none}\n.dsh-an-miniPrimary{border-color:transparent;background:var(--dsw-alias-button-primary-fill);color:var(--dsw-alias-label-primary-foreground)}\n.dsh-an-miniPrimary:active{background:var(--dsw-alias-button-primary-dimmed)}\n.dsh-an-miniDanger{border-color:transparent;background:var(--dsw-alias-state-error-primary);color:var(--dsw-alias-label-primary-foreground)}\n.dsh-an-miniDanger:active{background:var(--dsw-alias-state-error-primary)}\n\n/* ── 9 空态 · 虚线 1px，说明 12/次级墨色 ──────────────────────────── */\n.dsh-an-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:var(--an-space-2);padding:var(--an-space-5) var(--an-space-4);border:1px dashed var(--an-divider);border-radius:var(--dsw-radius-lg);text-align:center}\n.dsh-an-emptyIcon{display:flex;align-items:center;justify-content:center;width:32px;height:32px;margin:0 0 var(--an-space-1);border-radius:var(--dsw-radius-md);background:var(--an-hover);color:var(--dsw-alias-label-secondary)}\n.dsh-an-emptyTitle{font-size:var(--an-fs-row);line-height:var(--an-lh-row);font-weight:500;color:var(--dsw-alias-label-primary)}\n.dsh-an-emptyBody{max-width:36ch;font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);color:var(--dsw-alias-label-secondary);overflow-wrap:anywhere}\n\n/* ── 10 设置 · 分组 R16，项间 0.5px 分隔线，链接走 --dsw-alias-link ── */\n.dsh-an-settings{--dsh-an-settingIndent:var(--an-space-3);display:flex;flex-direction:column;gap:var(--an-space-2);margin:0;padding:var(--an-space-3);border:0.5px solid var(--dsw-alias-settings-card-stroke);border-radius:var(--dsw-radius-lg);background:var(--dsw-alias-settings-card-fill)}\n.dsh-an-settingsHead{font-size:var(--an-fs-row);line-height:var(--an-lh-row);font-weight:500;color:var(--dsw-alias-label-primary)}\n.dsh-an-settingGroup{display:flex;flex-direction:column;gap:var(--an-space-1);min-width:0}\n.dsh-an-settingGroup+.dsh-an-settingGroup{margin-top:var(--an-space-2);padding-top:var(--an-space-2);border-top:0.5px solid var(--an-divider)}\n.dsh-an-settingLabel{font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);font-weight:500;color:var(--dsw-alias-label-secondary)}\n.dsh-an-settingBody{display:flex;flex-direction:column;gap:var(--an-space-1);padding-left:var(--dsh-an-settingIndent)}\n.dsh-an-settingItem{display:flex;flex-direction:column;gap:var(--an-space-1);min-width:0}\n.dsh-an-settingItem+.dsh-an-settingItem{margin-top:var(--an-space-2);padding-top:var(--an-space-2);border-top:0.5px solid var(--an-divider)}\n.dsh-an-settingChoices{display:flex;flex-direction:column;gap:var(--an-space-1)}\n.dsh-an-settingChoice{display:flex;align-items:flex-start;gap:var(--an-space-2);font-size:var(--an-fs-row);line-height:var(--an-lh-row);color:var(--dsw-alias-label-primary);cursor:pointer}\n.dsh-an-settingChoice input{appearance:none;flex:none;width:14px;height:14px;margin:calc((var(--an-lh-row) - 14px) / 2) 0 0;box-sizing:border-box;border:0.5px solid var(--dsw-alias-label-tertiary);border-radius:var(--an-radius-pill);corner-shape:round;background:transparent;cursor:pointer;transition:var(--an-transition)}\n.dsh-an-settingChoice input:checked{border-color:var(--dsw-alias-brand-primary);background:var(--dsw-alias-brand-primary);box-shadow:inset 0 0 0 3px var(--an-field)}\n.dsh-an-settingInput{box-sizing:border-box;width:100%;height:28px;padding:0 var(--an-space-2);border:0.5px solid var(--an-field-line);border-radius:var(--dsw-radius-sm);background:var(--an-field);color:var(--dsw-alias-label-primary);font-family:inherit;font-size:var(--an-fs-row);line-height:var(--an-lh-row);font-weight:500;outline:0;transition:var(--an-transition)}\n.dsh-an-settingItem>.dsh-an-settingInput{font-family:inherit;font-size:var(--an-fs-row);line-height:var(--an-lh-row);font-weight:500}\n.dsh-an-settingInput:focus{border-color:var(--dsw-alias-state-business-primary)}\n/* 前缀提示词改为文本域：min-height 兜住三行，空态也不会被内联高度压扁 */\n.dsh-an-settingTextarea{display:block;height:auto;min-height:calc(var(--an-lh-row) + var(--an-space-4) + 2px);padding:var(--an-space-2);resize:none;overflow-y:auto;white-space:pre-wrap;overflow-wrap:anywhere}\n.dsh-an-settingHint{margin:0;font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);color:var(--dsw-alias-label-secondary)}\n.dsh-an-settingHintNote{margin-top:var(--an-space-1)}\n.dsh-an-settingBrand{display:flex;flex-direction:column;gap:2px;min-width:0}\n.dsh-an-settingBrandName{font-size:var(--an-fs-row);line-height:var(--an-lh-row);font-weight:500;color:var(--dsw-alias-label-primary)}\n.dsh-an-settingBrandTagline{font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);color:var(--dsw-alias-label-secondary);overflow-wrap:anywhere}\n.dsh-an-settingAbout{display:flex;align-items:center;gap:var(--an-space-2);flex-wrap:wrap;min-width:0;font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);color:var(--dsw-alias-label-secondary)}\n.dsh-an-settingAbout>span{flex:none}\n.dsh-an-settingAbout .dsh-an-updateHint{flex:0 1 auto;min-width:0}\n.dsh-an-settingMetaRow{display:flex;align-items:baseline;gap:var(--an-space-1);min-width:0;overflow:hidden;font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);color:var(--dsw-alias-label-secondary);white-space:nowrap}\n.dsh-an-settingMetaRow>span{flex:none}\n.dsh-an-settingDot{flex:none;color:var(--dsw-alias-label-tertiary)}\n.dsh-an-settingLink{flex:0 1 auto;min-width:0;overflow:hidden;color:var(--dsw-alias-link);font-weight:500;text-decoration:none;text-overflow:ellipsis;transition:var(--an-transition)}\n.dsh-an-settingLink:focus-visible{text-decoration:underline;text-decoration-style:dotted;text-decoration-thickness:1px;text-underline-offset:3px}\n/* 更新中心：检查入口、可展开的更新说明与更新动作，全部走共享令牌 */\n.dsh-an-updateCheck{flex:none;height:24px;padding:0 var(--an-space-2);border:0.5px solid var(--dsw-alias-border-l3);border-radius:var(--dsw-radius-sm);background:transparent;color:var(--dsw-alias-label-primary);font:inherit;font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);font-weight:500;cursor:pointer;transition:var(--an-transition)}\n.dsh-an-updateCheck:active{background:var(--an-active)}\n.dsh-an-updateCheck:disabled{color:var(--dsw-alias-label-tertiary);cursor:default}\n.dsh-an-updateCheck:focus-visible{outline-offset:2px}\n.dsh-an-updateHint{margin:0;font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);color:var(--dsw-alias-label-secondary);overflow-wrap:anywhere}\n.dsh-an-updateHintError{color:var(--dsw-alias-state-error-primary)}\n.dsh-an-updateCard{display:flex;flex-direction:column;gap:var(--an-space-2);margin-top:var(--an-space-1);padding:var(--an-space-2);border:0.5px solid var(--dsw-alias-border-l2);border-radius:var(--dsw-radius-md);background:var(--dsw-alias-bg-layer-1)}\n.dsh-an-updateTitle{font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);font-weight:500;color:var(--dsw-alias-label-primary)}\n.dsh-an-updateFull:focus-visible,.dsh-an-updateLinkBtn:focus-visible{text-decoration:underline;text-decoration-style:dotted;text-decoration-thickness:1px;text-underline-offset:3px}\n.dsh-an-updateFull{flex:none;color:var(--dsw-alias-link);font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);font-weight:500;text-decoration:none;transition:var(--an-transition)}\n.dsh-an-updateNotes{display:flex;flex-direction:column;gap:var(--an-space-2);max-height:220px;overflow-y:auto;padding-right:0;overscroll-behavior:contain;--dsh-scrollbar-width:var(--dsh-an-scrollRail);--dsh-scrollbar-thumb-border:var(--dsh-an-scrollInset);scrollbar-gutter:stable}\n.dsh-an-updateNotes[data-fade=\"true\"]{--dsh-an-fadeHeight:var(--an-space-5);-webkit-mask-image:linear-gradient(to bottom,currentColor 0,currentColor calc(100% - var(--dsh-an-fadeHeight)),transparent 100%),linear-gradient(to right,transparent calc(100% - var(--dsh-an-scrollRail)),currentColor calc(100% - var(--dsh-an-scrollRail)));mask-image:linear-gradient(to bottom,currentColor 0,currentColor calc(100% - var(--dsh-an-fadeHeight)),transparent 100%),linear-gradient(to right,transparent calc(100% - var(--dsh-an-scrollRail)),currentColor calc(100% - var(--dsh-an-scrollRail)));-webkit-mask-composite:source-over;mask-composite:add}\n.dsh-an-updateVersions{display:flex;flex-direction:column;gap:var(--an-space-1);min-width:0}\n.dsh-an-updateVersion{display:flex;flex-direction:column;gap:var(--an-space-1);min-width:0}\n.dsh-an-updateVersion+.dsh-an-updateVersion{padding-top:var(--an-space-1);border-top:0.5px solid var(--an-divider)}\n.dsh-an-updateVersionHead{display:flex;align-items:center;gap:var(--an-space-1);width:100%;padding:2px 0;border:0;border-radius:var(--dsw-radius-sm);background:transparent;color:var(--dsw-alias-label-primary);font:inherit;font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);font-weight:500;text-align:left;cursor:pointer}\n.dsh-an-updateVersionHead:active{background:var(--an-active)}\n.dsh-an-updateVersionHead:focus-visible{text-decoration:underline;text-decoration-style:dotted;text-decoration-thickness:1px;text-underline-offset:3px}\n.dsh-an-updateChevron{display:flex;align-items:center;justify-content:center;flex:none;width:16px;height:16px;color:var(--dsw-alias-label-secondary);font-size:var(--an-fs-caption);transition:transform var(--an-dur-fast) var(--an-ease)}\n.dsh-an-updateChevron[data-open=\"true\"]{transform:rotate(90deg)}\n.dsh-an-updateVersionLabel{font-variant-numeric:tabular-nums}\n.dsh-an-updateLatest{display:inline-flex;align-items:center;justify-content:center;flex:none;min-width:18px;height:18px;padding:0 var(--an-space-1);border:0.5px solid var(--dsw-alias-border-l3);border-radius:var(--an-radius-pill);corner-shape:round;background:var(--dsw-alias-interactive-bg-hover-solid);color:var(--dsw-alias-label-primary);font-size:var(--an-fs-caption);line-height:16px;font-weight:500}\n.dsh-an-updateVersionBody{display:flex;flex-direction:column;gap:var(--an-space-2);padding-left:var(--an-space-4);min-width:0}\n.dsh-an-updateGroup{display:flex;flex-direction:column;gap:var(--an-space-1);min-width:0}\n.dsh-an-updateGroupTitle{font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);font-weight:500;color:var(--dsw-alias-label-secondary)}\n.dsh-an-updateItems{display:flex;flex-direction:column;gap:var(--an-space-1);margin:0;padding-left:var(--an-space-4);color:var(--dsw-alias-label-primary)}\n.dsh-an-updateItem{font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);overflow-wrap:anywhere}\n.dsh-an-updateItem strong{font-weight:500}\n.dsh-an-updateActions{display:flex;align-items:center;gap:var(--an-space-2);flex-wrap:wrap;min-width:0}\n.dsh-an-updatePrimary{display:inline-flex;align-items:center;justify-content:center;flex:none;height:24px;padding:0 var(--an-space-3);border:0;border-radius:var(--dsw-radius-sm);background:var(--dsw-alias-button-primary-fill);color:var(--dsw-alias-label-primary-foreground);font:inherit;font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);font-weight:500;cursor:pointer;transition:var(--an-transition)}\n.dsh-an-updatePrimary:active{background:var(--dsw-alias-button-primary-dimmed)}\n.dsh-an-updatePrimary:disabled{opacity:.55;cursor:default}\n.dsh-an-updatePrimary:focus-visible{outline-offset:2px}\n.dsh-an-updateDone{display:flex;align-items:center;gap:var(--an-space-2);flex-wrap:wrap;min-width:0}\n.dsh-an-updateErrorRow{display:flex;align-items:baseline;gap:var(--an-space-2);flex-wrap:wrap;min-width:0}\n.dsh-an-updateError{flex:1 1 auto;min-width:0;margin:0;font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);color:var(--dsw-alias-state-error-primary);overflow-wrap:anywhere}\n.dsh-an-updateLinkBtn{padding:0;border:0;background:transparent;color:var(--dsw-alias-link);font:inherit;font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);font-weight:500;cursor:pointer}\n.dsh-an-updateFallback{display:flex;align-items:center;gap:var(--an-space-2);flex-wrap:wrap;min-width:0;padding-top:var(--an-space-1);border-top:0.5px solid var(--an-divider)}\n.dsh-an-updateFallback .dsh-an-updateHint{flex:1 1 100%;min-width:0}\n.dsh-an-updateCopy{flex:none;height:24px;padding:0 var(--an-space-2);border:0.5px solid var(--dsw-alias-border-l3);border-radius:var(--dsw-radius-sm);background:transparent;color:var(--dsw-alias-label-primary);font:inherit;font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);font-weight:500;cursor:pointer;transition:var(--an-transition)}\n.dsh-an-updateCopy:active{background:var(--an-active)}\n.dsh-an-updateCopy:focus-visible{outline-offset:2px}\n\n/* ── 11 面板脚注 · 存储状态就地提示，错误用状态色 ─────────────────── */\n.dsh-an-popFoot{margin:0;font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);color:var(--dsw-alias-label-secondary)}\n.dsh-an-error{color:var(--dsw-alias-state-error-primary)}\n\n/* ── 12 会话顶部入口 · H28/R8，计数徽标为胶囊 ──────────────────────── */\n.dsh-an-headerBtn{position:relative;display:inline-flex;align-items:center;justify-content:center;flex:none;width:28px;height:28px;padding:0;border:0;border-radius:var(--dsw-radius-sm);background:transparent;color:var(--dsw-alias-label-secondary);font:inherit;cursor:pointer;transition:var(--an-transition)}\n.dsh-an-headerBtn:active{background:var(--an-active);color:var(--dsw-alias-label-primary)}\n.dsh-an-headerBtn[data-active=\"true\"]{background:var(--an-hover);color:var(--dsw-alias-label-primary)}\n.dsh-an-headerBtn[data-disabled=\"true\"]{color:var(--dsw-alias-label-tertiary);cursor:not-allowed;pointer-events:none}\n.dsh-an-headerIcon{display:flex;align-items:center;justify-content:center;flex:none;width:16px;height:16px;color:currentColor}\n.dsh-an-headerCount{position:absolute;top:-2px;right:-2px;box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;min-width:16px;height:16px;padding:0 var(--an-space-1);border:0.5px solid var(--dsw-alias-bg-base);border-radius:var(--an-radius-pill);corner-shape:round;background:var(--dsw-alias-interactive-bg-hover-solid);color:var(--dsw-alias-label-secondary);font-size:var(--an-fs-caption);line-height:14px;font-weight:500;font-variant-numeric:tabular-nums}\n\n/* ── 13 拖拽把手 · 8px 命中带，3px 视觉条 ─────────────────────────── */\n.dsh-an-resizeHandle{position:absolute;left:0;top:0;bottom:0;z-index:2;display:flex;align-items:center;justify-content:center;width:var(--an-space-2);cursor:ew-resize;touch-action:none;outline:0}\n.dsh-an-resizeHandle::before{content:\"\";width:3px;height:var(--an-space-6);border-radius:var(--an-radius-pill);corner-shape:round;background:var(--dsw-alias-border-l4);transition:transform var(--an-dur-fast) var(--an-ease),background-color var(--an-dur-fast) var(--an-ease)}\n.dsh-an-resizeHandle:focus-visible::before{background:var(--dsw-alias-label-secondary)}\n.dsh-an-resizeHandle:focus-visible{outline-offset:-2px;border-radius:var(--dsw-radius-sm)}\n.dsh-an-resizeHandleBottom{position:absolute;left:50%;bottom:0;z-index:2;display:flex;align-items:center;justify-content:center;width:var(--an-space-6);height:var(--an-space-3);transform:translateX(-50%);cursor:ns-resize;touch-action:none;outline:0}\n.dsh-an-resizeHandleBottom::before{content:\"\";width:var(--an-space-5);height:3px;border-radius:var(--an-radius-pill);corner-shape:round;background:var(--dsw-alias-border-l4);transition:transform var(--an-dur-fast) var(--an-ease),background-color var(--an-dur-fast) var(--an-ease)}\n.dsh-an-resizeHandleBottom:focus-visible::before{background:var(--dsw-alias-label-secondary)}\n.dsh-an-resizeHandleBottom:focus-visible{outline-offset:-2px;border-radius:var(--dsw-radius-sm)}\n\n/* ── 14 加载 · 控件内 12px 环，文字隐藏，不报\"进行中\" ──────────────── */\n[data-loading=\"true\"]{position:relative;color:transparent!important;pointer-events:none;cursor:progress}\n[data-loading=\"true\"]>*{visibility:hidden}\n[data-loading=\"true\"]::after{content:\"\";position:absolute;left:50%;top:50%;box-sizing:border-box;width:12px;height:12px;margin:-6px 0 0 -6px;border:1.5px solid var(--dsw-alias-label-secondary);border-top-color:transparent;border-radius:var(--an-radius-pill);corner-shape:round;animation:dsh-an-spin var(--an-dur-spin) linear infinite}\n\n/* ── 15 悬停 · 只在支持 hover 的设备上启用（触摸端常显操作） ────────── */\n@media (hover:hover){\n.dsh-an-row:hover{background:var(--an-hover)}\n.dsh-an-actions{opacity:0;pointer-events:none}\n.dsh-an-row:hover .dsh-an-actions,.dsh-an-row:focus-within .dsh-an-actions{opacity:1;pointer-events:auto}\n.dsh-an-iconBtn:hover{background:var(--an-hover);color:var(--dsw-alias-label-primary)}\n.dsh-an-iconBtnDanger:hover{background:var(--dsw-alias-interactive-bg-hover-danger);color:var(--dsw-alias-state-error-primary)}\n.dsh-an-popClose:hover,.dsh-an-settingsBtn:hover{background:var(--an-hover);color:var(--dsw-alias-label-primary)}\n.dsh-an-addBtn:hover:not([disabled]){background:var(--dsw-alias-button-primary-hover)}\n.dsh-an-mini:hover:not([disabled]){background:var(--an-hover)}\n.dsh-an-miniPrimary:hover:not([disabled]){background:var(--dsw-alias-button-primary-hover);color:var(--dsw-alias-label-primary-foreground)}\n.dsh-an-miniDanger:hover:not([disabled]){background:var(--dsw-alias-interactive-bg-hover-danger);color:var(--dsw-alias-state-error-primary)}\n.dsh-an-clear:hover{background:var(--an-hover);color:var(--dsw-alias-label-primary)}\n.dsh-an-doneToggle:hover{background:var(--an-hover)}\n.dsh-an-check:hover .dsh-an-checkCircle{border-color:var(--dsw-alias-label-primary)}\n.dsh-an-settingChoice:hover input{border-color:var(--dsw-alias-label-primary)}\n.dsh-an-settingLink:hover{text-decoration:underline;text-decoration-style:dotted;text-decoration-thickness:1px;text-underline-offset:3px}\n.dsh-an-updatePrimary:hover:not(:disabled){background:var(--dsw-alias-button-primary-hover)}\n.dsh-an-headerBtn:hover{background:var(--an-hover);color:var(--dsw-alias-label-primary)}\n.dsh-an-resizeHandle:hover::before{transform:scaleY(1.4);background:var(--dsw-alias-label-secondary)}\n.dsh-an-resizeHandleBottom:hover::before{transform:scaleX(1.4);background:var(--dsw-alias-label-secondary)}\n}\n\n/* ── 16 动效 · 只动 opacity/transform，错峰出场封顶 ─────────────────── */\n@media (prefers-reduced-motion:no-preference){\n.dsh-an-rows>.dsh-an-row{animation:dsh-an-row-in var(--an-dur-base) var(--an-ease) both}\n.dsh-an-rows>.dsh-an-row:nth-child(2){animation-delay:var(--an-space-1)}\n.dsh-an-rows>.dsh-an-row:nth-child(3){animation-delay:var(--an-space-2)}\n.dsh-an-rows>.dsh-an-row:nth-child(4){animation-delay:calc(var(--an-space-2) + var(--an-space-1))}\n.dsh-an-rows>.dsh-an-row:nth-child(n+5){animation-delay:var(--an-space-3)}\n}\n@keyframes dsh-an-pop-in{from{opacity:0}to{opacity:1}}\n@keyframes dsh-an-row-in{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}\n@keyframes dsh-an-spin{to{transform:rotate(360deg)}}\n@media (prefers-reduced-motion:reduce){\n.dsh-an-popover,.dsh-an-rows>.dsh-an-row,.dsh-an-chevron,[data-loading=\"true\"]::after{animation:none}\n.dsh-an-popover,.dsh-an-row,.dsh-an-actions,.dsh-an-iconBtn{transition-duration:1ms}\n}\n\n/* ── 17 窄视口 · 390 基准下收紧内边距，主操作全部可达 ──────────────── */\n@media (max-width:480px){\n.dsh-an-popover{padding:var(--an-space-3);--dsh-an-listGutter:var(--an-space-3)}\n.dsh-an-popoverRight{padding-left:var(--an-space-4)}\n.dsh-an-popHead{gap:var(--an-space-2)}\n.dsh-an-add{padding:var(--an-space-2) var(--an-space-3)}\n.dsh-an-sectionHead,.dsh-an-doneHead{min-height:24px}\n}\n\n";
+var panel_css_default = "/*\n * Panel, composer dock, header entry and toast styles.\n *\n * Only DSH semantic aliases and the shared scale are used here — no palette of\n * its own. The entry point injects this sheet once for the whole frame, because\n * the dock mounts outside the panel tree.\n */\n/* ── 1 令牌 · 只映射 DSH 语义别名与共享尺度，不新建调色板 ─────────── */\nbody{--an-space-1:4px;--an-space-2:8px;--an-space-3:12px;--an-space-4:16px;--an-space-5:24px;--an-space-6:32px;--an-radius-pill:999px;--an-fs-caption:12px;--an-lh-caption:20px;--an-fs-row:13px;--an-lh-row:20px;--an-fs-title:14px;--an-lh-title:20px;--an-hover:var(--dsw-alias-interactive-bg-hover);--an-active:var(--dsw-alias-interactive-bg-active);--an-field:var(--dsw-alias-bg-layer-1);--an-field-line:var(--dsw-alias-border-l4);--an-divider:var(--dsw-alias-border-l2);--an-dur-fast:var(--ds-transition-duration-fast);--an-dur-base:var(--ds-transition-duration);--an-dur-spin:700ms;--an-ease:var(--ds-ease-in-out);--an-transition:background-color var(--an-dur-fast) var(--an-ease),border-color var(--an-dur-fast) var(--an-ease),color var(--an-dur-fast) var(--an-ease),opacity var(--an-dur-fast) var(--an-ease),transform var(--an-dur-fast) var(--an-ease),box-shadow var(--an-dur-fast) var(--an-ease)}\n\n/* ── 2 浮层 · 菜单材质 + 三层阴影，边框为 0（发丝线在阴影第一层） ── */\n.dsh-an-popover{position:fixed;z-index:1000;box-sizing:border-box;display:flex;flex-direction:column;gap:var(--an-space-3);min-height:0;padding:var(--an-space-4);border:0;border-radius:var(--dsw-radius-panel);background:var(--dsh-an-panelSurface);box-shadow:var(--dsw-elevation-panel);color:var(--dsw-alias-label-primary);font-size:var(--an-fs-row);line-height:var(--an-lh-row);--dsw-elevation-stroke-color:var(--dsw-alias-border-l2);--dsh-scrollbar-thumb:var(--dsw-alias-scrollbar-bg-l2,var(--an-divider));--dsh-scrollbar-thumb-hover:var(--dsw-alias-scrollbar-hover-l2,var(--dsw-alias-scrollbar-bg-l2,var(--an-divider)));--dsh-an-panelSurface:var(--dsw-alias-bg-layer-2);--dsh-an-listGutter:var(--an-space-4);--dsh-an-scrollRail:9px;--dsh-an-scrollInset:2px;overflow:hidden;animation:dsh-an-pop-in var(--an-dur-base) var(--an-ease) both}\n.dsh-an-popoverRight{padding-left:var(--an-space-4)}\n\n/* ── 3 面板头 · 标题与计数同一行，动作收在右侧 ───────────────────── */\n.dsh-an-popHead{display:flex;align-items:center;justify-content:space-between;gap:var(--an-space-3);min-width:0}\n.dsh-an-popTitleLine{display:flex;align-items:center;gap:var(--an-space-3);flex:1 1 auto;min-width:0}\n.dsh-an-popTitle{min-width:0;overflow:hidden;font-size:var(--an-fs-title);line-height:var(--an-lh-title);font-weight:500;color:var(--dsw-alias-label-primary);white-space:nowrap;text-overflow:ellipsis}\n.dsh-an-popMeta{min-width:0;margin:0;overflow:hidden;font-size:var(--an-fs-caption);line-height:16px;color:var(--dsw-alias-label-secondary);font-weight:400;font-variant-numeric:tabular-nums;white-space:nowrap;text-overflow:ellipsis}\n.dsh-an-popActions{display:flex;align-items:center;flex:none;gap:var(--an-space-2)}\n.dsh-an-popClose,.dsh-an-settingsBtn{display:grid;place-items:center;flex:none;width:24px;height:24px;padding:0;border:0;border-radius:var(--dsw-radius-sm);background:transparent;color:var(--dsw-alias-label-secondary);font:inherit;cursor:pointer;transition:var(--an-transition)}\n.dsh-an-popClose:active,.dsh-an-settingsBtn:active{background:var(--an-active)}\n.dsh-an-settingsBtn[data-active=\"true\"]{background:var(--an-hover);color:var(--dsw-alias-label-primary)}\n.dsh-an-settingsBtn{position:relative}\n.dsh-an-updateDot{position:absolute;top:3px;right:3px;width:6px;height:6px;border-radius:var(--an-radius-pill);corner-shape:round;background:var(--dsw-alias-brand-primary);box-shadow:0 0 0 2px var(--dsh-an-panelSurface)}\n/* The list-scope switch sits at the far right of the title line. */\n.dsh-an-scope{display:inline-flex;align-items:center;flex:none;box-sizing:border-box;height:24px;padding:1px;margin-left:auto;border:0.5px solid var(--dsw-alias-border-l2);border-radius:var(--an-radius-pill);corner-shape:round;background:var(--dsw-alias-bg-layer-1)}\n.dsh-an-scopeBtn{display:inline-flex;align-items:center;justify-content:center;height:20px;padding:0 var(--an-space-2);border:0;border-radius:var(--an-radius-pill);corner-shape:round;background:transparent;color:var(--dsw-alias-label-secondary);font:inherit;font-size:var(--an-fs-caption);line-height:16px;font-weight:500;cursor:pointer;transition:var(--an-transition)}\n.dsh-an-scopeBtn[data-active=\"true\"]{background:var(--dsw-alias-interactive-bg-hover-solid);color:var(--dsw-alias-label-primary)}\n.dsh-an-scopeBtn:focus-visible{outline:2px solid var(--dsw-alias-label-primary);outline-offset:1px}\n\n/* ── 4 添加区 · 嵌套表单组 R16，字段 0.5px 发丝线 ──────────────────── */\n.dsh-an-add{display:flex;flex-direction:column;gap:var(--an-space-2);padding:var(--an-space-3);border:0.5px solid var(--dsw-alias-settings-card-stroke);border-radius:var(--dsw-radius-lg);background:var(--dsw-alias-settings-card-fill);transition:var(--an-transition)}\n.dsh-an-add:focus-within{border-color:var(--dsw-alias-state-business-primary)}\n.dsh-an-input{display:block;flex:0 0 auto;width:100%;min-width:0;box-sizing:border-box;min-height:var(--an-lh-row);max-height:120px;padding:0;border:0;outline:0;background:transparent;color:var(--dsw-alias-label-primary);font:inherit;font-size:var(--an-fs-row);line-height:var(--an-lh-row);resize:none;overflow-y:auto;overflow-x:hidden}\n.dsh-an-input::placeholder{color:var(--dsw-alias-label-secondary)}\n.dsh-an-addFoot{display:flex;align-items:center;justify-content:space-between;gap:var(--an-space-2);width:100%;min-width:0}\n.dsh-an-addShortcut{min-width:0;overflow:hidden;font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);color:var(--dsw-alias-label-secondary);white-space:nowrap;text-overflow:ellipsis}\n.dsh-an-addBtn{display:inline-flex;align-items:center;justify-content:center;flex:none;height:28px;padding:0 var(--an-space-2);border:0;border-radius:var(--dsw-radius-sm);background:var(--dsw-alias-button-primary-fill);color:var(--dsw-alias-label-primary-foreground);font:inherit;font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);font-weight:500;cursor:pointer;transition:var(--an-transition)}\n.dsh-an-addBtn:active{background:var(--dsw-alias-button-primary-dimmed);transform:scale(.97)}\n.dsh-an-addBtn[disabled]{background:transparent;color:var(--dsw-alias-label-secondary);box-shadow:inset 0 0 0 0.5px var(--an-field-line);cursor:not-allowed}\n\n/* ── 5 分区与列表 · 9px 轨道内嵌 2px，底部羽化只盖内容不盖滚动条 ──── */\n/* The viewport grows into the popover padding so the 9px rail does not steal from the cards; the list pays the padding back minus the rail, so cards and the add field keep one content width at every panel size. */\n.dsh-an-listViewport{position:relative;display:flex;flex-direction:column;flex:1 1 auto;min-height:0;margin-right:calc(var(--dsh-an-listGutter) * -1)}\n/* Bottom edge treatment: a viewport-fixed alpha mask over the scroller itself, exactly like the DSH scroll areas. The first gradient fades the last 48px to transparent; the second keeps the 9px scrollbar rail opaque so the thumb stays crisp. There is no backdrop-filter layer, so there is no hard compositing edge to see. */\n.dsh-an-listViewport[data-bottom=\"true\"] .dsh-an-listArea{--dsh-an-fadeHeight:calc(var(--an-space-6) + var(--an-space-4));-webkit-mask-image:linear-gradient(to bottom,currentColor 0,currentColor calc(100% - var(--dsh-an-fadeHeight)),transparent 100%),linear-gradient(to right,transparent calc(100% - var(--dsh-an-scrollRail)),currentColor calc(100% - var(--dsh-an-scrollRail)));mask-image:linear-gradient(to bottom,currentColor 0,currentColor calc(100% - var(--dsh-an-fadeHeight)),transparent 100%),linear-gradient(to right,transparent calc(100% - var(--dsh-an-scrollRail)),currentColor calc(100% - var(--dsh-an-scrollRail)));-webkit-mask-composite:source-over;mask-composite:add}\n/* Geometry only: the shared DSH skin paints the thumb, so the plugin declares no scrollbar pseudo-elements. The popover already binds the l2 thumb pair for the menu material. */\n.dsh-an-listArea{--dsh-scrollbar-width:var(--dsh-an-scrollRail);--dsh-scrollbar-thumb-border:var(--dsh-an-scrollInset);display:flex;flex-direction:column;flex:1 1 auto;min-height:0;padding-right:calc(var(--dsh-an-listGutter) - var(--dsh-an-scrollRail));overflow-x:hidden;overflow-y:auto;scrollbar-gutter:stable}\n.dsh-an-listSection{display:flex;flex-direction:column;gap:var(--an-space-2);min-width:0}\n.dsh-an-listSection+.dsh-an-listSection{margin-top:var(--an-space-2)}\n.dsh-an-sectionHead,.dsh-an-doneHead{position:sticky;top:0;z-index:3;display:flex;align-items:center;justify-content:space-between;gap:var(--an-space-3);min-height:28px;margin:0;padding:var(--an-space-1) 0;background:transparent;transition:background-color var(--an-dur-fast) var(--an-ease)}\n.dsh-an-sectionHead[data-stuck],.dsh-an-doneHead[data-stuck]{background:var(--dsh-an-panelSurface,var(--dsw-alias-bg-layer-2))}\n.dsh-an-doneToggle{display:flex;align-items:center;gap:var(--an-space-2);flex:none;min-width:0;margin:0;padding:var(--an-space-1) var(--an-space-2) var(--an-space-1) 0;border:0;border-radius:var(--dsw-radius-sm);background:transparent;color:var(--dsw-alias-label-secondary);font:inherit;font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);font-weight:500;text-align:left;cursor:pointer;transition:var(--an-transition)}\n.dsh-an-doneToggle:active{background:var(--an-active)}\n.dsh-an-doneToggle[disabled]{color:var(--dsw-alias-label-tertiary);cursor:not-allowed;pointer-events:none}\n.dsh-an-chevron{display:flex;align-items:center;justify-content:center;flex:none;width:16px;height:16px;color:var(--dsw-alias-label-secondary);transition:transform var(--an-dur-fast) var(--an-ease)}\n.dsh-an-chevron[data-open=\"true\"]{transform:rotate(90deg)}\n.dsh-an-sectionCount{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;padding:0 var(--an-space-1);border:0.5px solid var(--dsw-alias-border-l3);border-radius:var(--an-radius-pill);corner-shape:round;background:var(--dsw-alias-interactive-bg-hover-solid);color:var(--dsw-alias-label-primary);font-size:var(--an-fs-caption);line-height:16px;font-weight:500;font-variant-numeric:tabular-nums}\n.dsh-an-clear{display:inline-flex;align-items:center;flex:none;height:24px;margin-left:auto;padding:0 var(--an-space-2);border:0;border-radius:var(--dsw-radius-sm);background:transparent;color:var(--dsw-alias-label-secondary);font:inherit;font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);font-weight:500;cursor:pointer;transition:var(--an-transition)}\n.dsh-an-clear:active{background:var(--an-active);color:var(--dsw-alias-label-primary)}\n.dsh-an-clearConfirm{display:flex;align-items:center;justify-content:space-between;gap:var(--an-space-2);min-width:0;margin-top:var(--an-space-1);padding:var(--an-space-2);border:0.5px solid var(--dsw-alias-settings-card-stroke);border-radius:var(--dsw-radius-lg);background:var(--dsw-alias-settings-card-fill)}\n.dsh-an-clearConfirmText{flex:1 1 auto;min-width:0;margin:0;font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);color:var(--dsw-alias-label-primary);overflow-wrap:anywhere}\n.dsh-an-clearConfirmActions{display:flex;align-items:center;flex:none;gap:var(--an-space-1)}\n.dsh-an-doneRows{margin-top:var(--an-space-2)}\n.dsh-an-rows{list-style:none;margin:0;padding:0;border:0.5px solid var(--dsw-alias-settings-card-stroke);border-radius:var(--dsw-radius-lg);background:var(--dsw-alias-settings-card-fill);overflow:hidden}\n.dsh-an-row{display:flex;align-items:flex-start;gap:var(--an-space-2);padding:var(--an-space-2);border-top:0.5px solid var(--an-divider);transition:var(--an-transition)}\n.dsh-an-row:first-child{border-top:0}\n\n/* ── 6 一行便笺 · 勾选圈 14px，命中区 24px ─────────────────────────── */\n.dsh-an-check{display:flex;align-items:center;justify-content:center;flex:none;width:24px;height:24px;margin:-2px 0 0;padding:0;border:0;border-radius:var(--an-radius-pill);corner-shape:round;background:transparent;color:transparent;font:inherit;cursor:pointer;transition:var(--an-transition)}\n.dsh-an-checkCircle{display:flex;align-items:center;justify-content:center;width:14px;height:14px;box-sizing:border-box;border:0.5px solid var(--dsw-alias-label-tertiary);border-radius:var(--an-radius-pill);corner-shape:round;background:transparent;color:transparent;transition:border-color var(--an-dur-fast) var(--an-ease),background-color var(--an-dur-fast) var(--an-ease),color var(--an-dur-fast) var(--an-ease),transform var(--an-dur-fast) var(--an-ease)}\n.dsh-an-check:active .dsh-an-checkCircle{transform:scale(.9)}\n.dsh-an-check[aria-checked=\"true\"] .dsh-an-checkCircle{border-color:var(--dsw-alias-brand-primary);background:var(--dsw-alias-brand-primary);color:var(--dsw-alias-label-primary-foreground)}\n.dsh-an-itemBody{display:flex;flex:1;flex-direction:column;gap:var(--an-space-1);min-width:0}\n.dsh-an-text{display:block;width:100%;margin:0;padding:0;border:0;background:transparent;color:var(--dsw-alias-label-primary);font:inherit;font-size:var(--an-fs-row);line-height:var(--an-lh-row);text-align:left;white-space:pre-wrap;overflow-wrap:anywhere;cursor:text;user-select:text;-webkit-user-select:text}\n.dsh-an-rowDone .dsh-an-text{color:var(--dsw-alias-label-secondary);text-decoration:line-through;text-decoration-thickness:1px;text-decoration-color:var(--dsw-alias-label-tertiary)}\n.dsh-an-rowFoot{display:flex;align-items:center;justify-content:space-between;gap:var(--an-space-2);min-height:24px}\n.dsh-an-meta{flex:0 1 auto;min-width:0;overflow:hidden;font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);color:var(--dsw-alias-label-secondary);font-variant-numeric:tabular-nums;white-space:nowrap;text-overflow:ellipsis}\n\n/* ── 7 行操作 · 图标按钮 H24/R8，触摸端常显 ────────────────────────── */\n.dsh-an-actions{display:flex;flex:none;gap:var(--an-space-1)}\n.dsh-an-iconBtn{position:relative;display:flex;align-items:center;justify-content:center;width:24px;height:24px;padding:0;border:0;border-radius:var(--dsw-radius-sm);background:transparent;color:var(--dsw-alias-label-secondary);font:inherit;cursor:pointer;transition:var(--an-transition)}\n.dsh-an-iconBtn:active{background:var(--an-active);color:var(--dsw-alias-label-primary);transform:scale(.94)}\n.dsh-an-iconBtn:disabled,.dsh-an-iconBtn[disabled]{color:var(--dsw-alias-label-tertiary);cursor:not-allowed;pointer-events:none}\n.dsh-an-forwardMark{position:absolute;right:0;bottom:0;display:flex;align-items:center;justify-content:center;width:10px;height:10px;border-radius:var(--an-radius-pill);corner-shape:round;background:var(--dsw-alias-label-secondary);color:var(--dsw-alias-label-primary-foreground);pointer-events:none}\n\n/* ── 8 就地编辑 · 保存/取消为紧凑描边按钮 ──────────────────────────── */\n.dsh-an-edit{display:flex;flex-direction:column;gap:var(--an-space-1);width:100%}\n.dsh-an-editInput{display:block;width:100%;box-sizing:border-box;min-height:var(--an-lh-row);max-height:160px;padding:var(--an-space-1) var(--an-space-2);border:0.5px solid var(--an-field-line);border-radius:var(--dsw-radius-sm);background:var(--an-field);color:var(--dsw-alias-label-primary);font:inherit;font-size:var(--an-fs-row);line-height:var(--an-lh-row);outline:0;resize:none;overflow-y:auto;overflow-x:hidden;transition:var(--an-transition)}\n.dsh-an-editInput:focus{border-color:var(--dsw-alias-state-business-primary)}\n.dsh-an-editActions{display:flex;align-items:center;gap:var(--an-space-1)}\n.dsh-an-editHint{flex:1 1 auto;min-width:0;margin-left:auto;overflow:hidden;font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);text-align:right;color:var(--dsw-alias-label-secondary);white-space:nowrap;text-overflow:ellipsis}\n.dsh-an-mini{display:inline-flex;align-items:center;justify-content:center;flex:none;height:24px;padding:0 var(--an-space-2);border:0.5px solid var(--dsw-alias-border-l3);border-radius:var(--dsw-radius-sm);background:transparent;color:var(--dsw-alias-label-primary);font:inherit;font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);font-weight:500;cursor:pointer;transition:var(--an-transition)}\n.dsh-an-mini:active{background:var(--an-active)}\n.dsh-an-mini[disabled]{color:var(--dsw-alias-label-tertiary);cursor:not-allowed;pointer-events:none}\n.dsh-an-miniPrimary{border-color:transparent;background:var(--dsw-alias-button-primary-fill);color:var(--dsw-alias-label-primary-foreground)}\n.dsh-an-miniPrimary:active{background:var(--dsw-alias-button-primary-dimmed)}\n.dsh-an-miniDanger{border-color:transparent;background:var(--dsw-alias-state-error-primary);color:var(--dsw-alias-label-primary-foreground)}\n.dsh-an-miniDanger:active{background:var(--dsw-alias-state-error-primary)}\n\n/* ── 9 空态 · 虚线 1px，说明 12/次级墨色 ──────────────────────────── */\n.dsh-an-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:var(--an-space-2);padding:var(--an-space-5) var(--an-space-4);border:1px dashed var(--an-divider);border-radius:var(--dsw-radius-lg);text-align:center}\n.dsh-an-emptyIcon{display:flex;align-items:center;justify-content:center;width:32px;height:32px;margin:0 0 var(--an-space-1);border-radius:var(--dsw-radius-md);background:var(--an-hover);color:var(--dsw-alias-label-secondary)}\n.dsh-an-emptyTitle{font-size:var(--an-fs-row);line-height:var(--an-lh-row);font-weight:500;color:var(--dsw-alias-label-primary)}\n.dsh-an-emptyBody{max-width:36ch;font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);color:var(--dsw-alias-label-secondary);overflow-wrap:anywhere}\n\n/* ── 10 设置 · 分组 R16，项间 0.5px 分隔线，链接走 --dsw-alias-link ── */\n.dsh-an-settings{--dsh-an-settingIndent:var(--an-space-3);display:flex;flex-direction:column;gap:var(--an-space-2);margin:0;padding:var(--an-space-3);border:0.5px solid var(--dsw-alias-settings-card-stroke);border-radius:var(--dsw-radius-lg);background:var(--dsw-alias-settings-card-fill)}\n.dsh-an-settingsHead{font-size:var(--an-fs-row);line-height:var(--an-lh-row);font-weight:500;color:var(--dsw-alias-label-primary)}\n.dsh-an-settingGroup{display:flex;flex-direction:column;gap:var(--an-space-1);min-width:0}\n.dsh-an-settingGroup+.dsh-an-settingGroup{margin-top:var(--an-space-2);padding-top:var(--an-space-2);border-top:0.5px solid var(--an-divider)}\n.dsh-an-settingLabel{font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);font-weight:500;color:var(--dsw-alias-label-secondary)}\n.dsh-an-settingBody{display:flex;flex-direction:column;gap:var(--an-space-1);padding-left:var(--dsh-an-settingIndent)}\n.dsh-an-settingItem{display:flex;flex-direction:column;gap:var(--an-space-1);min-width:0}\n.dsh-an-settingItem+.dsh-an-settingItem{margin-top:var(--an-space-2);padding-top:var(--an-space-2);border-top:0.5px solid var(--an-divider)}\n.dsh-an-settingChoices{display:flex;flex-direction:column;gap:var(--an-space-1)}\n.dsh-an-settingChoice{display:flex;align-items:flex-start;gap:var(--an-space-2);font-size:var(--an-fs-row);line-height:var(--an-lh-row);color:var(--dsw-alias-label-primary);cursor:pointer}\n.dsh-an-settingChoice input{appearance:none;flex:none;width:14px;height:14px;margin:calc((var(--an-lh-row) - 14px) / 2) 0 0;box-sizing:border-box;border:0.5px solid var(--dsw-alias-label-tertiary);border-radius:var(--an-radius-pill);corner-shape:round;background:transparent;cursor:pointer;transition:var(--an-transition)}\n.dsh-an-settingChoice input:checked{border-color:var(--dsw-alias-brand-primary);background:var(--dsw-alias-brand-primary);box-shadow:inset 0 0 0 3px var(--an-field)}\n.dsh-an-settingInput{box-sizing:border-box;width:100%;height:28px;padding:0 var(--an-space-2);border:0.5px solid var(--an-field-line);border-radius:var(--dsw-radius-sm);background:var(--an-field);color:var(--dsw-alias-label-primary);font-family:inherit;font-size:var(--an-fs-row);line-height:var(--an-lh-row);font-weight:500;outline:0;transition:var(--an-transition)}\n.dsh-an-settingItem>.dsh-an-settingInput{font-family:inherit;font-size:var(--an-fs-row);line-height:var(--an-lh-row);font-weight:500}\n.dsh-an-settingInput:focus{border-color:var(--dsw-alias-state-business-primary)}\n/* 前缀提示词改为文本域：min-height 兜住三行，空态也不会被内联高度压扁 */\n.dsh-an-settingTextarea{display:block;height:auto;min-height:calc(var(--an-lh-row) + var(--an-space-4) + 2px);padding:var(--an-space-2);resize:none;overflow-y:auto;white-space:pre-wrap;overflow-wrap:anywhere}\n.dsh-an-settingHint{margin:0;font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);color:var(--dsw-alias-label-secondary)}\n.dsh-an-settingHintNote{margin-top:var(--an-space-1)}\n.dsh-an-settingBrand{display:flex;flex-direction:column;gap:2px;min-width:0}\n.dsh-an-settingBrandName{font-size:var(--an-fs-row);line-height:var(--an-lh-row);font-weight:500;color:var(--dsw-alias-label-primary)}\n.dsh-an-settingBrandTagline{font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);color:var(--dsw-alias-label-secondary);overflow-wrap:anywhere}\n.dsh-an-settingAbout{display:flex;align-items:center;gap:var(--an-space-2);flex-wrap:wrap;min-width:0;font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);color:var(--dsw-alias-label-secondary)}\n.dsh-an-settingAbout>span{flex:none}\n.dsh-an-settingAbout .dsh-an-updateHint{flex:0 1 auto;min-width:0}\n.dsh-an-settingMetaRow{display:flex;align-items:baseline;gap:var(--an-space-1);min-width:0;overflow:hidden;font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);color:var(--dsw-alias-label-secondary);white-space:nowrap}\n.dsh-an-settingMetaRow>span{flex:none}\n.dsh-an-settingDot{flex:none;color:var(--dsw-alias-label-tertiary)}\n.dsh-an-settingLink{flex:0 1 auto;min-width:0;overflow:hidden;color:var(--dsw-alias-link);font-weight:500;text-decoration:none;text-overflow:ellipsis;transition:var(--an-transition)}\n.dsh-an-settingLink:focus-visible{text-decoration:underline;text-decoration-style:dotted;text-decoration-thickness:1px;text-underline-offset:3px}\n/* 更新中心：检查入口、可展开的更新说明与更新动作，全部走共享令牌 */\n.dsh-an-updateCheck{flex:none;height:24px;padding:0 var(--an-space-2);border:0.5px solid var(--dsw-alias-border-l3);border-radius:var(--dsw-radius-sm);background:transparent;color:var(--dsw-alias-label-primary);font:inherit;font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);font-weight:500;cursor:pointer;transition:var(--an-transition)}\n.dsh-an-updateCheck:active{background:var(--an-active)}\n.dsh-an-updateCheck:disabled{color:var(--dsw-alias-label-tertiary);cursor:default}\n.dsh-an-updateCheck:focus-visible{outline-offset:2px}\n.dsh-an-updateHint{margin:0;font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);color:var(--dsw-alias-label-secondary);overflow-wrap:anywhere}\n.dsh-an-updateHintError{color:var(--dsw-alias-state-error-primary)}\n.dsh-an-updateCard{display:flex;flex-direction:column;gap:var(--an-space-2);margin-top:var(--an-space-1);padding:var(--an-space-2);border:0.5px solid var(--dsw-alias-border-l2);border-radius:var(--dsw-radius-md);background:var(--dsw-alias-bg-layer-1)}\n.dsh-an-updateTitle{font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);font-weight:500;color:var(--dsw-alias-label-primary)}\n.dsh-an-updateFull:focus-visible,.dsh-an-updateLinkBtn:focus-visible{text-decoration:underline;text-decoration-style:dotted;text-decoration-thickness:1px;text-underline-offset:3px}\n.dsh-an-updateFull{flex:none;color:var(--dsw-alias-link);font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);font-weight:500;text-decoration:none;transition:var(--an-transition)}\n.dsh-an-updateNotes{display:flex;flex-direction:column;gap:var(--an-space-2);max-height:220px;overflow-y:auto;padding-right:0;overscroll-behavior:contain;--dsh-scrollbar-width:var(--dsh-an-scrollRail);--dsh-scrollbar-thumb-border:var(--dsh-an-scrollInset);scrollbar-gutter:stable}\n.dsh-an-updateNotes[data-fade=\"true\"]{--dsh-an-fadeHeight:var(--an-space-5);-webkit-mask-image:linear-gradient(to bottom,currentColor 0,currentColor calc(100% - var(--dsh-an-fadeHeight)),transparent 100%),linear-gradient(to right,transparent calc(100% - var(--dsh-an-scrollRail)),currentColor calc(100% - var(--dsh-an-scrollRail)));mask-image:linear-gradient(to bottom,currentColor 0,currentColor calc(100% - var(--dsh-an-fadeHeight)),transparent 100%),linear-gradient(to right,transparent calc(100% - var(--dsh-an-scrollRail)),currentColor calc(100% - var(--dsh-an-scrollRail)));-webkit-mask-composite:source-over;mask-composite:add}\n.dsh-an-updateVersions{display:flex;flex-direction:column;gap:var(--an-space-1);min-width:0}\n.dsh-an-updateVersion{display:flex;flex-direction:column;gap:var(--an-space-1);min-width:0}\n.dsh-an-updateVersion+.dsh-an-updateVersion{padding-top:var(--an-space-1);border-top:0.5px solid var(--an-divider)}\n.dsh-an-updateVersionHead{display:flex;align-items:center;gap:var(--an-space-1);width:100%;padding:2px 0;border:0;border-radius:var(--dsw-radius-sm);background:transparent;color:var(--dsw-alias-label-primary);font:inherit;font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);font-weight:500;text-align:left;cursor:pointer}\n.dsh-an-updateVersionHead:active{background:var(--an-active)}\n.dsh-an-updateVersionHead:focus-visible{text-decoration:underline;text-decoration-style:dotted;text-decoration-thickness:1px;text-underline-offset:3px}\n.dsh-an-updateChevron{display:flex;align-items:center;justify-content:center;flex:none;width:16px;height:16px;color:var(--dsw-alias-label-secondary);font-size:var(--an-fs-caption);transition:transform var(--an-dur-fast) var(--an-ease)}\n.dsh-an-updateChevron[data-open=\"true\"]{transform:rotate(90deg)}\n.dsh-an-updateVersionLabel{font-variant-numeric:tabular-nums}\n.dsh-an-updateLatest{display:inline-flex;align-items:center;justify-content:center;flex:none;min-width:18px;height:18px;padding:0 var(--an-space-1);border:0.5px solid var(--dsw-alias-border-l3);border-radius:var(--an-radius-pill);corner-shape:round;background:var(--dsw-alias-interactive-bg-hover-solid);color:var(--dsw-alias-label-primary);font-size:var(--an-fs-caption);line-height:16px;font-weight:500}\n.dsh-an-updateVersionBody{display:flex;flex-direction:column;gap:var(--an-space-2);padding-left:var(--an-space-4);min-width:0}\n.dsh-an-updateGroup{display:flex;flex-direction:column;gap:var(--an-space-1);min-width:0}\n.dsh-an-updateGroupTitle{font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);font-weight:500;color:var(--dsw-alias-label-secondary)}\n.dsh-an-updateItems{display:flex;flex-direction:column;gap:var(--an-space-1);margin:0;padding-left:var(--an-space-4);color:var(--dsw-alias-label-primary)}\n.dsh-an-updateItem{font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);overflow-wrap:anywhere}\n.dsh-an-updateItem strong{font-weight:500}\n.dsh-an-updateActions{display:flex;align-items:center;gap:var(--an-space-2);flex-wrap:wrap;min-width:0}\n.dsh-an-updatePrimary{display:inline-flex;align-items:center;justify-content:center;flex:none;height:24px;padding:0 var(--an-space-3);border:0;border-radius:var(--dsw-radius-sm);background:var(--dsw-alias-button-primary-fill);color:var(--dsw-alias-label-primary-foreground);font:inherit;font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);font-weight:500;cursor:pointer;transition:var(--an-transition)}\n.dsh-an-updatePrimary:active{background:var(--dsw-alias-button-primary-dimmed)}\n.dsh-an-updatePrimary:disabled{opacity:.55;cursor:default}\n.dsh-an-updatePrimary:focus-visible{outline-offset:2px}\n.dsh-an-updateDone{display:flex;align-items:center;gap:var(--an-space-2);flex-wrap:wrap;min-width:0}\n.dsh-an-updateErrorRow{display:flex;align-items:baseline;gap:var(--an-space-2);flex-wrap:wrap;min-width:0}\n.dsh-an-updateError{flex:1 1 auto;min-width:0;margin:0;font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);color:var(--dsw-alias-state-error-primary);overflow-wrap:anywhere}\n.dsh-an-updateLinkBtn{padding:0;border:0;background:transparent;color:var(--dsw-alias-link);font:inherit;font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);font-weight:500;cursor:pointer}\n.dsh-an-updateFallback{display:flex;align-items:center;gap:var(--an-space-2);flex-wrap:wrap;min-width:0;padding-top:var(--an-space-1);border-top:0.5px solid var(--an-divider)}\n.dsh-an-updateFallback .dsh-an-updateHint{flex:1 1 100%;min-width:0}\n.dsh-an-updateCopy{flex:none;height:24px;padding:0 var(--an-space-2);border:0.5px solid var(--dsw-alias-border-l3);border-radius:var(--dsw-radius-sm);background:transparent;color:var(--dsw-alias-label-primary);font:inherit;font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);font-weight:500;cursor:pointer;transition:var(--an-transition)}\n.dsh-an-updateCopy:active{background:var(--an-active)}\n.dsh-an-updateCopy:focus-visible{outline-offset:2px}\n\n/* ── 11 面板脚注 · 存储状态就地提示，错误用状态色 ─────────────────── */\n.dsh-an-popFoot{margin:0;font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);color:var(--dsw-alias-label-secondary)}\n.dsh-an-error{color:var(--dsw-alias-state-error-primary)}\n\n/* ── 12 会话顶部入口 · H28/R8，计数徽标为胶囊 ──────────────────────── */\n.dsh-an-headerBtn{position:relative;display:inline-flex;align-items:center;justify-content:center;flex:none;width:28px;height:28px;padding:0;border:0;border-radius:var(--dsw-radius-sm);background:transparent;color:var(--dsw-alias-label-secondary);font:inherit;cursor:pointer;transition:var(--an-transition)}\n.dsh-an-headerBtn:active{background:var(--an-active);color:var(--dsw-alias-label-primary)}\n.dsh-an-headerBtn[data-active=\"true\"]{background:var(--an-hover);color:var(--dsw-alias-label-primary)}\n.dsh-an-headerBtn[data-disabled=\"true\"]{color:var(--dsw-alias-label-tertiary);cursor:not-allowed;pointer-events:none}\n.dsh-an-headerIcon{display:flex;align-items:center;justify-content:center;flex:none;width:16px;height:16px;color:currentColor}\n.dsh-an-headerCount{position:absolute;top:-2px;right:-2px;box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;min-width:16px;height:16px;padding:0 var(--an-space-1);border:0.5px solid var(--dsw-alias-bg-base);border-radius:var(--an-radius-pill);corner-shape:round;background:var(--dsw-alias-interactive-bg-hover-solid);color:var(--dsw-alias-label-secondary);font-size:var(--an-fs-caption);line-height:14px;font-weight:500;font-variant-numeric:tabular-nums}\n\n/* ── 13 拖拽把手 · 8px 命中带，3px 视觉条 ─────────────────────────── */\n.dsh-an-resizeHandle{position:absolute;left:0;top:0;bottom:0;z-index:2;display:flex;align-items:center;justify-content:center;width:var(--an-space-2);cursor:ew-resize;touch-action:none;outline:0}\n.dsh-an-resizeHandle::before{content:\"\";width:3px;height:var(--an-space-6);border-radius:var(--an-radius-pill);corner-shape:round;background:var(--dsw-alias-border-l4);transition:transform var(--an-dur-fast) var(--an-ease),background-color var(--an-dur-fast) var(--an-ease)}\n.dsh-an-resizeHandle:focus-visible::before{background:var(--dsw-alias-label-secondary)}\n.dsh-an-resizeHandle:focus-visible{outline-offset:-2px;border-radius:var(--dsw-radius-sm)}\n.dsh-an-resizeHandleBottom{position:absolute;left:50%;bottom:0;z-index:2;display:flex;align-items:center;justify-content:center;width:var(--an-space-6);height:var(--an-space-3);transform:translateX(-50%);cursor:ns-resize;touch-action:none;outline:0}\n.dsh-an-resizeHandleBottom::before{content:\"\";width:var(--an-space-5);height:3px;border-radius:var(--an-radius-pill);corner-shape:round;background:var(--dsw-alias-border-l4);transition:transform var(--an-dur-fast) var(--an-ease),background-color var(--an-dur-fast) var(--an-ease)}\n.dsh-an-resizeHandleBottom:focus-visible::before{background:var(--dsw-alias-label-secondary)}\n.dsh-an-resizeHandleBottom:focus-visible{outline-offset:-2px;border-radius:var(--dsw-radius-sm)}\n\n/* ── 14 加载 · 控件内 12px 环，文字隐藏，不报\"进行中\" ──────────────── */\n[data-loading=\"true\"]{position:relative;color:transparent!important;pointer-events:none;cursor:progress}\n[data-loading=\"true\"]>*{visibility:hidden}\n[data-loading=\"true\"]::after{content:\"\";position:absolute;left:50%;top:50%;box-sizing:border-box;width:12px;height:12px;margin:-6px 0 0 -6px;border:1.5px solid var(--dsw-alias-label-secondary);border-top-color:transparent;border-radius:var(--an-radius-pill);corner-shape:round;animation:dsh-an-spin var(--an-dur-spin) linear infinite}\n\n/* ── 15 悬停 · 只在支持 hover 的设备上启用（触摸端常显操作） ────────── */\n@media (hover:hover){\n.dsh-an-row:hover{background:var(--an-hover)}\n.dsh-an-actions{opacity:0;pointer-events:none}\n.dsh-an-row:hover .dsh-an-actions,.dsh-an-row:focus-within .dsh-an-actions{opacity:1;pointer-events:auto}\n.dsh-an-iconBtn:hover{background:var(--an-hover);color:var(--dsw-alias-label-primary)}\n.dsh-an-iconBtnDanger:hover{background:var(--dsw-alias-interactive-bg-hover-danger);color:var(--dsw-alias-state-error-primary)}\n.dsh-an-popClose:hover,.dsh-an-settingsBtn:hover{background:var(--an-hover);color:var(--dsw-alias-label-primary)}\n.dsh-an-scopeBtn:hover:not([data-active=\"true\"]){background:var(--an-hover);color:var(--dsw-alias-label-primary)}\n.dsh-an-addBtn:hover:not([disabled]){background:var(--dsw-alias-button-primary-hover)}\n.dsh-an-mini:hover:not([disabled]){background:var(--an-hover)}\n.dsh-an-miniPrimary:hover:not([disabled]){background:var(--dsw-alias-button-primary-hover);color:var(--dsw-alias-label-primary-foreground)}\n.dsh-an-miniDanger:hover:not([disabled]){background:var(--dsw-alias-interactive-bg-hover-danger);color:var(--dsw-alias-state-error-primary)}\n.dsh-an-clear:hover{background:var(--an-hover);color:var(--dsw-alias-label-primary)}\n.dsh-an-doneToggle:hover{background:var(--an-hover)}\n.dsh-an-check:hover .dsh-an-checkCircle{border-color:var(--dsw-alias-label-primary)}\n.dsh-an-settingChoice:hover input{border-color:var(--dsw-alias-label-primary)}\n.dsh-an-settingLink:hover{text-decoration:underline;text-decoration-style:dotted;text-decoration-thickness:1px;text-underline-offset:3px}\n.dsh-an-updatePrimary:hover:not(:disabled){background:var(--dsw-alias-button-primary-hover)}\n.dsh-an-headerBtn:hover{background:var(--an-hover);color:var(--dsw-alias-label-primary)}\n.dsh-an-resizeHandle:hover::before{transform:scaleY(1.4);background:var(--dsw-alias-label-secondary)}\n.dsh-an-resizeHandleBottom:hover::before{transform:scaleX(1.4);background:var(--dsw-alias-label-secondary)}\n}\n\n/* ── 16 动效 · 只动 opacity/transform，错峰出场封顶 ─────────────────── */\n@media (prefers-reduced-motion:no-preference){\n.dsh-an-rows>.dsh-an-row{animation:dsh-an-row-in var(--an-dur-base) var(--an-ease) both}\n.dsh-an-rows>.dsh-an-row:nth-child(2){animation-delay:var(--an-space-1)}\n.dsh-an-rows>.dsh-an-row:nth-child(3){animation-delay:var(--an-space-2)}\n.dsh-an-rows>.dsh-an-row:nth-child(4){animation-delay:calc(var(--an-space-2) + var(--an-space-1))}\n.dsh-an-rows>.dsh-an-row:nth-child(n+5){animation-delay:var(--an-space-3)}\n}\n@keyframes dsh-an-pop-in{from{opacity:0}to{opacity:1}}\n@keyframes dsh-an-row-in{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}\n@keyframes dsh-an-spin{to{transform:rotate(360deg)}}\n@media (prefers-reduced-motion:reduce){\n.dsh-an-popover,.dsh-an-rows>.dsh-an-row,.dsh-an-chevron,[data-loading=\"true\"]::after{animation:none}\n.dsh-an-popover,.dsh-an-row,.dsh-an-actions,.dsh-an-iconBtn{transition-duration:1ms}\n}\n\n/* ── 17 窄视口 · 390 基准下收紧内边距，主操作全部可达 ──────────────── */\n@media (max-width:480px){\n.dsh-an-popover{padding:var(--an-space-3);--dsh-an-listGutter:var(--an-space-3)}\n.dsh-an-popoverRight{padding-left:var(--an-space-4)}\n.dsh-an-popHead{gap:var(--an-space-2)}\n.dsh-an-add{padding:var(--an-space-2) var(--an-space-3)}\n.dsh-an-sectionHead,.dsh-an-doneHead{min-height:24px}\n}\n\n";
 
 // src/client/constants.ts
 /**
@@ -52,6 +52,8 @@ const NS = "dsh-aside-note";
 const PANEL_ID = "dsh-aside-note";
 /** Session-scoped memo store used by the popover and the session-header entry. */
 const SESSION_STORAGE_KEY = "dsh.aside-note";
+/** Notes shared by every session of one workspace; kept beside the session key. */
+const WORKSPACE_STORAGE_KEY = "dsh.aside-note.workspaces";
 /** Unsaved add/edit drafts, restored when the panel is reopened. */
 const DRAFT_STORAGE_KEY = "dsh.aside-note.drafts";
 /** Notes already forwarded to the composer, per session; marks the forward button. */
@@ -80,6 +82,9 @@ const MOD_LABEL = IS_MAC ? "⌘" : "Ctrl";
 function isSendModifier(event) {
 	return IS_MAC ? event.metaKey === true : event.ctrlKey === true;
 }
+/** Last chosen list scope: the workspace list or the session list. */
+const SCOPE_MODE_KEY = "dsh.aside-note.scope-mode";
+const SCOPE_MODE_DEFAULT = "workspace";
 /** Remembered expand/collapse state of the open/completed sections. */
 const SECTION_STATE_KEY = "dsh.aside-note.sections";
 const SECTION_STATE_DEFAULT = {
@@ -107,6 +112,10 @@ const en = {
 	"popover.clearConfirmAction": "Clear",
 	"popover.clearDone": "Clear completed",
 	"popover.storage": "Separate per session · saved only on this device",
+	"popover.shared": "Shared across this workspace · saved only on this device",
+	"scope.label": "Note scope",
+	"scope.workspace": "Workspace",
+	"scope.session": "Session",
 	"popover.empty.title": "No notes yet",
 	"popover.empty.body": "Keep your ideas beside the conversation",
 	"settings.open": "Settings",
@@ -216,6 +225,10 @@ const zh = {
 	"popover.clearConfirmAction": "确认清除",
 	"popover.clearDone": "清除已完成",
 	"popover.storage": "按会话隔离 · 数据仅保存在本地",
+	"popover.shared": "工作区共享 · 数据仅保存在本地",
+	"scope.label": "便笺范围",
+	"scope.workspace": "工作区",
+	"scope.session": "会话",
 	"popover.empty.title": "旁边还没有记录",
 	"popover.empty.body": "让想法留在对话旁边",
 	"settings.open": "设置",
@@ -342,159 +355,255 @@ function makeSay(ctx, getLocaleId) {
 	};
 }
 
-// src/client/ui/primitives.ts
-/**
-* Shared glyphs and the tooltip wrapper.
-*
-* Glyphs come from the product icon set; this plugin draws none of its own, so
-* stroke weight, optical size and currentColor stay consistent with the shell.
-* Tooltip and Toast are the seeded primitives — the bundle keeps them external.
-*/
-const h$11 = react.default.createElement;
-const PRIMITIVES = _deepseek_ai_dsh_client_ui_primitives;
-const Tooltip = typeof PRIMITIVES.Tooltip === "function" ? PRIMITIVES.Tooltip : null;
-const Toast = typeof PRIMITIVES.Toast === "function" ? PRIMITIVES.Toast : null;
-const icon = (name) => typeof PRIMITIVES[name] === "function" ? PRIMITIVES[name] : null;
-/**
-* Glyphs come from the shared product icon set; this plugin draws none of
-* its own, so stroke weight, optical size and currentColor stay consistent
-* with the surrounding shell.
-*/
-function Glyph(props) {
-	const Component = icon(props.name);
-	if (!Component) return null;
-	return h$11(Component, { size: props.size });
+// src/client/scope.ts
+const EMPTY = {
+	sessionId: "",
+	workspaceId: "",
+	title: "",
+	sessionIds: []
+};
+let binding = EMPTY;
+const text$1 = (value) => value ? String(value) : "";
+/** Resolve the workspace of the captured session; null clears the binding. */
+function bindWorkspace(sessionId, workspace) {
+	const next = workspace ? {
+		sessionId: text$1(sessionId),
+		workspaceId: text$1(workspace.workspaceId),
+		title: text$1(workspace.title),
+		sessionIds: Array.isArray(workspace.sessionIds) ? workspace.sessionIds.map(text$1).filter(Boolean) : []
+	} : {
+		...EMPTY,
+		sessionId: text$1(sessionId)
+	};
+	if (next.sessionId === binding.sessionId && next.workspaceId === binding.workspaceId && next.title === binding.title && next.sessionIds.join("\0") === binding.sessionIds.join("\0")) return false;
+	binding = next;
+	return true;
 }
-const IconCheck = (props) => h$11(Glyph, {
-	name: "IconCheckOutlineMedium",
-	size: props && props.size ? props.size : 12
-});
-const IconCopy = () => h$11(Glyph, {
-	name: "IconCopyOutlineRegular",
-	size: 14
-});
-const IconForward = () => h$11(Glyph, {
-	name: "IconShareOutlineRegular",
-	size: 14
-});
-const IconGear = () => h$11(Glyph, {
-	name: "IconSettingsOutlineRegular",
-	size: 14
-});
-const IconPencil = () => h$11(Glyph, {
-	name: "IconEditOutlineRegular",
-	size: 14
-});
-const IconTrash = () => h$11(Glyph, {
-	name: "IconTrashOutlineRegular",
-	size: 14
-});
-const IconChevron = () => h$11(Glyph, {
-	name: "IconChevronRightOutlineRegular",
-	size: 12
-});
-const IconEmpty = () => h$11(Glyph, {
-	name: "IconChecklistOutlineRegular",
-	size: 18
-});
-const IconClose = () => h$11(Glyph, {
-	name: "IconCloseOutlineRegular",
-	size: 14
-});
-/** Wrap one icon-only control in the shared tooltip; a bare button when absent. */
-function withTooltip(label, node) {
-	if (!Tooltip) return node;
-	return h$11(Tooltip, {
-		label,
-		side: "top",
-		portal: true,
-		gap: 6
-	}, node);
+/** The workspace list available to this session, or null outside a workspace. */
+function workspaceScopeForSession(sessionId) {
+	const id = text$1(sessionId);
+	if (id && binding.sessionId === id && binding.workspaceId) return {
+		kind: "workspace",
+		id: binding.workspaceId,
+		title: binding.title,
+		sessionIds: binding.sessionIds
+	};
+	return null;
+}
+/** The list this session reads and writes under the chosen scope mode. */
+function scopeForSession(sessionId, mode = "workspace") {
+	const workspace = workspaceScopeForSession(sessionId);
+	if (workspace && mode !== "session") return workspace;
+	const id = text$1(sessionId);
+	return {
+		kind: "session",
+		id,
+		title: "",
+		sessionIds: id ? [id] : []
+	};
+}
+/** Stable key for the forward marks of one list. */
+function scopeKey(scope) {
+	if (!scope || !scope.id) return "";
+	return scope.kind === "workspace" ? `ws:${scope.id}` : String(scope.id);
 }
 
-// src/client/ui/toastSeat.ts
-/** Frame-wide toast seat: one notice at a time, dismissed when it fades. */
-const h$10 = react.default.createElement;
-const TOAST_COPY = {
-	copied: {
-		key: "toast.copied",
-		tone: "success"
-	},
-	forwarded: {
-		key: "toast.forwarded",
-		tone: "success"
-	},
-	unforwarded: {
-		key: "toast.unforwarded",
-		tone: "success"
-	},
-	deleted: {
-		key: "toast.deleted",
-		tone: "success"
-	},
-	cleared: {
-		key: "toast.cleared",
-		tone: "success"
-	},
-	copyFailed: { key: "toast.copyFailed" },
-	forwardFailed: { key: "toast.forwardFailed" },
-	saveFailed: { key: "toast.saveFailed" }
-};
-const WarningIcon = icon("IconWarningOutlineRegular");
-/**
-* Settled outcomes (copy, forward, delete, write failure) live in the frame,
-* not inside the panel: the panel unmounts on close, the banner must not.
-*/
-function createToastSeat(tr) {
-	const source = (() => {
-		let notice = null;
-		let sequence = 0;
-		const listeners = /* @__PURE__ */ new Set();
-		const publish = (next) => {
-			notice = next;
-			for (const listener of listeners) listener();
-		};
-		return {
-			hooks: { notice: {
-				getSnapshot: () => notice,
-				subscribe: (listener) => {
-					listeners.add(listener);
-					return () => {
-						listeners.delete(listener);
-					};
-				}
-			} },
-			show(kind) {
-				sequence += 1;
-				publish({
-					kind,
-					sequence
-				});
-			},
-			dismiss() {
-				publish(null);
-			}
-		};
-	})();
-	/** The slot the layout mounts once; it owns the only visible notice. */
-	function ToastHost(props) {
-		const notice = react.default.useSyncExternalStore(source.hooks.notice.subscribe, source.hooks.notice.getSnapshot);
-		if (!notice || !Toast) return null;
-		const copy = TOAST_COPY[notice.kind] || TOAST_COPY.saveFailed;
-		const bound = props && typeof props.t === "function" ? props.t(copy.key) : "";
-		const text = bound && bound !== copy.key ? bound : tr(copy.key);
-		return h$10(Toast, {
-			key: notice.sequence,
-			text,
-			tone: copy.tone,
-			icon: copy.tone ? void 0 : WarningIcon ? h$10(WarningIcon, { size: 16 }) : void 0,
-			onDone: source.dismiss
-		});
-	}
-	return {
-		show: source.show,
-		ToastHost
+// src/client/domain/forward.ts
+/** Append one note to the conversation composer (Lexical contenteditable or textarea). */
+/** Session whose conversation is on screen; the dock keeps this current. */
+let targetSessionId = "";
+/** Point forwarding at the conversation the user currently has open. */
+function setForwardTarget(sessionId) {
+	targetSessionId = sessionId ? String(sessionId) : "";
+}
+/** The visible conversation root of the target session, when the host marks one. */
+function conversationRoot() {
+	if (!targetSessionId) return null;
+	for (const node of document.querySelectorAll("[data-conversation-session]")) if (node.getAttribute("data-conversation-session") === targetSessionId) return node;
+	return null;
+}
+function appendToConversation(text, prefix = "") {
+	const note = String(text || "").replace(/^\s+|\s+$/g, "");
+	if (!note) return false;
+	const bullet = `- ${note}`;
+	const lead = prefix ? String(prefix).trim() : "";
+	const emptyBlock = lead ? `${lead}\n${bullet}` : bullet;
+	const visible = (node) => {
+		const rect = node.getBoundingClientRect();
+		return rect.width > 0 && rect.height > 0;
 	};
+	const root = conversationRoot() || document;
+	const specific = [...root.querySelectorAll("[data-composer-input]")].filter(visible);
+	const editor = (specific.length ? specific : [...root.querySelectorAll("[contenteditable=\"true\"][role=\"textbox\"], textarea[role=\"textbox\"]")].filter(visible))[0];
+	if (!editor) return false;
+	/** Payload for a composer whose current plain text is `current`. */
+	const payloadFor = (current) => {
+		const value = typeof current === "string" ? current : "";
+		if (!value.trim()) return emptyBlock;
+		return value.endsWith("\n") ? bullet : `\n${bullet}`;
+	};
+	if (editor.tagName === "TEXTAREA") {
+		const textarea = editor;
+		const current = textarea.value;
+		const payload = payloadFor(current);
+		Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, "value").set.call(textarea, `${current}${payload}`);
+		textarea.dispatchEvent(new Event("input", { bubbles: true }));
+		textarea.focus();
+		const end = textarea.value.length;
+		textarea.setSelectionRange(end, end);
+		return true;
+	}
+	const payload = payloadFor(typeof editor.innerText === "string" ? editor.innerText : "");
+	editor.focus();
+	try {
+		const range = document.createRange();
+		range.selectNodeContents(editor);
+		range.collapse(false);
+		const selection = window.getSelection();
+		selection.removeAllRanges();
+		selection.addRange(range);
+	} catch {}
+	try {
+		const data = new DataTransfer();
+		data.setData("text/plain", payload);
+		const event = new ClipboardEvent("paste", {
+			bubbles: true,
+			cancelable: true,
+			clipboardData: data
+		});
+		if (!editor.dispatchEvent(event)) return true;
+	} catch {}
+	try {
+		return document.execCommand("insertText", false, payload);
+	} catch {
+		return false;
+	}
+}
+
+// src/client/storage/codec.ts
+/** The browser store, or null when storage is blocked. */
+/** The browser store, or null when storage is blocked. */
+function storage() {
+	try {
+		return window.localStorage;
+	} catch {
+		return null;
+	}
+}
+
+// src/client/storage/prefs.ts
+/** Panel geometry, list scope, send shortcut, forward prefix and section state. */
+/** Read the persisted right-panel width, clamped for the current viewport. */
+function readPanelWidth() {
+	const ls = storage();
+	const max = Math.min(720, Math.max(280, window.innerWidth - 32));
+	try {
+		const saved = ls && Number(ls.getItem("dsh.aside-note.panel-width"));
+		if (Number.isFinite(saved) && saved > 0) return Math.max(280, Math.min(max, saved));
+	} catch {}
+	return Math.max(280, Math.min(max, 360));
+}
+/** Persist the right-panel width so it survives reopening the popover. */
+function writePanelWidth(width) {
+	const ls = storage();
+	if (!ls) return;
+	try {
+		ls.setItem(PANEL_WIDTH_KEY, String(Math.round(width)));
+	} catch {}
+}
+/** Read the persisted right-panel height; 0 means content-sized. */
+function readPanelHeight() {
+	const ls = storage();
+	try {
+		const saved = ls && Number(ls.getItem("dsh.aside-note.panel-height"));
+		if (Number.isFinite(saved) && saved > 0) return saved;
+	} catch {}
+	return 0;
+}
+/** Persist the right-panel height; 0 restores content sizing. */
+function writePanelHeight(height) {
+	const ls = storage();
+	if (!ls) return;
+	try {
+		if (height > 0) ls.setItem(PANEL_HEIGHT_KEY, String(Math.round(height)));
+		else ls.removeItem(PANEL_HEIGHT_KEY);
+	} catch {}
+}
+/** Read the last chosen list scope; "workspace" is the default. */
+function readScopeMode() {
+	try {
+		return (storage() && storage().getItem("dsh.aside-note.scope-mode")) === "session" ? "session" : SCOPE_MODE_DEFAULT;
+	} catch {
+		return SCOPE_MODE_DEFAULT;
+	}
+}
+function writeScopeMode(mode) {
+	try {
+		const ls = storage();
+		if (ls) ls.setItem(SCOPE_MODE_KEY, mode === "session" ? "session" : "workspace");
+	} catch {}
+}
+/** Read the Enter-to-send preference. */
+function readSendShortcut() {
+	try {
+		const saved = storage() && storage().getItem("dsh.aside-note.send-shortcut");
+		return saved === "enter" || saved === "ctrl-enter" ? saved : SEND_SHORTCUT_DEFAULT;
+	} catch {
+		return SEND_SHORTCUT_DEFAULT;
+	}
+}
+function writeSendShortcut(value) {
+	try {
+		const ls = storage();
+		if (ls) ls.setItem(SEND_SHORTCUT_KEY, value === "enter" ? "enter" : "ctrl-enter");
+	} catch {}
+}
+/** Read the user's forward lead-in; an empty string means no prefix. */
+function readForwardPrefix() {
+	try {
+		const raw = storage() && storage().getItem("dsh.aside-note.forward-prefix");
+		return typeof raw === "string" ? raw.slice(0, 80) : "";
+	} catch {
+		return "";
+	}
+}
+function writeForwardPrefix(value) {
+	try {
+		const ls = storage();
+		if (ls) ls.setItem(FORWARD_PREFIX_STORAGE_KEY, String(value || "").slice(0, 80));
+	} catch {}
+}
+/** Remembered section state; corrupt or missing storage falls back to defaults. */
+function readSectionState() {
+	const fallback = {
+		open: SECTION_STATE_DEFAULT.open,
+		done: SECTION_STATE_DEFAULT.done
+	};
+	const ls = storage();
+	if (!ls) return fallback;
+	try {
+		const raw = ls.getItem(SECTION_STATE_KEY);
+		if (!raw) return fallback;
+		const saved = JSON.parse(raw);
+		if (!saved || typeof saved !== "object") return fallback;
+		return {
+			open: typeof saved.open === "boolean" ? saved.open : fallback.open,
+			done: typeof saved.done === "boolean" ? saved.done : fallback.done
+		};
+	} catch {
+		return fallback;
+	}
+}
+/** Persist the section state immediately; storage failures are ignored. */
+function writeSectionState(state) {
+	const ls = storage();
+	if (!ls) return;
+	try {
+		ls.setItem(SECTION_STATE_KEY, JSON.stringify({
+			open: state.open === true,
+			done: state.done === true
+		}));
+	} catch {}
 }
 
 // src/client/domain/id.ts
@@ -593,17 +702,6 @@ function metaLabel(item, say, localeId) {
 	});
 }
 
-// src/client/storage/codec.ts
-/** The browser store, or null when storage is blocked. */
-/** The browser store, or null when storage is blocked. */
-function storage() {
-	try {
-		return window.localStorage;
-	} catch {
-		return null;
-	}
-}
-
 // src/client/storage/events.ts
 /**
 * Same-tab change bus.
@@ -623,15 +721,22 @@ function notifyTodoChange() {
 }
 
 // src/client/storage/session.ts
-/** Session-scoped notes: the only store the panel renders. */
-/** Empty session-scoped store. */
+/**
+* Session-scoped notes in one localStorage record.
+*
+* The shape stays at v1: workspace notes now live under
+* `WORKSPACE_STORAGE_KEY`, so the session key existing users already have is
+* never rewritten into a new schema.
+*/
+/** Empty note store. */
 function emptySessionStore() {
 	return {
 		version: 1,
 		sessions: {}
 	};
 }
-/** Read the whole session memo store; corrupt or unavailable reads as empty. */
+const bucket$1 = (value) => value && typeof value === "object" && !Array.isArray(value) ? value : {};
+/** Read the whole note store; corrupt or unavailable reads as empty. */
 function readSessionStore() {
 	const ls = storage();
 	if (!ls) return emptySessionStore();
@@ -640,14 +745,27 @@ function readSessionStore() {
 		if (!raw) return emptySessionStore();
 		const parsed = JSON.parse(raw);
 		if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return emptySessionStore();
-		const sessions = parsed.sessions;
-		if (!sessions || typeof sessions !== "object" || Array.isArray(sessions)) return emptySessionStore();
 		return {
 			version: 1,
-			sessions
+			sessions: bucket$1(parsed.sessions)
 		};
 	} catch {
 		return emptySessionStore();
+	}
+}
+/** Persist the whole session store; the single writer for this key. */
+function writeSessionStore(store) {
+	const ls = storage();
+	if (!ls) return false;
+	try {
+		ls.setItem(SESSION_STORAGE_KEY, JSON.stringify({
+			version: 1,
+			sessions: bucket$1(store && store.sessions)
+		}));
+		notifyTodoChange();
+		return true;
+	} catch {
+		return false;
 	}
 }
 /** Read one session's memo record. */
@@ -665,22 +783,306 @@ function readSessionRecord(sessionId) {
 }
 /** Persist one session's memo record. */
 function writeSessionRecord(sessionId, record) {
-	const ls = storage();
 	const key = sessionId ? String(sessionId) : "";
-	if (!ls || !key) return false;
+	if (!key) return false;
 	const store = readSessionStore();
 	store.sessions[key] = {
 		sessionId: key,
 		updatedAt: record.updatedAt || Date.now(),
 		items: normalizeItems(record.items)
 	};
+	return writeSessionStore(store);
+}
+
+// src/client/storage/workspace.ts
+/**
+* Workspace-scoped notes.
+*
+* Stored under `WORKSPACE_STORAGE_KEY`, beside the session key, so adding
+* workspace lists never changes the shape of existing per-session data. One
+* list is shared by every session of a workspace. The first time a workspace
+* is seen, notes already written per session are folded in once;
+* `seededSessionIds` records that so a later delete is not undone by the merge
+* running again.
+*/
+const text = (value) => value ? String(value) : "";
+const bucket = (value) => value && typeof value === "object" && !Array.isArray(value) ? value : {};
+function seededOf(record) {
+	const raw = record && record.seededSessionIds;
+	if (!Array.isArray(raw)) return [];
+	const seen = /* @__PURE__ */ new Set();
+	const next = [];
+	for (const value of raw) {
+		const id = text(value);
+		if (!id || seen.has(id)) continue;
+		seen.add(id);
+		next.push(id);
+	}
+	return next;
+}
+/** Empty workspace-note store. */
+function emptyWorkspaceStore() {
+	return {
+		version: 1,
+		workspaces: {}
+	};
+}
+/** Read the workspace-note store; corrupt or unavailable reads as empty. */
+function readWorkspaceStore() {
+	const ls = storage();
+	if (!ls) return emptyWorkspaceStore();
 	try {
-		ls.setItem(SESSION_STORAGE_KEY, JSON.stringify(store));
+		const raw = ls.getItem(WORKSPACE_STORAGE_KEY);
+		if (!raw) return emptyWorkspaceStore();
+		const parsed = JSON.parse(raw);
+		if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return emptyWorkspaceStore();
+		return {
+			version: 1,
+			workspaces: bucket(parsed.workspaces)
+		};
+	} catch {
+		return emptyWorkspaceStore();
+	}
+}
+/** Persist the whole workspace-note store. */
+function writeWorkspaceStore(store) {
+	const ls = storage();
+	if (!ls) return false;
+	try {
+		ls.setItem(WORKSPACE_STORAGE_KEY, JSON.stringify({
+			version: 1,
+			workspaces: bucket(store && store.workspaces)
+		}));
 		notifyTodoChange();
 		return true;
 	} catch {
 		return false;
 	}
+}
+/** One workspace's memo record. */
+function readWorkspaceRecord(workspaceId) {
+	const key = text(workspaceId);
+	if (!key) return {
+		items: [],
+		updatedAt: 0,
+		seededSessionIds: []
+	};
+	const record = readWorkspaceStore().workspaces[key];
+	return {
+		items: normalizeItems(record && record.items),
+		updatedAt: record && Number.isFinite(record.updatedAt) ? record.updatedAt : 0,
+		seededSessionIds: seededOf(record)
+	};
+}
+/** Persist one workspace's memo record. */
+function writeWorkspaceRecord(workspaceId, record) {
+	const key = text(workspaceId);
+	if (!key) return false;
+	const store = readWorkspaceStore();
+	const previous = store.workspaces[key];
+	const seededSource = Array.isArray(record.seededSessionIds) ? record : previous;
+	store.workspaces[key] = {
+		workspaceId: key,
+		updatedAt: record.updatedAt || Date.now(),
+		items: normalizeItems(record.items),
+		seededSessionIds: seededOf(seededSource)
+	};
+	return writeWorkspaceStore(store);
+}
+/**
+* Fold the member sessions' existing notes into the workspace list once.
+* Returns whether the store changed; repeated calls are cheap and idempotent.
+*/
+function ensureWorkspaceRecord(workspaceId, sessionIds) {
+	const key = text(workspaceId);
+	if (!key) return false;
+	const previous = readWorkspaceStore().workspaces[key];
+	const seeded = new Set(seededOf(previous));
+	const items = normalizeItems(previous && previous.items);
+	const seen = new Set(items.map((item) => item.id));
+	let changed = !previous;
+	if (!changed && Array.isArray(sessionIds)) for (const value of sessionIds) {
+		const sessionId = text(value);
+		if (!sessionId) continue;
+		if (!seeded.has(sessionId)) {
+			changed = true;
+			break;
+		}
+	}
+	if (!changed) return false;
+	const sessionStore = readSessionStore();
+	for (const value of Array.isArray(sessionIds) ? sessionIds : []) {
+		const sessionId = text(value);
+		if (!sessionId || seeded.has(sessionId)) continue;
+		seeded.add(sessionId);
+		changed = true;
+		const sessionRecord = sessionStore.sessions[sessionId];
+		for (const item of normalizeItems(sessionRecord && sessionRecord.items)) {
+			if (seen.has(item.id)) continue;
+			seen.add(item.id);
+			items.push(item);
+		}
+	}
+	return writeWorkspaceRecord(key, {
+		items,
+		updatedAt: previous && Number.isFinite(previous.updatedAt) ? previous.updatedAt : Date.now(),
+		seededSessionIds: [...seeded]
+	});
+}
+
+// src/client/ui/primitives.ts
+/**
+* Shared glyphs and the tooltip wrapper.
+*
+* Glyphs come from the product icon set; this plugin draws none of its own, so
+* stroke weight, optical size and currentColor stay consistent with the shell.
+* Tooltip and Toast are the seeded primitives — the bundle keeps them external.
+*/
+const h$12 = react.default.createElement;
+const PRIMITIVES = _deepseek_ai_dsh_client_ui_primitives;
+const Tooltip = typeof PRIMITIVES.Tooltip === "function" ? PRIMITIVES.Tooltip : null;
+const Toast = typeof PRIMITIVES.Toast === "function" ? PRIMITIVES.Toast : null;
+const icon = (name) => typeof PRIMITIVES[name] === "function" ? PRIMITIVES[name] : null;
+/**
+* Glyphs come from the shared product icon set; this plugin draws none of
+* its own, so stroke weight, optical size and currentColor stay consistent
+* with the surrounding shell.
+*/
+function Glyph(props) {
+	const Component = icon(props.name);
+	if (!Component) return null;
+	return h$12(Component, { size: props.size });
+}
+const IconCheck = (props) => h$12(Glyph, {
+	name: "IconCheckOutlineMedium",
+	size: props && props.size ? props.size : 12
+});
+const IconCopy = () => h$12(Glyph, {
+	name: "IconCopyOutlineRegular",
+	size: 14
+});
+const IconForward = () => h$12(Glyph, {
+	name: "IconShareOutlineRegular",
+	size: 14
+});
+const IconGear = () => h$12(Glyph, {
+	name: "IconSettingsOutlineRegular",
+	size: 14
+});
+const IconPencil = () => h$12(Glyph, {
+	name: "IconEditOutlineRegular",
+	size: 14
+});
+const IconTrash = () => h$12(Glyph, {
+	name: "IconTrashOutlineRegular",
+	size: 14
+});
+const IconChevron = () => h$12(Glyph, {
+	name: "IconChevronRightOutlineRegular",
+	size: 12
+});
+const IconEmpty = () => h$12(Glyph, {
+	name: "IconChecklistOutlineRegular",
+	size: 18
+});
+const IconClose = () => h$12(Glyph, {
+	name: "IconCloseOutlineRegular",
+	size: 14
+});
+/** Wrap one icon-only control in the shared tooltip; a bare button when absent. */
+function withTooltip(label, node) {
+	if (!Tooltip) return node;
+	return h$12(Tooltip, {
+		label,
+		side: "top",
+		portal: true,
+		gap: 6
+	}, node);
+}
+
+// src/client/ui/toastSeat.ts
+/** Frame-wide toast seat: one notice at a time, dismissed when it fades. */
+const h$11 = react.default.createElement;
+const TOAST_COPY = {
+	copied: {
+		key: "toast.copied",
+		tone: "success"
+	},
+	forwarded: {
+		key: "toast.forwarded",
+		tone: "success"
+	},
+	unforwarded: {
+		key: "toast.unforwarded",
+		tone: "success"
+	},
+	deleted: {
+		key: "toast.deleted",
+		tone: "success"
+	},
+	cleared: {
+		key: "toast.cleared",
+		tone: "success"
+	},
+	copyFailed: { key: "toast.copyFailed" },
+	forwardFailed: { key: "toast.forwardFailed" },
+	saveFailed: { key: "toast.saveFailed" }
+};
+const WarningIcon = icon("IconWarningOutlineRegular");
+/**
+* Settled outcomes (copy, forward, delete, write failure) live in the frame,
+* not inside the panel: the panel unmounts on close, the banner must not.
+*/
+function createToastSeat(tr) {
+	const source = (() => {
+		let notice = null;
+		let sequence = 0;
+		const listeners = /* @__PURE__ */ new Set();
+		const publish = (next) => {
+			notice = next;
+			for (const listener of listeners) listener();
+		};
+		return {
+			hooks: { notice: {
+				getSnapshot: () => notice,
+				subscribe: (listener) => {
+					listeners.add(listener);
+					return () => {
+						listeners.delete(listener);
+					};
+				}
+			} },
+			show(kind) {
+				sequence += 1;
+				publish({
+					kind,
+					sequence
+				});
+			},
+			dismiss() {
+				publish(null);
+			}
+		};
+	})();
+	/** The slot the layout mounts once; it owns the only visible notice. */
+	function ToastHost(props) {
+		const notice = react.default.useSyncExternalStore(source.hooks.notice.subscribe, source.hooks.notice.getSnapshot);
+		if (!notice || !Toast) return null;
+		const copy = TOAST_COPY[notice.kind] || TOAST_COPY.saveFailed;
+		const bound = props && typeof props.t === "function" ? props.t(copy.key) : "";
+		const text = bound && bound !== copy.key ? bound : tr(copy.key);
+		return h$11(Toast, {
+			key: notice.sequence,
+			text,
+			tone: copy.tone,
+			icon: copy.tone ? void 0 : WarningIcon ? h$11(WarningIcon, { size: 16 }) : void 0,
+			onDone: source.dismiss
+		});
+	}
+	return {
+		show: source.show,
+		ToastHost
+	};
 }
 
 // src/client/ui/headerEntry.ts
@@ -700,8 +1102,9 @@ function createHeaderEntry({ getSessionId, getActiveAnchor, getLocaleId, tr, onO
 			if (button) button.remove();
 			return;
 		}
+		const scope = scopeForSession(sessionId, readScopeMode());
 		const store = readSessionStore();
-		const open = normalizeItems(store.sessions[sessionId] && store.sessions[sessionId].items).filter((item) => !item.done).length;
+		const open = (scope.kind === "workspace" ? readWorkspaceRecord(scope.id).items : normalizeItems(store.sessions[sessionId] && store.sessions[sessionId].items)).filter((item) => !item.done).length;
 		if (!button) {
 			button = document.createElement("button");
 			button.type = "button";
@@ -710,12 +1113,13 @@ function createHeaderEntry({ getSessionId, getActiveAnchor, getLocaleId, tr, onO
 			button.addEventListener("click", (event) => {
 				event.preventDefault();
 				event.stopPropagation();
-				onOpen(sessionId, button);
+				onOpen(getSessionId(), button);
 			});
 			host.appendChild(button);
 		}
 		button.dataset.active = getActiveAnchor() === button ? "true" : "false";
-		const signature = `${getLocaleId()}:${sessionId}:${open}`;
+		button.dataset.scope = scope.kind;
+		const signature = `${getLocaleId()}:${scopeKey(scope)}:${open}`;
 		if (button.dataset.signature !== signature) {
 			const icon = document.createElement("span");
 			icon.className = "dsh-an-headerIcon";
@@ -745,7 +1149,7 @@ function createHeaderEntry({ getSessionId, getActiveAnchor, getLocaleId, tr, onO
 			});
 		};
 		const onStorage = (event) => {
-			if (event.key === "dsh.aside-note") schedule();
+			if (event.key === "dsh.aside-note" || event.key === "dsh.aside-note.workspaces" || event.key === "dsh.aside-note.scope-mode") schedule();
 		};
 		TODO_LISTENERS.add(schedule);
 		window.addEventListener("storage", onStorage);
@@ -770,26 +1174,41 @@ function createHeaderEntry({ getSessionId, getActiveAnchor, getLocaleId, tr, onO
 }
 
 // src/client/ui/useSessionMemoStore.ts
-/** Per-session notes plus a synchronous writer that never invents state. */
-/** Per-session memos plus a synchronous writer that never invents state. */
-function useSessionMemoStore(sessionId) {
-	const sessionKey = sessionId ? String(sessionId) : "";
-	const sessionRef = react.default.useRef(sessionKey);
-	sessionRef.current = sessionKey;
-	const [record, setRecord] = react.default.useState(() => readSessionRecord(sessionKey));
+/** Notes for the active scope plus a synchronous writer that never invents state. */
+/** Read the record the current scope renders. */
+function readScope(scope) {
+	return scope.kind === "workspace" ? readWorkspaceRecord(scope.id) : readSessionRecord(scope.id);
+}
+/** Write the record the current scope renders. */
+function writeScope(scope, record) {
+	return scope.kind === "workspace" ? writeWorkspaceRecord(scope.id, record) : writeSessionRecord(scope.id, record);
+}
+/** Notes of one list (a workspace, or a single session) and their writer. */
+function useMemoStore(scope) {
+	const kind = scope && scope.kind === "workspace" ? "workspace" : "session";
+	const id = scope && scope.id ? String(scope.id) : "";
+	const scopeRef = react.default.useRef({
+		kind,
+		id
+	});
+	scopeRef.current = {
+		kind,
+		id
+	};
+	const [record, setRecord] = react.default.useState(() => readScope(scopeRef.current));
 	const [syncError, setSyncError] = react.default.useState(false);
 	const recordRef = react.default.useRef(record);
 	recordRef.current = record;
 	react.default.useEffect(() => {
-		setRecord(readSessionRecord(sessionRef.current));
+		setRecord(readScope(scopeRef.current));
 		setSyncError(false);
-	}, [sessionKey]);
+	}, [kind, id]);
 	react.default.useEffect(() => {
 		const onStorage = (event) => {
-			if (event.key !== "dsh.aside-note") return;
-			setRecord(readSessionRecord(sessionRef.current));
+			if (event.key !== "dsh.aside-note" && event.key !== "dsh.aside-note.workspaces") return;
+			setRecord(readScope(scopeRef.current));
 		};
-		const onLocal = () => setRecord(readSessionRecord(sessionRef.current));
+		const onLocal = () => setRecord(readScope(scopeRef.current));
 		TODO_LISTENERS.add(onLocal);
 		window.addEventListener("storage", onStorage);
 		return () => {
@@ -805,11 +1224,13 @@ function useSessionMemoStore(sessionId) {
 				items: [],
 				updatedAt: 0
 			};
+			const nextItems = normalizeItems(updater(current.items || []));
 			const next = {
-				items: normalizeItems(updater(current.items || [])),
+				...current,
+				items: nextItems,
 				updatedAt: Date.now()
 			};
-			const ok = writeSessionRecord(sessionRef.current, next);
+			const ok = writeScope(scopeRef.current, next);
 			setSyncError(!ok);
 			if (!ok) return false;
 			recordRef.current = next;
@@ -817,107 +1238,6 @@ function useSessionMemoStore(sessionId) {
 			return true;
 		}, [])
 	};
-}
-
-// src/client/storage/prefs.ts
-/** Panel geometry, send shortcut, forward prefix and section state. */
-/** Read the persisted right-panel width, clamped for the current viewport. */
-function readPanelWidth() {
-	const ls = storage();
-	const max = Math.min(720, Math.max(280, window.innerWidth - 32));
-	try {
-		const saved = ls && Number(ls.getItem("dsh.aside-note.panel-width"));
-		if (Number.isFinite(saved) && saved > 0) return Math.max(280, Math.min(max, saved));
-	} catch {}
-	return Math.max(280, Math.min(max, 360));
-}
-/** Persist the right-panel width so it survives reopening the popover. */
-function writePanelWidth(width) {
-	const ls = storage();
-	if (!ls) return;
-	try {
-		ls.setItem(PANEL_WIDTH_KEY, String(Math.round(width)));
-	} catch {}
-}
-/** Read the persisted right-panel height; 0 means content-sized. */
-function readPanelHeight() {
-	const ls = storage();
-	try {
-		const saved = ls && Number(ls.getItem("dsh.aside-note.panel-height"));
-		if (Number.isFinite(saved) && saved > 0) return saved;
-	} catch {}
-	return 0;
-}
-/** Persist the right-panel height; 0 restores content sizing. */
-function writePanelHeight(height) {
-	const ls = storage();
-	if (!ls) return;
-	try {
-		if (height > 0) ls.setItem(PANEL_HEIGHT_KEY, String(Math.round(height)));
-		else ls.removeItem(PANEL_HEIGHT_KEY);
-	} catch {}
-}
-/** Read the Enter-to-send preference. */
-function readSendShortcut() {
-	try {
-		const saved = storage() && storage().getItem("dsh.aside-note.send-shortcut");
-		return saved === "enter" || saved === "ctrl-enter" ? saved : SEND_SHORTCUT_DEFAULT;
-	} catch {
-		return SEND_SHORTCUT_DEFAULT;
-	}
-}
-function writeSendShortcut(value) {
-	try {
-		const ls = storage();
-		if (ls) ls.setItem(SEND_SHORTCUT_KEY, value === "enter" ? "enter" : "ctrl-enter");
-	} catch {}
-}
-/** Read the user's forward lead-in; an empty string means no prefix. */
-function readForwardPrefix() {
-	try {
-		const raw = storage() && storage().getItem("dsh.aside-note.forward-prefix");
-		return typeof raw === "string" ? raw.slice(0, 80) : "";
-	} catch {
-		return "";
-	}
-}
-function writeForwardPrefix(value) {
-	try {
-		const ls = storage();
-		if (ls) ls.setItem(FORWARD_PREFIX_STORAGE_KEY, String(value || "").slice(0, 80));
-	} catch {}
-}
-/** Remembered section state; corrupt or missing storage falls back to defaults. */
-function readSectionState() {
-	const fallback = {
-		open: SECTION_STATE_DEFAULT.open,
-		done: SECTION_STATE_DEFAULT.done
-	};
-	const ls = storage();
-	if (!ls) return fallback;
-	try {
-		const raw = ls.getItem(SECTION_STATE_KEY);
-		if (!raw) return fallback;
-		const saved = JSON.parse(raw);
-		if (!saved || typeof saved !== "object") return fallback;
-		return {
-			open: typeof saved.open === "boolean" ? saved.open : fallback.open,
-			done: typeof saved.done === "boolean" ? saved.done : fallback.done
-		};
-	} catch {
-		return fallback;
-	}
-}
-/** Persist the section state immediately; storage failures are ignored. */
-function writeSectionState(state) {
-	const ls = storage();
-	if (!ls) return;
-	try {
-		ls.setItem(SECTION_STATE_KEY, JSON.stringify({
-			open: state.open === true,
-			done: state.done === true
-		}));
-	} catch {}
 }
 
 // src/client/ui/position.ts
@@ -1262,21 +1582,25 @@ function forgetForwarded(sessionId, itemIds) {
 }
 
 // src/client/ui/useForwardMarks.ts
-/** Which notes were forwarded in this session, plus the toggle-off bookkeeping. */
-function useForwardMarks(sessionId) {
-	const [forwardedIds, setForwardedIds] = react.default.useState(() => readForwardedIds(sessionId));
-	const sessionRef = react.default.useRef(sessionId ? String(sessionId) : "");
+/** Which notes of this list were forwarded, plus the toggle-off bookkeeping. */
+/**
+* Forward marks belong to the list, not to the conversation: the same note
+* stays marked while the user moves between sessions of one workspace.
+*/
+function useForwardMarks(scopeKey) {
+	const key = scopeKey ? String(scopeKey) : "";
+	const [forwardedIds, setForwardedIds] = react.default.useState(() => readForwardedIds(key));
+	const keyRef = react.default.useRef(key);
 	react.default.useEffect(() => {
-		const key = sessionId ? String(sessionId) : "";
-		if (sessionRef.current === key) return;
-		sessionRef.current = key;
+		if (keyRef.current === key) return;
+		keyRef.current = key;
 		setForwardedIds(readForwardedIds(key));
-	}, [sessionId]);
+	}, [key]);
 	/** Drop forwarded flags for notes that no longer render (deleted or cleared). */
 	const forgetForwardedItems = (itemIds) => {
 		const ids = (Array.isArray(itemIds) ? itemIds : [itemIds]).filter(Boolean);
 		if (!ids.length) return;
-		forgetForwarded(sessionId, ids);
+		forgetForwarded(key, ids);
 		setForwardedIds((current) => {
 			if (!ids.some((id) => current[id])) return current;
 			const next = { ...current };
@@ -1288,7 +1612,7 @@ function useForwardMarks(sessionId) {
 	const rememberForwarded = (item) => {
 		const id = item && item.id ? String(item.id) : "";
 		if (!id) return;
-		markForwarded(sessionId, id);
+		markForwarded(key, id);
 		setForwardedIds((current) => current[id] ? current : {
 			...current,
 			[id]: true
@@ -2591,69 +2915,9 @@ function useOutsideDismiss(panelRef, anchorRef, onClose) {
 	}, [onClose, anchorRef]);
 }
 
-// src/client/domain/forward.ts
-/** Append a note to the conversation composer (Lexical contenteditable or textarea). */
-/** Append one note to the conversation composer (Lexical contenteditable or textarea). */
-function appendToConversation(text, prefix = "") {
-	const note = String(text || "").replace(/^\s+|\s+$/g, "");
-	if (!note) return false;
-	const bullet = `- ${note}`;
-	const lead = prefix ? String(prefix).trim() : "";
-	const emptyBlock = lead ? `${lead}\n${bullet}` : bullet;
-	const visible = (node) => {
-		const rect = node.getBoundingClientRect();
-		return rect.width > 0 && rect.height > 0;
-	};
-	const specific = [...document.querySelectorAll("[data-composer-input]")].filter(visible);
-	const editor = (specific.length ? specific : [...document.querySelectorAll("[contenteditable=\"true\"][role=\"textbox\"], textarea[role=\"textbox\"]")].filter(visible))[0];
-	if (!editor) return false;
-	/** Payload for a composer whose current plain text is `current`. */
-	const payloadFor = (current) => {
-		const value = typeof current === "string" ? current : "";
-		if (!value.trim()) return emptyBlock;
-		return value.endsWith("\n") ? bullet : `\n${bullet}`;
-	};
-	if (editor.tagName === "TEXTAREA") {
-		const textarea = editor;
-		const current = textarea.value;
-		const payload = payloadFor(current);
-		Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, "value").set.call(textarea, `${current}${payload}`);
-		textarea.dispatchEvent(new Event("input", { bubbles: true }));
-		textarea.focus();
-		const end = textarea.value.length;
-		textarea.setSelectionRange(end, end);
-		return true;
-	}
-	const payload = payloadFor(typeof editor.innerText === "string" ? editor.innerText : "");
-	editor.focus();
-	try {
-		const range = document.createRange();
-		range.selectNodeContents(editor);
-		range.collapse(false);
-		const selection = window.getSelection();
-		selection.removeAllRanges();
-		selection.addRange(range);
-	} catch {}
-	try {
-		const data = new DataTransfer();
-		data.setData("text/plain", payload);
-		const event = new ClipboardEvent("paste", {
-			bubbles: true,
-			cancelable: true,
-			clipboardData: data
-		});
-		if (!editor.dispatchEvent(event)) return true;
-	} catch {}
-	try {
-		return document.execCommand("insertText", false, payload);
-	} catch {
-		return false;
-	}
-}
-
 // src/client/ui/TodoRow.ts
 /** One note: checkbox, actions, inline edit and the forwarded mark. */
-const h$9 = react.default.createElement;
+const h$10 = react.default.createElement;
 function TodoRow(props) {
 	const { item, done, say, onToast, onToggle, onStartEdit, onDelete, editing, editDraft, setEditDraft, onEditDraftChange, onFinishEdit, onCancelEdit, editRef, forwardPrefix, sendShortcut = SEND_SHORTCUT_DEFAULT, forwarded = false, onForwarded, onUnforwarded } = props;
 	const editHintKey = sendShortcut === "enter" ? "edit.hintEnter" : "edit.hintCtrlEnter";
@@ -2720,7 +2984,7 @@ function TodoRow(props) {
 			resizeEditor(node);
 		});
 	};
-	const body = editing ? h$9("div", { className: "dsh-an-edit" }, h$9("textarea", {
+	const body = editing ? h$10("div", { className: "dsh-an-edit" }, h$10("textarea", {
 		ref: setEditorRef,
 		className: "dsh-an-editInput",
 		value: editDraft,
@@ -2763,73 +3027,104 @@ function TodoRow(props) {
 			}
 		},
 		onBlur: () => onFinishEdit(item)
-	}), h$9("div", { className: "dsh-an-editActions" }, h$9("button", {
+	}), h$10("div", { className: "dsh-an-editActions" }, h$10("button", {
 		type: "button",
 		className: "dsh-an-mini dsh-an-miniPrimary",
 		onMouseDown: (event) => event.preventDefault(),
 		onClick: () => onFinishEdit(item)
-	}, say("edit.save")), h$9("button", {
+	}, say("edit.save")), h$10("button", {
 		type: "button",
 		className: "dsh-an-mini",
 		onMouseDown: (event) => event.preventDefault(),
 		onClick: onCancelEdit
-	}, say("edit.cancel")), h$9("span", {
+	}, say("edit.cancel")), h$10("span", {
 		className: "dsh-an-editHint",
 		title: say(editHintKey, { mod: MOD_LABEL })
-	}, say(editHintKey, { mod: MOD_LABEL })))) : h$9("div", {
+	}, say(editHintKey, { mod: MOD_LABEL })))) : h$10("div", {
 		className: "dsh-an-text",
 		title: say("item.editHint"),
 		onDoubleClick: () => onStartEdit(item)
 	}, item.text);
 	const checked = done === true;
-	return h$9("li", { className: done ? "dsh-an-row dsh-an-rowDone" : "dsh-an-row" }, h$9("button", {
+	return h$10("li", { className: done ? "dsh-an-row dsh-an-rowDone" : "dsh-an-row" }, h$10("button", {
 		type: "button",
 		className: "dsh-an-check",
 		role: "checkbox",
 		"aria-checked": checked ? "true" : "false",
 		"aria-label": say(done ? "item.markOpen" : "item.markDone"),
 		onClick: toggleCheck
-	}, h$9("span", { className: "dsh-an-checkCircle" }, checked ? h$9(IconCheck, { size: 9 }) : null)), h$9("div", { className: "dsh-an-itemBody" }, body, editing ? null : h$9("div", { className: "dsh-an-rowFoot" }, h$9("span", {
+	}, h$10("span", { className: "dsh-an-checkCircle" }, checked ? h$10(IconCheck, { size: 9 }) : null)), h$10("div", { className: "dsh-an-itemBody" }, body, editing ? null : h$10("div", { className: "dsh-an-rowFoot" }, h$10("span", {
 		className: "dsh-an-meta",
 		title: metaLabel(item, say, props.localeId)
-	}, metaLabel(item, say, props.localeId)), h$9("div", { className: "dsh-an-actions" }, withTooltip(say("item.copy"), h$9("button", {
+	}, metaLabel(item, say, props.localeId)), h$10("div", { className: "dsh-an-actions" }, withTooltip(say("item.copy"), h$10("button", {
 		type: "button",
 		className: "dsh-an-iconBtn",
 		"aria-label": say("item.copy"),
 		"aria-busy": pending === "copy" ? "true" : "false",
 		"data-loading": pending === "copy" ? "true" : void 0,
 		onClick: copy
-	}, h$9(IconCopy, null))), done ? null : withTooltip(say(forwarded ? "item.forwarded" : "item.forward"), h$9("button", {
+	}, h$10(IconCopy, null))), done ? null : withTooltip(say(forwarded ? "item.forwarded" : "item.forward"), h$10("button", {
 		type: "button",
 		className: "dsh-an-iconBtn",
 		"aria-label": say(forwarded ? "item.forwarded" : "item.forward"),
 		"data-forwarded": forwarded ? "true" : void 0,
 		onClick: forward
-	}, h$9(IconForward, null), forwarded ? h$9("span", {
+	}, h$10(IconForward, null), forwarded ? h$10("span", {
 		className: "dsh-an-forwardMark",
 		"aria-hidden": true
-	}, h$9(IconCheck, { size: 8 })) : null)), withTooltip(say("item.edit"), h$9("button", {
+	}, h$10(IconCheck, { size: 8 })) : null)), withTooltip(say("item.edit"), h$10("button", {
 		type: "button",
 		className: "dsh-an-iconBtn",
 		"aria-label": say("item.edit"),
 		onClick: () => onStartEdit(item)
-	}, h$9(IconPencil, null))), withTooltip(say("item.delete"), h$9("button", {
+	}, h$10(IconPencil, null))), withTooltip(say("item.delete"), h$10("button", {
 		type: "button",
 		className: "dsh-an-iconBtn dsh-an-iconBtnDanger",
 		"aria-label": say("item.delete"),
 		onClick: () => onDelete(item)
-	}, h$9(IconTrash, null)))))));
+	}, h$10(IconTrash, null)))))));
+}
+
+// src/client/ui/ScopeSwitch.tsx
+/** Segmented switch between the workspace list and the session list. */
+const h$9 = react.default.createElement;
+function ScopeSwitch(props) {
+	const { say, mode, onChange } = props;
+	const options = [{
+		value: "workspace",
+		label: say("scope.workspace")
+	}, {
+		value: "session",
+		label: say("scope.session")
+	}];
+	return h$9("div", {
+		className: "dsh-an-scope",
+		role: "group",
+		"aria-label": say("scope.label")
+	}, options.map((option) => h$9("button", {
+		key: option.value,
+		type: "button",
+		className: "dsh-an-scopeBtn",
+		"data-scope-mode": option.value,
+		"data-active": mode === option.value ? "true" : void 0,
+		"aria-pressed": mode === option.value,
+		onClick: () => onChange(option.value)
+	}, option.label)));
 }
 
 // src/client/ui/PanelHead.ts
-/** Panel title, counts and the settings/close actions. */
+/** Panel title, counts, the list-scope switch and the settings/close actions. */
 const h$8 = react.default.createElement;
 function PanelHead(props) {
-	const { say, openCount, total, showSettings, onToggleSettings, onClose, newerVersion } = props;
+	const { say, openCount, total, showSettings, onToggleSettings, onClose, newerVersion, scopeMode, canUseWorkspace, onScopeChange } = props;
 	return h$8("div", { className: "dsh-an-popHead" }, h$8("div", { className: "dsh-an-popTitleLine" }, h$8("div", { className: "dsh-an-popTitle" }, say("popover.title")), h$8("p", { className: "dsh-an-popMeta" }, say("popover.count", {
 		open: openCount,
 		total
-	}))), h$8("div", { className: "dsh-an-popActions" }, withTooltip(say("settings.open"), h$8("button", {
+	})), canUseWorkspace ? h$8(ScopeSwitch, {
+		say,
+		mode: scopeMode,
+		onChange: onScopeChange
+	}) : null), h$8("div", { className: "dsh-an-popActions" }, withTooltip(say("settings.open"), h$8("button", {
 		type: "button",
 		className: "dsh-an-settingsBtn",
 		"data-active": showSettings ? "true" : void 0,
@@ -3193,7 +3488,7 @@ function NoteList(props) {
 /**
 * The floating notes panel.
 *
-* State, handlers and effects for one session's notes; the markup lives in the
+* State, handlers and effects for the list in view; the markup lives in the
 * sibling components, the geometry in usePanelGeometry and the store in
 * useSessionMemoStore.
 */
@@ -3202,11 +3497,22 @@ function MemoPopover(props) {
 	const say = props.say;
 	const localeId = props.localeId;
 	const sessionId = props.sessionId || "";
+	/** The header switch remembers its choice; a workspace-less session stays session-scoped. */
+	const [mode, setMode] = react.default.useState(() => readScopeMode());
+	react.default.useEffect(() => {
+		const onStorage = (event) => {
+			if (event && event.key === "dsh.aside-note.scope-mode") setMode(readScopeMode());
+		};
+		window.addEventListener("storage", onStorage);
+		return () => window.removeEventListener("storage", onStorage);
+	}, []);
+	const canUseWorkspace = Boolean(workspaceScopeForSession(sessionId));
+	const scope = scopeForSession(sessionId, mode);
 	/** Settled outcomes go to the frame-wide toast host, not to inline marks. */
 	const report = typeof props.onToast === "function" ? props.onToast : () => {};
-	const { record, syncError, commit } = useSessionMemoStore(props.sessionId);
+	const { record, syncError, commit } = useMemoStore(scope);
 	const { sectionsRef, showOpen, showDone, toggleOpen, toggleDone, applySections } = useSections();
-	const { forwardedIds, rememberForwarded, unrememberForwarded, forgetForwardedItems } = useForwardMarks(sessionId);
+	const { forwardedIds, rememberForwarded, unrememberForwarded, forgetForwardedItems } = useForwardMarks(scopeKey(scope));
 	const { showSettings, setShowSettings, sendShortcut, chooseShortcut, forwardPrefix, changeForwardPrefix, prefixRef } = usePanelSettings();
 	const update = useUpdateCenter(localeId);
 	const newerVersion = update.latestVersion;
@@ -3241,6 +3547,19 @@ function MemoPopover(props) {
 		showDone
 	});
 	useOutsideDismiss(panelRef, props.anchorRef, props.onClose);
+	const chooseScope = (next) => {
+		if (next === mode) return;
+		if (next === "workspace" && !canUseWorkspace) return;
+		if (next === "workspace") {
+			const workspace = scopeForSession(sessionId, "workspace");
+			if (workspace.kind === "workspace") ensureWorkspaceRecord(workspace.id, workspace.sessionIds);
+		}
+		writeScopeMode(next);
+		setMode(next);
+		cancelEdit();
+		dismissClearConfirm();
+		notifyTodoChange();
+	};
 	const clearDone = () => {
 		const clearedItems = items.filter((item) => item.done);
 		if (!commit((currentItems) => currentItems.filter((item) => !item.done))) {
@@ -3310,7 +3629,10 @@ function MemoPopover(props) {
 		showSettings,
 		onToggleSettings: () => setShowSettings((value) => !value),
 		onClose: props.onClose,
-		newerVersion
+		newerVersion,
+		scopeMode: mode,
+		canUseWorkspace,
+		onScopeChange: chooseScope
 	}), showSettings ? h$1(SettingsPanel, {
 		say,
 		sendShortcut,
@@ -3359,7 +3681,7 @@ function MemoPopover(props) {
 	}), h$1("div", {
 		className: "dsh-an-popFoot",
 		role: "status"
-	}, h$1("span", { className: syncError ? "dsh-an-error" : void 0 }, say(syncError ? "storage.failed" : "popover.storage"))));
+	}, h$1("span", { className: syncError ? "dsh-an-error" : void 0 }, say(syncError ? "storage.failed" : scope.kind === "workspace" ? "popover.shared" : "popover.storage"))));
 	return react_dom.default.createPortal(content, document.body);
 }
 
@@ -3373,6 +3695,8 @@ function MemoPopover(props) {
 * in their own modules; P2 splits the remaining UI out of this file.
 */
 const h = react.default.createElement;
+/** Hosts without ui-workspace (and the bundle test) keep the session list. */
+const useNoWorkspace = () => null;
 /** Compact floating memo list, anchored to the entry that opened it. */
 function apply(ctx) {
 	const locale = ctx.get("locale");
@@ -3420,6 +3744,9 @@ function apply(ctx) {
 			return;
 		}
 		closeMemoPopover();
+		const scope = scopeForSession(sessionId, readScopeMode());
+		if (scope.kind === "workspace") ensureWorkspaceRecord(scope.id, scope.sessionIds);
+		setForwardTarget(sessionId);
 		const container = document.createElement("div");
 		container.dataset.dshMemoPopoverRoot = "true";
 		document.body.appendChild(container);
@@ -3452,13 +3779,20 @@ function apply(ctx) {
 	ctx.effect(() => headerEntry.attach(() => closeMemoPopover()), "dsh-aside-note: right-side entry");
 	function BoundSessionCapture(props) {
 		const sessionId = props.sessionId || "";
+		const snapshot = (typeof props.useWorkspaces === "function" ? props.useWorkspaces : useNoWorkspace)((state) => state);
+		const workspace = react.default.useMemo(() => {
+			return (snapshot && Array.isArray(snapshot.items) ? snapshot.items : []).find((candidate) => candidate && Array.isArray(candidate.sessionIds) && candidate.sessionIds.includes(sessionId)) || null;
+		}, [snapshot, sessionId]);
 		react.default.useEffect(() => {
+			const changed = bindWorkspace(sessionId, workspace);
 			if (activeSessionId !== sessionId) {
 				activeSessionId = sessionId;
+				setForwardTarget(sessionId);
 				closeMemoPopover();
-			}
+			} else if (changed) closeMemoPopover();
+			if (workspace) ensureWorkspaceRecord(workspace.workspaceId, workspace.sessionIds);
 			refreshHeaderEntry();
-		}, [sessionId]);
+		}, [sessionId, workspace]);
 		return null;
 	}
 	ctx.slots.inject("conversation.composer.dock", () => ctx.slots.register({

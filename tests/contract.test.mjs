@@ -882,7 +882,7 @@ test('clicking a forwarded note removes the mark instead of forwarding again', (
   assert.match(client, /const unrememberForwarded = item => \{/)
   assert.match(client, /unrememberForwarded = item => \{\n\s+const id = [^\n]+\n\s+if \(!id\) return\n\s+forgetForwardedItems\(id\)/)
   assert.match(client, /onUnforwarded: unrememberForwarded/)
-  assert.match(client, /forgetForwardedItems = itemIds => \{[\s\S]*?forgetForwarded\(sessionId, ids\)[\s\S]*?setForwardedIds\(/)
+  assert.match(client, /forgetForwardedItems = itemIds => \{[\s\S]*?forgetForwarded\(key, ids\)[\s\S]*?setForwardedIds\(/)
   // Removing the mark never touches the checkbox: the row still toggles open/done only.
   assert.match(client, /const toggleCheck = \(\) => onToggle\(item\)/)
 })
