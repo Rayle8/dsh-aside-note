@@ -47,6 +47,19 @@ export async function connect() {
   const session = new Session(ws)
   await session.send('Page.enable')
   await session.send('Runtime.enable')
+  // Pin the content box and DPR when the host window cannot be sized exactly
+  // (Windows headless Chrome subtracts frame pixels). Same numbers run.sh gets
+  // from --window-size/--force-device-scale-factor on macOS, so crop.py's 4x
+  // constants and the 1440x900 layout still hold.
+  const viewport = /^(\d+)x(\d+)@(\d+(?:\.\d+)?)$/.exec(process.env.SHOT_VIEWPORT || '')
+  if (viewport) {
+    await session.send('Emulation.setDeviceMetricsOverride', {
+      width: Number(viewport[1]),
+      height: Number(viewport[2]),
+      deviceScaleFactor: Number(viewport[3]),
+      mobile: false,
+    })
+  }
   return session
 }
 

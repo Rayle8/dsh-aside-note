@@ -10,7 +10,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { connect, evaluate, shot, sleep } from './lib/cdp.mjs'
-import { NOTES_KEY, anchorExpression } from './lib/notes.mjs'
+import { anchorExpression, clearStoresExpression, readStoresExpression, restoreStoresExpression } from './lib/notes.mjs'
 
 const theme = process.env.THEME === 'dark' ? 'dark' : 'light'
 const port = process.env.PORT || 61399
@@ -151,14 +151,8 @@ async function captureFeatures() {
   await sleep(400)
 
   // Empty state: drop the notes for a moment, then put them back.
-  const saved = await evaluate(session, `localStorage.getItem(${JSON.stringify(NOTES_KEY)})`)
-  await evaluate(session, `(() => {
-    const key = ${JSON.stringify(NOTES_KEY)}
-    const db = JSON.parse(localStorage.getItem(key))
-    for (const s of Object.values(db.sessions)) s.items = []
-    localStorage.setItem(key, JSON.stringify(db))
-    return true
-  })()`)
+  const saved = await evaluate(session, readStoresExpression())
+  await evaluate(session, clearStoresExpression())
   await session.send('Page.reload')
   await waitApp()
   await clickText('继续')
@@ -169,7 +163,7 @@ async function captureFeatures() {
   await capture('empty')
   await closePanel()
   await restore()
-  await evaluate(session, `localStorage.setItem(${JSON.stringify(NOTES_KEY)}, ${JSON.stringify(saved)})`)
+  await evaluate(session, restoreStoresExpression(saved))
 
   fs.writeFileSync(path.join(outDir, `${theme}-rects.json`), JSON.stringify(rects, null, 2))
 }

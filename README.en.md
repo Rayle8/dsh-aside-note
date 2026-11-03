@@ -111,7 +111,7 @@ Click a note's forward button to append it to the current chat input as a list i
 
 ## Feature screenshots
 
-Five states shot from the same session and the same set of notes, in both themes:
+Five states shot from the same demo session and the same set of notes, in both themes:
 
 <table>
   <tr>

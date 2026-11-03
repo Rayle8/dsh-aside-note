@@ -12,6 +12,7 @@ The 1.0.0–2.0.1 iterations were development builds of the same plugin; the 2.x
 - **Forward to the open conversation:** forwarding a shared note appends it to the composer of the conversation currently on screen, not the one the panel was opened from.
 - **Workspace / session switch:** the panel header switches between the workspace list and the current session's list; the choice is remembered across panel openings.
 - **Separate storage keys:** session notes stay under `dsh.aside-note` with their original shape, while workspace notes live under `dsh.aside-note.workspaces`; adding the workspace list never rewrites existing session data.
+- **README screenshots:** re-shot for 1.1.0 — both themes now show the workspace/session switch, the shared-workspace footer and the live badge count, from one batch of notes; `tools/screenshots/run.ps1` repeats the run on Windows.
 <!-- app-update-notes:en:end -->
 
 <!-- app-update-notes:zh:start -->
@@ -20,6 +21,7 @@ The 1.0.0–2.0.1 iterations were development builds of the same plugin; the 2.x
 - **转发到当前会话：** 共享便笺会追加到当前屏幕上打开的会话输入框，而不是面板最初打开时所在的会话。
 - **工作区 / 会话切换：** 面板顶部可在工作区清单与当前会话清单之间切换，选择会被记住，下次打开沿用。
 - **独立存储键：** 会话便笺仍保存在 `dsh.aside-note`，结构不变；工作区清单使用 `dsh.aside-note.workspaces`，新增工作区不会改写原有会话数据。
+- **README 截图：** 按 1.1.0 界面重拍——明暗两套都带上「工作区 / 会话」切换、工作区共享页脚与入口角标，且出自同一批便笺；Windows 上可用 `tools/screenshots/run.ps1` 复现。
 <!-- app-update-notes:zh:end -->
 
 ## 1.0.3
