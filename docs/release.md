@@ -16,6 +16,8 @@
 
 需要并行开发时，每个分支一个独立 worktree；合并后执行 `git worktree remove <path>` 并删除分支。
 
+标签只有两类：`v<version>` 是发布标签，只能由 `npm run release` 创建、只能指向 release 提交；`docs/<version>` 是文档/截图的补充标记，指向发版后追加的截图提交，不触发发布 workflow（workflow 只认 `v*`），也不表示新版本。
+
 ## 日常开发循环
 
 ```bash
@@ -34,7 +36,7 @@ git push -u origin feat/xxx
 - `client/client.js` 是**提交进仓库的构建产物**，必须与 `src/client/**` 出现在同一个提交里；CI 会重新 build 并检查 `git diff client/`，不一致直接失败。
 - 不要手改 `client/client.js`，构建会覆盖它。
 - `package.json` 的 `version` 与 `src/client/constants.ts` 的 `PLUGIN_VERSION` 必须一致，契约测试会检查。
-- UI 改动先在隔离的 DSH profile 里用 `npm pack` 的 tgz 做一次真机冒烟；截图按 [截图与预览图 SOP](./screenshot-sop.md) 重拍。
+- UI 改动先在隔离的 DSH profile 里用 `npm pack` 的 tgz 做一次真机冒烟；**发版之前**按 [截图与预览图 SOP](./screenshot-sop.md) 重拍 README 截图并单独提交（`docs: reshoot …`），这样 `release: <version>` 提交与随后的 `v<version>` tag 自带新图。不要等发完版再补图——那只能移动已发布的 tag。
 
 ## 版本策略
 
@@ -52,6 +54,7 @@ git push -u origin feat/xxx
 发布只改 `## next-released`，不要手写 `## X.Y.Z`：
 
 ```bash
+# 0. 发版前先按截图 SOP 重拍并提交（docs: reshoot …），让 release 提交带上新图
 # 1. 确认 next-released 下已经写好本次要发布的内容
 # 2. 一条命令完成版本号、CHANGELOG、检查、提交和 tag
 npm run release -- 0.10.0

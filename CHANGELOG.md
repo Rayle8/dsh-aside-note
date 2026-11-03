@@ -4,6 +4,16 @@ The 1.0.0–2.0.1 iterations were development builds of the same plugin; the 2.x
 
 ## next-released
 
+<!-- app-update-notes:en:start -->
+### Changed
+- **Screenshots before release:** the screenshot SOP now runs before `npm run release`, so a `v<version>` tag ships the README images for that build; post-release screenshot updates are marked with a `docs/<version>` tag instead of a new version.
+<!-- app-update-notes:en:end -->
+
+<!-- app-update-notes:zh:start -->
+### 变更
+- **发版前截图：** 截图 SOP 改为在 `npm run release` 之前执行，`v<version>` tag 因此自带该版本的 README 图片；发版后的补图用 `docs/<version>` 标记，不再为此发版。
+<!-- app-update-notes:zh:end -->
+
 ## 1.1.0
 
 <!-- app-update-notes:en:start -->

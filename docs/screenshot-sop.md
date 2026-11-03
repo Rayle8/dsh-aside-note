@@ -2,6 +2,8 @@
 
 本文件固定本插件的截图产出流程：从一套**隔离的 DSH 环境**里生成演示会话，拍下面板状态，再裁切成 README 用图。目标是任何人（或 agent）照此执行都能得到同一批图，且图中不出现任何其它工程的信息。
 
+**什么时候做：发版之前。** 截图是发布内容的一部分，必须在 `npm run release -- <version>` 之前提交，让 `release: <version>` 提交以及由它生成的 `v<version>` tag 本身就带着新图——这样任何人 checkout 或浏览该 tag，看到的 README 就是当前版本的界面。发版之后才补图，就只能移动已经发布的 tag（例如把 `v1.1.0` 从 release 提交前移到补图提交），能不做就不做。万一确实需要给某个已发布版本补文档或截图，用 `docs/<version>` 形式的标记标签指住补充提交，**不要**为此重发版本或改 `package.json`。
+
 配套脚本在 [`tools/screenshots/`](../tools/screenshots/)：
 
 | 文件 | 作用 |
