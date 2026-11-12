@@ -15,6 +15,8 @@
 
 ## next-released
 
+## 1.1.1
+
 - **发版前截图：** 截图 SOP 改为在 `npm run release` 之前执行，`v<version>` tag 因此自带该版本的 README 图片；发版后的补图用 `docs/<version>` 标记，不再为此发版。
 
 ## 1.1.0

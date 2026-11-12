@@ -6,6 +6,8 @@ This file records user-visible changes only. Screenshots, marketplace listing ma
 
 ## next-released
 
+## 1.1.1
+
 <!-- app-update-notes:en:start -->
 ### Changed
 - **Update:** when the market refuses an update because an agent is running, the card now names that refusal and hands over the terminal command plus **Copy update prompt**, the same way it already did for a busy or missing market. The command does not go through the market, so it is the way to update while an agent runs.
