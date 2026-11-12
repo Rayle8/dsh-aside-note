@@ -3,7 +3,8 @@ import React from 'react'
 import { MAX_TEXT } from '../constants'
 import { clearEditDraft, readEditDraft } from '../storage/drafts'
 
-export function useNoteActions({ sessionId, commit, report, forgetForwardedItems }) {
+export function useNoteActions({ draftKey, commit, report, forgetForwardedItems }) {
+  const key = draftKey ? String(draftKey) : ''
   const [editingId, setEditingId] = React.useState(null)
   const [editDraft, setEditDraft] = React.useState('')
   const editRef = React.useRef(null)
@@ -39,7 +40,7 @@ export function useNoteActions({ sessionId, commit, report, forgetForwardedItems
     if (item.id === editingId) {
       setEditingId(null)
       setEditDraft('')
-      clearEditDraft(sessionId, item.id)
+      clearEditDraft(key, item.id)
     }
   }
 
@@ -52,14 +53,14 @@ export function useNoteActions({ sessionId, commit, report, forgetForwardedItems
       return
     }
     report('deleted')
-    clearEditDraft(sessionId, item.id)
+    clearEditDraft(key, item.id)
     forgetForwardedItems(item.id)
     resetEditing(item.id)
   }
 
   const startEdit = item => {
     cancelEditRef.current = false
-    const saved = readEditDraft(sessionId, item.id)
+    const saved = readEditDraft(key, item.id)
     setEditingId(item.id)
     setEditDraft(saved === null ? item.text : saved)
   }
@@ -84,7 +85,7 @@ export function useNoteActions({ sessionId, commit, report, forgetForwardedItems
     }
     setEditingId(null)
     setEditDraft('')
-    clearEditDraft(sessionId, item.id)
+    clearEditDraft(key, item.id)
   }
 
   const cancelEdit = () => {
@@ -92,8 +93,19 @@ export function useNoteActions({ sessionId, commit, report, forgetForwardedItems
     const currentId = editingId
     setEditingId(null)
     setEditDraft('')
-    if (currentId) clearEditDraft(sessionId, currentId)
+    if (currentId) clearEditDraft(key, currentId)
   }
 
-  return { editingId, editDraft, setEditDraft, editRef, startEdit, finishEdit, cancelEdit, toggle, remove }
+  /**
+   * Close the editor without discarding the stored draft. Switching the
+   * workspace/session scope only changes which list is shown; the text belongs
+   * to the draft scope, so reopening the row must restore it.
+   */
+  const stopEditing = () => {
+    cancelEditRef.current = true
+    setEditingId(null)
+    setEditDraft('')
+  }
+
+  return { editingId, editDraft, setEditDraft, editRef, startEdit, finishEdit, cancelEdit, stopEditing, toggle, remove }
 }

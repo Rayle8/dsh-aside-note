@@ -86,7 +86,7 @@ Click a note's forward button to append it to the current chat input as a list i
 
 ### Small details for everyday use
 
-- **Saved drafts**: close the panel and pick up where you left off when you reopen it.
+- **Saved drafts**: close the panel and pick up where you left off when you reopen it; conversations in one workspace share the same draft, so switching conversations does not mean retyping.
 - **Completed history**: separate open and completed sections, with creation and completion times.
 - **Adjustable panel**: resize the width and height, with your preferences remembered.
 - **Fits into DSH**: follows the light/dark theme and Chinese/English language settings.
@@ -102,7 +102,7 @@ Click a note's forward button to append it to the current chat input as a list i
 - **Entry and panel**: an icon button at the top right badges the open count; clicking it opens a fixed panel aligned to the entry, which shifts left of the DSH right sidebar and closes when you switch sessions.
 - **Note actions**: add, complete, copy, edit by double-click or pencil, and delete; clearing completed notes asks for confirmation, and completed notes expand for review.
 - **One-click forward**: each note is appended to the **currently open conversation's** composer as a `-` item, with the customizable prefix written only when the composer is empty — nothing is sent automatically. The forward button gains a check per list, and clicking it again removes the mark.
-- **Remembered state**: add and edit drafts are saved per session and restored when the panel reopens; the open/completed expand state and the Workspace/Session scope choice are remembered too.
+- **Remembered state**: add and edit drafts are saved per workspace (per session outside a workspace), so switching conversations or the Workspace/Session switch never loses them; submitting still writes the list selected at that moment. Drafts are restored when the panel reopens, and the open/completed expand state plus the scope choice are remembered too.
 - **Panel size**: drag the left edge for width and the bottom handle for height, double-click either to reset; both persist in the browser.
 - **List regions**: **Open** and **Completed** each keep a sticky header and its own scroll, and expanding completed never compresses open; completed notes show creation and completion times, newest completion first.
 - **Settings**: send shortcut (Enter or ⌘/Ctrl+Enter), forward prefix, and About (version, check, author, source), saved automatically.
@@ -206,6 +206,8 @@ The list shared by one workspace lives separately under `dsh.aside-note.workspac
 ```
 
 `workspaces` holds the list shared by one workspace; `seededSessionIds` remembers which member sessions were already folded in, so notes are merged once and never resurrect after a delete. Session data stays under the original `dsh.aside-note` key and workspace data is never written back into it; sessions without a workspace only use their `sessions` record. The panel header's scope choice lives separately under `dsh.aside-note.scope-mode` (`workspace` or `session`, default `workspace`).
+
+Unsaved add/edit drafts live under `dsh.aside-note.drafts`: sessions in one workspace share a single workspace draft, so switching conversations or the scope never loses text; the submitted note goes to the workspace list or the session list according to the scope selected at that moment. Sessions outside a workspace keep their own draft. The first time a workspace is opened after upgrading, the current session's old draft is folded into the shared one.
 
 Therefore:
 

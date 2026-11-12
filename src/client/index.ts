@@ -12,9 +12,10 @@ import ReactDOMClient from 'react-dom/client'
 import CSS from './styles/panel.css?inline'
 import { NS, PANEL_ID } from './constants'
 import { DICT, fill, makeSay } from './i18n'
-import { bindWorkspace, scopeForSession } from './scope'
+import { bindWorkspace, draftKeyForSession, scopeForSession, workspaceScopeForSession } from './scope'
 import { setForwardTarget } from './domain/forward'
 import { readScopeMode } from './storage/prefs'
+import { ensureDraftScope } from './storage/drafts'
 import { ensureWorkspaceRecord } from './storage/workspace'
 import { createToastSeat } from './ui/toastSeat'
 import { createHeaderEntry } from './ui/headerEntry'
@@ -139,6 +140,10 @@ function apply(ctx: DshClientCtx) {
     // the panel reads it; the first open is where that merge happens.
     const scope = scopeForSession(sessionId, readScopeMode())
     if (scope.kind === 'workspace') ensureWorkspaceRecord(scope.id, scope.sessionIds)
+    // Drafts belong to the workspace even while the session list is showing,
+    // so fold a pre-workspace draft in before the panel reads its composer.
+    const workspace = workspaceScopeForSession(sessionId)
+    if (workspace) ensureDraftScope(draftKeyForSession(sessionId), sessionId, workspace.sessionIds)
     setForwardTarget(sessionId)
     const container = document.createElement('div')
     container.dataset.dshMemoPopoverRoot = 'true'

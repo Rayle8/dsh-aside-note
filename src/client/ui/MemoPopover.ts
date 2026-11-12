@@ -8,7 +8,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { PANEL_DEFAULT_WIDTH, SCOPE_MODE_KEY } from '../constants'
-import { scopeForSession, scopeKey, workspaceScopeForSession } from '../scope'
+import { draftKeyForSession, scopeForSession, scopeKey, workspaceScopeForSession } from '../scope'
 import { notifyTodoChange } from '../storage/events'
 import { readScopeMode, writeScopeMode } from '../storage/prefs'
 import { ensureWorkspaceRecord } from '../storage/workspace'
@@ -50,6 +50,8 @@ export function MemoPopover(props) {
   }, [])
   const canUseWorkspace = Boolean(workspaceScopeForSession(sessionId))
   const scope = scopeForSession(sessionId, mode)
+  // Drafts follow the workspace, not the tab; the writer below still follows `scope`.
+  const draftKey = draftKeyForSession(sessionId)
   /** Settled outcomes go to the frame-wide toast host, not to inline marks. */
   const report = typeof props.onToast === 'function' ? props.onToast : () => {}
   const { record, syncError, commit } = useMemoStore(scope)
@@ -60,9 +62,9 @@ export function MemoPopover(props) {
   // registry answer is cached for an hour across panel opens.
   const update = useUpdateCenter(localeId)
   const newerVersion = update.latestVersion
-  const { draft, addRef, composingRef, add, onDraftChange, onDraftKeyDown } = useComposerDraft({ sessionId, commit, report, sendShortcut })
-  const { editingId, editDraft, setEditDraft, editRef, startEdit, finishEdit, cancelEdit, toggle, remove } = useNoteActions({
-    sessionId,
+  const { draft, addRef, composingRef, add, onDraftChange, onDraftKeyDown } = useComposerDraft({ draftKey, commit, report, sendShortcut })
+  const { editingId, editDraft, setEditDraft, editRef, startEdit, finishEdit, cancelEdit, stopEditing, toggle, remove } = useNoteActions({
+    draftKey,
     commit,
     report,
     forgetForwardedItems,
@@ -104,7 +106,9 @@ export function MemoPopover(props) {
     // Leaving a list abandons its inline editors and pending clear confirmation.
     writeScopeMode(next)
     setMode(next)
-    cancelEdit()
+    // The draft is shared by both scopes, so closing the editor here must not
+    // discard what was typed; reopening the row restores it.
+    stopEditing()
     dismissClearConfirm()
     notifyTodoChange()
   }
@@ -135,7 +139,7 @@ export function MemoPopover(props) {
     editing: editingId === item.id,
     editDraft,
     setEditDraft,
-    onEditDraftChange: value => saveEditDraft(sessionId, item.id, value),
+    onEditDraftChange: value => saveEditDraft(draftKey, item.id, value),
     onFinishEdit: finishEdit,
     onCancelEdit: cancelEdit,
     editRef,

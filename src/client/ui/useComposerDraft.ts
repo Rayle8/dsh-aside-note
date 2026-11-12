@@ -1,11 +1,12 @@
 /** The add box: draft persistence, auto-grow, send chords and newline insertion. */
 import React from 'react'
 import { MAX_TEXT, isSendModifier } from '../constants'
-import { clearAddDraft, readSessionDrafts, saveAddDraft } from '../storage/drafts'
+import { clearAddDraft, readScopeDrafts, saveAddDraft } from '../storage/drafts'
 import { uid } from '../domain/id'
 
-export function useComposerDraft({ sessionId, commit, report, sendShortcut }) {
-  const [draft, setDraft] = React.useState(() => readSessionDrafts(sessionId).add)
+export function useComposerDraft({ draftKey, commit, report, sendShortcut }) {
+  const key = draftKey ? String(draftKey) : ''
+  const [draft, setDraft] = React.useState(() => readScopeDrafts(key).add)
   const addRef = React.useRef(null)
   const composingRef = React.useRef(false)
 
@@ -45,7 +46,7 @@ export function useComposerDraft({ sessionId, commit, report, sendShortcut }) {
       return
     }
     setDraft('')
-    clearAddDraft(sessionId)
+    clearAddDraft(key)
   }
 
   const insertDraftNewline = node => {
@@ -54,7 +55,7 @@ export function useComposerDraft({ sessionId, commit, report, sendShortcut }) {
     const end = node.selectionEnd === null ? start : node.selectionEnd
     const next = `${node.value.slice(0, start)}\n${node.value.slice(end)}`
     setDraft(next)
-    saveAddDraft(sessionId, next)
+    saveAddDraft(key, next)
     window.requestAnimationFrame(() => {
       node.selectionStart = start + 1
       node.selectionEnd = start + 1
@@ -65,7 +66,7 @@ export function useComposerDraft({ sessionId, commit, report, sendShortcut }) {
   const onDraftChange = event => {
     const value = event.target.value
     setDraft(value)
-    saveAddDraft(sessionId, value)
+    saveAddDraft(key, value)
     resizeAdd(event.target)
   }
 

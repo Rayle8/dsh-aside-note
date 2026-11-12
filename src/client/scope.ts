@@ -72,3 +72,17 @@ export function scopeKey(scope) {
   if (!scope || !scope.id) return ''
   return scope.kind === 'workspace' ? `ws:${scope.id}` : String(scope.id)
 }
+
+/**
+ * Stable key for the drafts of a conversation.
+ *
+ * Drafts belong to the workspace, not to the tab the panel is showing: every
+ * member conversation shares one buffer, so neither switching conversations
+ * nor switching the workspace/session scope strands half-typed text. The save
+ * itself still uses the scope selected at that moment. A session outside a
+ * workspace keeps its own buffer.
+ */
+export function draftKeyForSession(sessionId) {
+  const workspace = workspaceScopeForSession(sessionId)
+  return workspace ? scopeKey(workspace) : text(sessionId)
+}

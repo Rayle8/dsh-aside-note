@@ -10,12 +10,14 @@ This file records user-visible changes only. Screenshots, marketplace listing ma
 ### Changed
 - **Update:** when the market refuses an update because an agent is running, the card now names that refusal and hands over the terminal command plus **Copy update prompt**, the same way it already did for a busy or missing market. The command does not go through the market, so it is the way to update while an agent runs.
 - **Update copy:** the card calls the in-app update **automatic update** instead of naming the plugin market — “the market is running another update” read as an internal detail the user cannot act on.
+- **Drafts follow the workspace:** unsaved add and edit drafts are shared by every conversation in a workspace, so switching conversations or the Workspace/Session switch never loses half-typed text; submitting still writes the list selected at that moment. Sessions outside a workspace keep their own draft, and the first workspace open after upgrading folds the current session's old draft into the shared one.
 <!-- app-update-notes:en:end -->
 
 <!-- app-update-notes:zh:start -->
 ### 变更
 - **更新：** 市场因「有 agent 正在运行」拒绝更新时，卡片现在会说明这一点，并像忙碌/无市场那样给出终端命令与「拷贝更新提示词」。该命令不经过市场，所以 agent 运行期间也能更新。
 - **更新文案：** 卡片把应用内更新称为**自动更新**，不再直呼插件市场——「市场正在执行另一个更新」读起来像用户无法处置的内部细节。
+- **草稿跟随工作区：** 工作区内所有会话共用一份新增/编辑草稿，切换会话或在「工作区 / 会话」之间切换都不会丢字；提交时仍写入当前选中的清单。工作区之外的会话按会话保存草稿，升级后首次打开工作区会把当前会话的旧草稿并入共享草稿。
 <!-- app-update-notes:zh:end -->
 
 ## 1.1.0

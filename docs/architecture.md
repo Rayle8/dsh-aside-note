@@ -65,19 +65,21 @@ docs/assets/             # README 截图（preview-* 与 features/）
 
 ## 4. 数据模型
 
-所有数据在**当前浏览器**的 `localStorage`。同一个工作区默认共享一份清单，面板头部可在工作区清单与当前会话清单之间切换；没有工作区的会话只有会话清单。
+所有数据在**当前浏览器**的 `localStorage`。同一个工作区默认共享一份清单与一份未提交草稿，面板头部可在工作区清单与当前会话清单之间切换；没有工作区的会话只有会话清单。
 
 | 键 | 内容 |
 | --- | --- |
 | `dsh.aside-note` | `{ version: 1, sessions: { [sessionId]: { sessionId, updatedAt, items: Note[] } } }`（会话键保持原结构） |
 | `dsh.aside-note.workspaces` | `{ version: 1, workspaces: { [workspaceId]: { workspaceId, updatedAt, items: Note[], seededSessionIds: string[] } } }` |
 | `dsh.aside-note.scope-mode` | `workspace`（工作区，默认）或 `session`（当前会话） |
-| `dsh.aside-note.drafts` | `{ version: 1, sessions: { [sessionId]: { add, edits: { [itemId]: text } } } }` |
+| `dsh.aside-note.drafts` | `{ version: 1, sessions: { [draftKey]: { add, edits: { [itemId]: text } } } }`；`draftKey` 为 `ws:<workspaceId>`（工作区共享）或会话 ID |
 | `dsh.aside-note.forwarded` | `{ version: 1, sessions: { [listKey]: { [itemId]: true } } }`；`listKey` 为 `ws:<workspaceId>` 或会话 ID |
 | `dsh.aside-note.sections` | `{ open, done }` |
 | `dsh.aside-note.panel-width` / `panel-height` | 数字；高度 `0` 表示内容自适应 |
 | `dsh.aside-note.send-shortcut` | `enter` 或 `ctrl-enter` |
 | `dsh.aside-note.forward-prefix` | 最长 80 字符的转发前缀 |
+
+草稿按 `draftKey` 存放：会话属于工作区时，整个工作区共用一份新增/编辑草稿，切换会话或在「工作区 / 会话」之间切换都不丢字；没有工作区的会话按会话保存。提交草稿时仍按当前选中的范围写入 `dsh.aside-note.workspaces` 或 `dsh.aside-note`，草稿本身不区分范围。升级后首次打开工作区，会把当前会话的旧草稿并入共享键并清理成员会话的旧副本。
 
 `Note` 形如 `{ id, text, done, createdAt, updatedAt, completedAt? }`；`text` 上限 280，单份清单上限 300 条。会话数据继续使用 `dsh.aside-note` 的 v1 结构，工作区数据单独放在 `dsh.aside-note.workspaces`，因此新增范围不会改写旧键；首次进入工作区会把成员会话里已有的便笺合入一次，`seededSessionIds` 记住已合入的会话，之后删除不会因再次合并而复活。键名不带版本后缀，前缀与包名 `dsh-aside-note` 对齐。
 

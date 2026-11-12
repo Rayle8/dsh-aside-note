@@ -409,6 +409,19 @@ function scopeKey(scope) {
 	if (!scope || !scope.id) return "";
 	return scope.kind === "workspace" ? `ws:${scope.id}` : String(scope.id);
 }
+/**
+* Stable key for the drafts of a conversation.
+*
+* Drafts belong to the workspace, not to the tab the panel is showing: every
+* member conversation shares one buffer, so neither switching conversations
+* nor switching the workspace/session scope strands half-typed text. The save
+* itself still uses the scope selected at that moment. A session outside a
+* workspace keeps its own buffer.
+*/
+function draftKeyForSession(sessionId) {
+	const workspace = workspaceScopeForSession(sessionId);
+	return workspace ? scopeKey(workspace) : text$1(sessionId);
+}
 
 // src/client/domain/forward.ts
 /** Append one note to the conversation composer (Lexical contenteditable or textarea). */
@@ -606,6 +619,149 @@ function writeSectionState(state) {
 			done: state.done === true
 		}));
 	} catch {}
+}
+
+// src/client/storage/drafts.ts
+/**
+* Unsaved add/edit drafts, so closing the panel never loses text.
+*
+* Records are keyed by draft scope, not by conversation: inside a workspace
+* every member session shares one buffer (`ws:<workspaceId>`), so switching
+* conversations or the workspace/session scope never strands half-typed text.
+* A session outside a workspace keeps its own key. Saving still writes the
+* list selected at that moment. The map field stays `sessions` so the existing
+* store keeps its shape.
+*/
+const keyOf = (value) => value ? String(value) : "";
+/** Empty unsaved-draft store. */
+function emptyDraftStore() {
+	return {
+		version: 1,
+		sessions: {}
+	};
+}
+/** Read the unsaved add/edit drafts; corrupt or unavailable reads as empty. */
+function readDraftStore() {
+	const ls = storage();
+	if (!ls) return emptyDraftStore();
+	try {
+		const raw = ls.getItem(DRAFT_STORAGE_KEY);
+		if (!raw) return emptyDraftStore();
+		const parsed = JSON.parse(raw);
+		if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return emptyDraftStore();
+		const sessions = parsed.sessions;
+		if (!sessions || typeof sessions !== "object" || Array.isArray(sessions)) return emptyDraftStore();
+		return {
+			version: 1,
+			sessions
+		};
+	} catch {
+		return emptyDraftStore();
+	}
+}
+function writeDraftStore(store) {
+	const ls = storage();
+	if (!ls) return;
+	try {
+		ls.setItem(DRAFT_STORAGE_KEY, JSON.stringify(store));
+	} catch {}
+}
+/** Unsaved add/edit drafts of one scope (a workspace or a lone session). */
+function readScopeDrafts(key) {
+	const id = keyOf(key);
+	const record = id ? readDraftStore().sessions[id] : null;
+	if (!record || typeof record !== "object" || Array.isArray(record)) return {
+		add: "",
+		edits: {}
+	};
+	return {
+		add: typeof record.add === "string" ? record.add : "",
+		edits: record.edits && typeof record.edits === "object" && !Array.isArray(record.edits) ? record.edits : {}
+	};
+}
+function pruneDraftScope(store, key) {
+	const record = store.sessions[key];
+	if (!record) return;
+	const hasAdd = typeof record.add === "string" && record.add.length > 0;
+	const hasEdits = record.edits && typeof record.edits === "object" && Object.keys(record.edits).length > 0;
+	if (!hasAdd && !hasEdits) delete store.sessions[key];
+}
+function saveAddDraft(key, text) {
+	const id = keyOf(key);
+	if (!id) return;
+	const store = readDraftStore();
+	const record = store.sessions[id] || {};
+	const value = String(text || "").slice(0, 280);
+	if (value) record.add = value;
+	else delete record.add;
+	record.edits = record.edits && typeof record.edits === "object" ? record.edits : {};
+	store.sessions[id] = record;
+	pruneDraftScope(store, id);
+	writeDraftStore(store);
+}
+function clearAddDraft(key) {
+	saveAddDraft(key, "");
+}
+function readEditDraft(key, itemId) {
+	const id = keyOf(key);
+	if (!id || !itemId) return null;
+	const edits = readScopeDrafts(id).edits;
+	return typeof edits[itemId] === "string" ? edits[itemId] : null;
+}
+function saveEditDraft(key, itemId, text) {
+	const id = keyOf(key);
+	if (!id || !itemId) return;
+	const store = readDraftStore();
+	const record = store.sessions[id] || {};
+	record.edits = record.edits && typeof record.edits === "object" ? record.edits : {};
+	record.edits[itemId] = String(text || "").slice(0, 280);
+	store.sessions[id] = record;
+	writeDraftStore(store);
+}
+function clearEditDraft(key, itemId) {
+	const id = keyOf(key);
+	if (!id || !itemId) return;
+	const store = readDraftStore();
+	const record = store.sessions[id];
+	if (!record || !record.edits || typeof record.edits !== "object") return;
+	delete record.edits[itemId];
+	pruneDraftScope(store, id);
+	writeDraftStore(store);
+}
+/**
+* Move a conversation's pre-workspace draft under the shared workspace key.
+*
+* Runs once per workspace: the draft the user is looking at becomes the shared
+* buffer, and the workspace members' per-session copies are retired so that
+* clearing the buffer cannot resurrect them. A no-op outside a workspace, once
+* the shared key exists, or when the legacy record holds no text.
+*/
+function ensureDraftScope(key, sessionId, sessionIds) {
+	const target = keyOf(key);
+	const source = keyOf(sessionId);
+	if (!target || !source || target === source) return false;
+	const members = (Array.isArray(sessionIds) ? sessionIds : []).map(keyOf).filter(Boolean);
+	const store = readDraftStore();
+	if (store.sessions[target]) return false;
+	const legacy = store.sessions[source];
+	if (!legacy || typeof legacy !== "object" || Array.isArray(legacy)) return false;
+	const add = typeof legacy.add === "string" ? legacy.add.slice(0, 280) : "";
+	const edits = {};
+	const legacyEdits = legacy.edits && typeof legacy.edits === "object" && !Array.isArray(legacy.edits) ? legacy.edits : {};
+	for (const [itemId, text] of Object.entries(legacyEdits)) {
+		if (!itemId || typeof text !== "string") continue;
+		edits[itemId] = text.slice(0, 280);
+	}
+	const editCount = Object.keys(edits).length;
+	if (!add && !editCount) return false;
+	store.sessions[target] = {
+		...add ? { add } : {},
+		...editCount ? { edits } : {}
+	};
+	for (const member of members) delete store.sessions[member];
+	delete store.sessions[source];
+	writeDraftStore(store);
+	return true;
 }
 
 // src/client/domain/id.ts
@@ -2525,107 +2681,11 @@ function useUpdateCenter(localeId) {
 	};
 }
 
-// src/client/storage/drafts.ts
-/** Unsaved add/edit drafts, so closing the panel never loses text. */
-/** Empty unsaved-draft store. */
-function emptyDraftStore() {
-	return {
-		version: 1,
-		sessions: {}
-	};
-}
-/** Read the unsaved add/edit drafts; corrupt or unavailable reads as empty. */
-function readDraftStore() {
-	const ls = storage();
-	if (!ls) return emptyDraftStore();
-	try {
-		const raw = ls.getItem(DRAFT_STORAGE_KEY);
-		if (!raw) return emptyDraftStore();
-		const parsed = JSON.parse(raw);
-		if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return emptyDraftStore();
-		const sessions = parsed.sessions;
-		if (!sessions || typeof sessions !== "object" || Array.isArray(sessions)) return emptyDraftStore();
-		return {
-			version: 1,
-			sessions
-		};
-	} catch {
-		return emptyDraftStore();
-	}
-}
-function writeDraftStore(store) {
-	const ls = storage();
-	if (!ls) return;
-	try {
-		ls.setItem(DRAFT_STORAGE_KEY, JSON.stringify(store));
-	} catch {}
-}
-function readSessionDrafts(sessionId) {
-	const key = sessionId ? String(sessionId) : "";
-	const record = key ? readDraftStore().sessions[key] : null;
-	if (!record || typeof record !== "object" || Array.isArray(record)) return {
-		add: "",
-		edits: {}
-	};
-	return {
-		add: typeof record.add === "string" ? record.add : "",
-		edits: record.edits && typeof record.edits === "object" && !Array.isArray(record.edits) ? record.edits : {}
-	};
-}
-function pruneDraftSession(store, sessionId) {
-	const record = store.sessions[sessionId];
-	if (!record) return;
-	const hasAdd = typeof record.add === "string" && record.add.length > 0;
-	const hasEdits = record.edits && typeof record.edits === "object" && Object.keys(record.edits).length > 0;
-	if (!hasAdd && !hasEdits) delete store.sessions[sessionId];
-}
-function saveAddDraft(sessionId, text) {
-	const key = sessionId ? String(sessionId) : "";
-	if (!key) return;
-	const store = readDraftStore();
-	const record = store.sessions[key] || {};
-	const value = String(text || "").slice(0, 280);
-	if (value) record.add = value;
-	else delete record.add;
-	record.edits = record.edits && typeof record.edits === "object" ? record.edits : {};
-	store.sessions[key] = record;
-	pruneDraftSession(store, key);
-	writeDraftStore(store);
-}
-function clearAddDraft(sessionId) {
-	saveAddDraft(sessionId, "");
-}
-function readEditDraft(sessionId, itemId) {
-	const key = sessionId ? String(sessionId) : "";
-	if (!key || !itemId) return null;
-	const edits = readSessionDrafts(key).edits;
-	return typeof edits[itemId] === "string" ? edits[itemId] : null;
-}
-function saveEditDraft(sessionId, itemId, text) {
-	const key = sessionId ? String(sessionId) : "";
-	if (!key || !itemId) return;
-	const store = readDraftStore();
-	const record = store.sessions[key] || {};
-	record.edits = record.edits && typeof record.edits === "object" ? record.edits : {};
-	record.edits[itemId] = String(text || "").slice(0, 280);
-	store.sessions[key] = record;
-	writeDraftStore(store);
-}
-function clearEditDraft(sessionId, itemId) {
-	const key = sessionId ? String(sessionId) : "";
-	if (!key || !itemId) return;
-	const store = readDraftStore();
-	const record = store.sessions[key];
-	if (!record || !record.edits || typeof record.edits !== "object") return;
-	delete record.edits[itemId];
-	pruneDraftSession(store, key);
-	writeDraftStore(store);
-}
-
 // src/client/ui/useComposerDraft.ts
 /** The add box: draft persistence, auto-grow, send chords and newline insertion. */
-function useComposerDraft({ sessionId, commit, report, sendShortcut }) {
-	const [draft, setDraft] = react.default.useState(() => readSessionDrafts(sessionId).add);
+function useComposerDraft({ draftKey, commit, report, sendShortcut }) {
+	const key = draftKey ? String(draftKey) : "";
+	const [draft, setDraft] = react.default.useState(() => readScopeDrafts(key).add);
 	const addRef = react.default.useRef(null);
 	const composingRef = react.default.useRef(false);
 	const resizeAdd = (node) => {
@@ -2661,7 +2721,7 @@ function useComposerDraft({ sessionId, commit, report, sendShortcut }) {
 			return;
 		}
 		setDraft("");
-		clearAddDraft(sessionId);
+		clearAddDraft(key);
 	};
 	const insertDraftNewline = (node) => {
 		if (!node) return;
@@ -2669,7 +2729,7 @@ function useComposerDraft({ sessionId, commit, report, sendShortcut }) {
 		const end = node.selectionEnd === null ? start : node.selectionEnd;
 		const next = `${node.value.slice(0, start)}\n${node.value.slice(end)}`;
 		setDraft(next);
-		saveAddDraft(sessionId, next);
+		saveAddDraft(key, next);
 		window.requestAnimationFrame(() => {
 			node.selectionStart = start + 1;
 			node.selectionEnd = start + 1;
@@ -2679,7 +2739,7 @@ function useComposerDraft({ sessionId, commit, report, sendShortcut }) {
 	const onDraftChange = (event) => {
 		const value = event.target.value;
 		setDraft(value);
-		saveAddDraft(sessionId, value);
+		saveAddDraft(key, value);
 		resizeAdd(event.target);
 	};
 	const onDraftKeyDown = (event) => {
@@ -2717,7 +2777,8 @@ function useComposerDraft({ sessionId, commit, report, sendShortcut }) {
 
 // src/client/ui/useNoteActions.ts
 /** Row actions: toggle, delete, and the inline edit session. */
-function useNoteActions({ sessionId, commit, report, forgetForwardedItems }) {
+function useNoteActions({ draftKey, commit, report, forgetForwardedItems }) {
+	const key = draftKey ? String(draftKey) : "";
 	const [editingId, setEditingId] = react.default.useState(null);
 	const [editDraft, setEditDraft] = react.default.useState("");
 	const editRef = react.default.useRef(null);
@@ -2749,7 +2810,7 @@ function useNoteActions({ sessionId, commit, report, forgetForwardedItems }) {
 		if (item.id === editingId) {
 			setEditingId(null);
 			setEditDraft("");
-			clearEditDraft(sessionId, item.id);
+			clearEditDraft(key, item.id);
 		}
 	};
 	const remove = (item) => {
@@ -2758,13 +2819,13 @@ function useNoteActions({ sessionId, commit, report, forgetForwardedItems }) {
 			return;
 		}
 		report("deleted");
-		clearEditDraft(sessionId, item.id);
+		clearEditDraft(key, item.id);
 		forgetForwardedItems(item.id);
 		resetEditing(item.id);
 	};
 	const startEdit = (item) => {
 		cancelEditRef.current = false;
-		const saved = readEditDraft(sessionId, item.id);
+		const saved = readEditDraft(key, item.id);
 		setEditingId(item.id);
 		setEditDraft(saved === null ? item.text : saved);
 	};
@@ -2790,14 +2851,24 @@ function useNoteActions({ sessionId, commit, report, forgetForwardedItems }) {
 		}
 		setEditingId(null);
 		setEditDraft("");
-		clearEditDraft(sessionId, item.id);
+		clearEditDraft(key, item.id);
 	};
 	const cancelEdit = () => {
 		cancelEditRef.current = true;
 		const currentId = editingId;
 		setEditingId(null);
 		setEditDraft("");
-		if (currentId) clearEditDraft(sessionId, currentId);
+		if (currentId) clearEditDraft(key, currentId);
+	};
+	/**
+	* Close the editor without discarding the stored draft. Switching the
+	* workspace/session scope only changes which list is shown; the text belongs
+	* to the draft scope, so reopening the row must restore it.
+	*/
+	const stopEditing = () => {
+		cancelEditRef.current = true;
+		setEditingId(null);
+		setEditDraft("");
 	};
 	return {
 		editingId,
@@ -2807,6 +2878,7 @@ function useNoteActions({ sessionId, commit, report, forgetForwardedItems }) {
 		startEdit,
 		finishEdit,
 		cancelEdit,
+		stopEditing,
 		toggle,
 		remove
 	};
@@ -3513,6 +3585,7 @@ function MemoPopover(props) {
 	}, []);
 	const canUseWorkspace = Boolean(workspaceScopeForSession(sessionId));
 	const scope = scopeForSession(sessionId, mode);
+	const draftKey = draftKeyForSession(sessionId);
 	/** Settled outcomes go to the frame-wide toast host, not to inline marks. */
 	const report = typeof props.onToast === "function" ? props.onToast : () => {};
 	const { record, syncError, commit } = useMemoStore(scope);
@@ -3522,13 +3595,13 @@ function MemoPopover(props) {
 	const update = useUpdateCenter(localeId);
 	const newerVersion = update.latestVersion;
 	const { draft, addRef, composingRef, add, onDraftChange, onDraftKeyDown } = useComposerDraft({
-		sessionId,
+		draftKey,
 		commit,
 		report,
 		sendShortcut
 	});
-	const { editingId, editDraft, setEditDraft, editRef, startEdit, finishEdit, cancelEdit, toggle, remove } = useNoteActions({
-		sessionId,
+	const { editingId, editDraft, setEditDraft, editRef, startEdit, finishEdit, cancelEdit, stopEditing, toggle, remove } = useNoteActions({
+		draftKey,
 		commit,
 		report,
 		forgetForwardedItems
@@ -3561,7 +3634,7 @@ function MemoPopover(props) {
 		}
 		writeScopeMode(next);
 		setMode(next);
-		cancelEdit();
+		stopEditing();
 		dismissClearConfirm();
 		notifyTodoChange();
 	};
@@ -3591,7 +3664,7 @@ function MemoPopover(props) {
 		editing: editingId === item.id,
 		editDraft,
 		setEditDraft,
-		onEditDraftChange: (value) => saveEditDraft(sessionId, item.id, value),
+		onEditDraftChange: (value) => saveEditDraft(draftKey, item.id, value),
 		onFinishEdit: finishEdit,
 		onCancelEdit: cancelEdit,
 		editRef,
@@ -3751,6 +3824,8 @@ function apply(ctx) {
 		closeMemoPopover();
 		const scope = scopeForSession(sessionId, readScopeMode());
 		if (scope.kind === "workspace") ensureWorkspaceRecord(scope.id, scope.sessionIds);
+		const workspace = workspaceScopeForSession(sessionId);
+		if (workspace) ensureDraftScope(draftKeyForSession(sessionId), sessionId, workspace.sessionIds);
 		setForwardTarget(sessionId);
 		const container = document.createElement("div");
 		container.dataset.dshMemoPopoverRoot = "true";
