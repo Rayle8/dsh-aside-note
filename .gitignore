@@ -13,3 +13,6 @@ Thumbs.db
 # Python bytecode from the crop helper
 __pycache__/
 *.pyc
+
+# Automated test runs (report + screenshot evidence), never committed
+.test/

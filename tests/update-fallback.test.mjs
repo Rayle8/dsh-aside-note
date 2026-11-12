@@ -169,7 +169,7 @@ test('a market that stays busy hands over the command instead of only an error',
   const fallback = await until(() => popover.querySelector('.dsh-an-updateFallback'), 12000)
   assert.equal(starts.length, 4, 'the busy answer is retried before giving up')
   assert.match(fallback.textContent, /npx -y dsh-aside-note install/, 'the fallback states the command')
-  assert.match(popover.textContent, /市场正在执行另一个更新/, 'the refusal is still reported')
+  assert.match(popover.textContent, /自动更新正在执行另一个任务/, 'the refusal is still reported')
   assert.equal(popover.querySelector('.dsh-an-updatePrimary').textContent, '立即更新',
     'the retry button stays available next to the command')
 
@@ -179,6 +179,49 @@ test('a market that stays busy hands over the command instead of only an error',
   assert.equal(copied.length, 1, 'one click copies one prompt')
   assert.equal(copied[0], '帮我更新 DSH 插件 AsideNote（旁边记）到最新版本：在终端执行 npx -y dsh-aside-note install。',
     'the prompt is handed over verbatim')
+
+  await act(async () => { reactRoot.unmount() })
+  for (const dispose of disposers) dispose()
+  dom.window.close()
+})
+
+test('a market that refuses under a running agent hands over the command', async t => {
+  const { window, act, popover, until, reactRoot, disposers, dom } = await boot(t, {
+    capabilities: () => json(200, {
+      schema: 'dsh-market/update-api/v1',
+      marketVersion: '1.73.3',
+      stability: 'beta',
+      restart: { supported: false },
+      endpoints: {
+        updates: '/dsh-market/api/v1/updates',
+        operations: '/dsh-market/api/v1/operations',
+        restart: '/dsh-market/api/v1/restart',
+      },
+    }),
+    // The market refuses to replace plugin files under a live agent, and the
+    // refusal is final: no amount of waiting makes it answer differently.
+    start: () => json(409, {
+      schema: 'dsh-market/update-api/v1',
+      error: 'an agent is running',
+      failure: { code: 'AGENTS_RUNNING', message: 'an agent is running', retryable: false },
+    }),
+    operation: () => json(404, {}),
+  })
+
+  await until(() => popover.querySelector('.dsh-an-updateCard'), 4000)
+  const updateButton = popover.querySelector('.dsh-an-updatePrimary')
+  assert.equal(updateButton.textContent, '立即更新', 'a reachable market offers the one-click path')
+
+  await act(async () => { updateButton.click() })
+
+  const fallback = await until(() => popover.querySelector('.dsh-an-updateFallback'), 4000)
+  assert.match(popover.textContent, /有 agent 正在运行/, 'the refusal is named instead of the raw market text')
+  assert.match(fallback.textContent, /npx -y dsh-aside-note install/, 'the command is the way past the market')
+
+  const copied = clipboard(window)
+  await act(async () => { fallback.querySelector('.dsh-an-updateCopy').click() })
+  await act(async () => { await wait(window, 20) })
+  assert.match(copied[0], /npx -y dsh-aside-note install/, 'the prompt carries the command')
 
   await act(async () => { reactRoot.unmount() })
   for (const dispose of disposers) dispose()

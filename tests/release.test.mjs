@@ -8,6 +8,7 @@ import {
   extractSection,
   parseStatusPaths,
   prepareChangelog,
+  prepareOpsChangelog,
   splitSections,
 } from '../tools/release.mjs'
 
@@ -91,6 +92,20 @@ test('prepareChangelog refuses an empty next-released section', () => {
     () => prepareChangelog('## next-released\n\n## 2.0.1\n\n- Shipped.\n', '2.1.0'),
     /is empty; write the release notes/,
   )
+})
+
+test('prepareOpsChangelog rotates the operations log and steps aside when it is empty', () => {
+  const ops = '# 运营记录\n\n## next-released\n\n- 重拍 README 截图。\n\n## 1.0.1\n\n- 旧记录。\n'
+  const prepared = prepareOpsChangelog(ops, '1.1.0')
+  assert.equal(
+    prepared,
+    '# 运营记录\n\n## next-released\n\n## 1.1.0\n\n- 重拍 README 截图。\n\n## 1.0.1\n\n- 旧记录。\n',
+  )
+  // An empty next-released, a missing heading or a missing file is not a
+  // release failure: the operations log simply stays as it is.
+  assert.equal(prepareOpsChangelog('## next-released\n\n## 1.0.1\n\n- 旧记录。\n', '1.1.0'), null)
+  assert.equal(prepareOpsChangelog('## 1.0.1\n\n- 旧记录。\n', '1.1.0'), null)
+  assert.equal(prepareOpsChangelog(undefined, '1.1.0'), null)
 })
 
 test('parseStatusPaths keeps the filename when the index column is blank', () => {

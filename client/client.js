@@ -190,7 +190,7 @@ const en = {
 	"update.full": "Full release notes",
 	"update.now": "Update now",
 	"update.starting": "Preparing the update…",
-	"update.waiting": "Another update is running in the market — waiting…",
+	"update.waiting": "Another automatic update is running — waiting…",
 	"update.updating": "Updating…",
 	"update.updatingPercent": "Updating… {percent}%",
 	"update.updated": "Updated to {version}",
@@ -199,12 +199,13 @@ const en = {
 	"update.restartHint": "Restart DSH manually to finish the update",
 	"update.failed": "Update failed: {reason}",
 	"update.force": "Update anyway",
-	"update.tooFresh": "This release is too new for the market right now — retry later or update anyway",
-	"update.unchanged": "The market answered with the same version — retry later or update anyway",
+	"update.tooFresh": "This release is too new for the automatic update right now — retry later or update anyway",
+	"update.unchanged": "The automatic update answered with the same version — retry later or update anyway",
 	"update.notInstalled": "This plugin is not installed in the current profile, so it cannot be updated in-app",
-	"update.forbidden": "The market refused this update request",
-	"update.rejected": "The market did not run this update; a linked checkout updates from its own directory",
-	"update.busy": "Another update is already running in the market — try again shortly",
+	"update.forbidden": "The automatic update refused this request",
+	"update.rejected": "The automatic update did not run; a linked checkout updates from its own directory",
+	"update.busy": "Another automatic update is already running — try again shortly",
+	"update.agentsRunning": "An agent is running, and the automatic update will not replace plugin files under it; wait for it to finish, or update with the command below",
 	"update.timeout": "Timed out waiting for the update result — try again later",
 	"update.manualHint": "Or update directly: run npx -y dsh-aside-note install in a terminal, or update from the Plugins page, then reload",
 	"update.copyPrompt": "Copy update prompt",
@@ -303,7 +304,7 @@ const zh = {
 	"update.full": "完整更新说明",
 	"update.now": "立即更新",
 	"update.starting": "正在准备更新…",
-	"update.waiting": "市场正在执行另一个更新，等待中…",
+	"update.waiting": "自动更新正在执行另一个任务，等待中…",
 	"update.updating": "正在更新…",
 	"update.updatingPercent": "正在更新… {percent}%",
 	"update.updated": "已更新到 {version}",
@@ -312,12 +313,13 @@ const zh = {
 	"update.restartHint": "请手动重启 DSH 以完成更新",
 	"update.failed": "更新失败：{reason}",
 	"update.force": "仍要更新",
-	"update.tooFresh": "新版本刚发布，市场暂缓安装；可稍后重试，或选择仍要更新",
-	"update.unchanged": "市场返回的版本没有变化；可稍后重试，或选择仍要更新",
+	"update.tooFresh": "新版本刚发布，自动更新会暂缓安装；可稍后重试，或选择仍要更新",
+	"update.unchanged": "自动更新拿到的版本没有变化；可稍后重试，或选择仍要更新",
 	"update.notInstalled": "当前 profile 中没有安装这个插件，无法在应用内更新",
-	"update.forbidden": "市场拒绝了这次更新请求",
-	"update.rejected": "市场没有执行这次更新；link 安装的插件需要在 checkout 中更新后刷新",
-	"update.busy": "市场正在执行另一个更新，请稍后再试",
+	"update.forbidden": "自动更新被拒绝，这次请求没有执行",
+	"update.rejected": "自动更新没有执行；link 安装的插件需要在 checkout 中更新后刷新",
+	"update.busy": "自动更新正在执行另一个任务，请稍后再试",
+	"update.agentsRunning": "有 agent 正在运行，自动更新不会在它运行期间替换插件文件；可以等它结束，或用下面的命令直接更新",
 	"update.timeout": "等待更新结果超时，请稍后再试",
 	"update.manualHint": "也可以直接更新：在终端执行 npx -y dsh-aside-note install，或到「插件」页更新，装好后刷新页面即可",
 	"update.copyPrompt": "拷贝更新提示词",
@@ -3172,6 +3174,7 @@ const FAILURE_COPY = {
 	UPDATE_FORBIDDEN: "update.forbidden",
 	UPDATE_REJECTED: "update.rejected",
 	OPERATION_BUSY: "update.busy",
+	AGENTS_RUNNING: "update.agentsRunning",
 	UPDATE_TIMEOUT: "update.timeout"
 };
 function UpdateNotice(props) {
@@ -3219,11 +3222,13 @@ function UpdateNotice(props) {
 	const failureKey = run.failureCode ? FAILURE_COPY[run.failureCode] : "";
 	const canForce = run.failureCode === "RELEASE_TOO_FRESH" || run.failureCode === "VERSION_UNCHANGED";
 	/**
-	* No market, or one that stayed busy: the user needs the command now, not a
-	* "try again later" with nothing behind it. A busy market keeps its retry
-	* button, so both paths stay reachable.
+	* No market, one that stayed busy, or one that refuses to replace files under
+	* a running agent: the user needs the command now, not a "try again later"
+	* with nothing behind it. The panel never runs a package manager itself, so
+	* the command is the way past a refusal — it does not go through the market.
+	* A busy market keeps its retry button, so both paths stay reachable.
 	*/
-	const manual = stopped || run.failureCode === "OPERATION_BUSY";
+	const manual = stopped || run.failureCode === "OPERATION_BUSY" || run.failureCode === "AGENTS_RUNNING";
 	const progress = phase === "running" ? run.percent === null ? say("update.updating") : say("update.updatingPercent", { percent: run.percent }) : "";
 	/**
 	* Hand the user a prompt they can paste into an agent; report the outcome.

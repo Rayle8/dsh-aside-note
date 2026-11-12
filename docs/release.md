@@ -33,6 +33,7 @@ git push -u origin feat/xxx
 必须遵守：
 
 - `CHANGELOG.md` 顶部始终保留 `## next-released`，所有改动写在它下面；发布命令会把它改名为版本号并插入新的空标题，CI 也会检查这个标题存在。
+- 运营与基建改动（截图、上架物料、README 结构、发布与构建工具）写进 `CHANGELOG-OPS.md` 的同名 `## next-released`；它不进 Release 正文，也不随 npm 包发布。
 - `client/client.js` 是**提交进仓库的构建产物**，必须与 `src/client/**` 出现在同一个提交里；CI 会重新 build 并检查 `git diff client/`，不一致直接失败。
 - 不要手改 `client/client.js`，构建会覆盖它。
 - `package.json` 的 `version` 与 `src/client/constants.ts` 的 `PLUGIN_VERSION` 必须一致，契约测试会检查。
@@ -68,7 +69,7 @@ git push origin v0.10.0
 
 1. 校验工作区干净、当前在 `main`、版本号大于当前版本、tag 尚未存在；
 2. 同步 `package.json` 的 `version` 与 `src/client/constants.ts` 的 `PLUGIN_VERSION`；
-3. 把 `## next-released` 改名为 `## <version>`，并在顶部插入一个新的空 `## next-released`；
+3. 把 `## next-released` 改名为 `## <version>`，并在顶部插入一个新的空 `## next-released`；`CHANGELOG-OPS.md` 存在且其 `## next-released` 下有内容时，对它做同样的改名；
 4. 运行 `npm run check`，确认 lint、类型、测试和构建产物都一致；
 5. 提交 `release: <version>` 并打 `v<version>` tag，**不自动 push**。
 
@@ -110,6 +111,7 @@ Release 正文由 [tools/release/notes.mjs](../tools/release/notes.mjs) 从 `CHA
 ```
 
 - 标记块只包裹「更新内容」本身；面板读取的就是块内文本，按当前语言取 `zh` 或 `en`，缺失时互相回退。
+- 运营与基建记录写在 [CHANGELOG-OPS.md](../CHANGELOG-OPS.md)，不进 Release 正文，也不使用 `app-update-notes` 标记。
 - 生成器负责加上 `# English` / `# 中文`、`## What's changed` / `## 更新内容`、安装或升级一节（npm 命令 + tgz 附件），以及 `<details>` 里的 Full Changelog 链接；这些不要手写进 CHANGELOG。
 - 发布步骤第 2 步会把 `## next-released` 改成 `## <version>`；忘记改名时生成器找不到版本小节，changelog 校验会先行终止任务。
 - 小节缺少两组标记时生成器直接失败，任务中断，不会静默发出版本却没有 Release 说明。

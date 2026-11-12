@@ -32,6 +32,30 @@ test('package declares the DSH bundle and web client halves', () => {
   }
 })
 
+test('the operations log stays beside the changelog, out of the notes and the tarball', () => {
+  assert.ok(exists('CHANGELOG-OPS.md'), 'missing CHANGELOG-OPS.md; operations history has nowhere to go')
+  const ops = read('CHANGELOG-OPS.md')
+  // The markers are how tools/release/notes.mjs and the panel find the notes.
+  // Ops entries must never carry them, or build chores leak into the update card.
+  assert.doesNotMatch(
+    ops,
+    /<!--\s*app-update-notes:/,
+    'the operations log must not carry release-note markers',
+  )
+  const manifest = JSON.parse(read('package.json'))
+  assert.ok(!manifest.files.includes('CHANGELOG-OPS.md'), 'the operations log stays out of the npm tarball')
+  // Same version headings as the changelog, so a release rotates both files.
+  const changelog = read('CHANGELOG.md')
+  const headings = [...ops.matchAll(/^## (.+)$/gm)].map((match) => match[1].trim())
+  assert.equal(headings[0], 'next-released', 'CHANGELOG-OPS.md must start with "## next-released"')
+  for (const title of headings.slice(1)) {
+    assert.ok(
+      changelog.includes(`\n## ${title}\n`),
+      `CHANGELOG.md has no "## ${title}" section to pair with the operations log`,
+    )
+  }
+})
+
 test('client version matches the package version', () => {
   const manifest = JSON.parse(read('package.json'))
   assert.match(read('src/client/constants.ts'), new RegExp(`PLUGIN_VERSION = '${manifest.version.replace(/\./g, '\\.')}'`))

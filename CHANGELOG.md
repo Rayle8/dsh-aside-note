@@ -2,16 +2,20 @@
 
 The 1.0.0–2.0.1 iterations were development builds of the same plugin; the 2.x line was withdrawn from npm before it became public and the changelog was consolidated at 0.9.10, the first public release under the `dsh-aside-note` name. The public line resumes here at 1.0.0, the first stable release.
 
+This file records user-visible changes only. Screenshots, marketplace listing material, documentation structure and the release pipeline are tracked in [CHANGELOG-OPS.md](./CHANGELOG-OPS.md), so the notes the panel shows never carry build or operations chores.
+
 ## next-released
 
 <!-- app-update-notes:en:start -->
 ### Changed
-- **Screenshots before release:** the screenshot SOP now runs before `npm run release`, so a `v<version>` tag ships the README images for that build; post-release screenshot updates are marked with a `docs/<version>` tag instead of a new version.
+- **Update:** when the market refuses an update because an agent is running, the card now names that refusal and hands over the terminal command plus **Copy update prompt**, the same way it already did for a busy or missing market. The command does not go through the market, so it is the way to update while an agent runs.
+- **Update copy:** the card calls the in-app update **automatic update** instead of naming the plugin market — “the market is running another update” read as an internal detail the user cannot act on.
 <!-- app-update-notes:en:end -->
 
 <!-- app-update-notes:zh:start -->
 ### 变更
-- **发版前截图：** 截图 SOP 改为在 `npm run release` 之前执行，`v<version>` tag 因此自带该版本的 README 图片；发版后的补图用 `docs/<version>` 标记，不再为此发版。
+- **更新：** 市场因「有 agent 正在运行」拒绝更新时，卡片现在会说明这一点，并像忙碌/无市场那样给出终端命令与「拷贝更新提示词」。该命令不经过市场，所以 agent 运行期间也能更新。
+- **更新文案：** 卡片把应用内更新称为**自动更新**，不再直呼插件市场——「市场正在执行另一个更新」读起来像用户无法处置的内部细节。
 <!-- app-update-notes:zh:end -->
 
 ## 1.1.0
@@ -22,7 +26,6 @@ The 1.0.0–2.0.1 iterations were development builds of the same plugin; the 2.x
 - **Forward to the open conversation:** forwarding a shared note appends it to the composer of the conversation currently on screen, not the one the panel was opened from.
 - **Workspace / session switch:** the panel header switches between the workspace list and the current session's list; the choice is remembered across panel openings.
 - **Separate storage keys:** session notes stay under `dsh.aside-note` with their original shape, while workspace notes live under `dsh.aside-note.workspaces`; adding the workspace list never rewrites existing session data.
-- **README screenshots:** re-shot for 1.1.0 — both themes now show the workspace/session switch, the shared-workspace footer and the live badge count, from one batch of notes; `tools/screenshots/run.ps1` repeats the run on Windows.
 <!-- app-update-notes:en:end -->
 
 <!-- app-update-notes:zh:start -->
@@ -31,7 +34,6 @@ The 1.0.0–2.0.1 iterations were development builds of the same plugin; the 2.x
 - **转发到当前会话：** 共享便笺会追加到当前屏幕上打开的会话输入框，而不是面板最初打开时所在的会话。
 - **工作区 / 会话切换：** 面板顶部可在工作区清单与当前会话清单之间切换，选择会被记住，下次打开沿用。
 - **独立存储键：** 会话便笺仍保存在 `dsh.aside-note`，结构不变；工作区清单使用 `dsh.aside-note.workspaces`，新增工作区不会改写原有会话数据。
-- **README 截图：** 按 1.1.0 界面重拍——明暗两套都带上「工作区 / 会话」切换、工作区共享页脚与入口角标，且出自同一批便笺；Windows 上可用 `tools/screenshots/run.ps1` 复现。
 <!-- app-update-notes:zh:end -->
 
 ## 1.0.3
@@ -63,15 +65,11 @@ The 1.0.0–2.0.1 iterations were development builds of the same plugin; the 2.x
 <!-- app-update-notes:en:start -->
 ### Changed
 - **Install:** the installer now closes by telling the user that the 旁边记 entry sits at the top right of the conversation after install — no restart — and, when it is still missing, to refresh the Plugins page and toggle the plugin off and on once, which recomposes the running host.
-- **README:** the install story is a single section now — **Quick install**, right above “Why AsideNote”, with **Install with an agent** and **Install from the command line** — replacing the separate npm, git-checkout and Release methods and the standalone install-prompt page; the link recipe a contributor needs moved to **Development**. The feature list is merged from 28 bullets into ten groups.
-- **Screenshots:** the README images are re-shot from the 旁边记 build at 4× device scale — panel title, composer placeholder, empty state and Settings › About carry the new name and tagline, the feature shots are now 1080 px wide and the previews 1920 px, so they stay crisp when zoomed — the four preview images come from the same demo session as the feature shots, and the sidebar account menu is hidden so the shots carry no personal account.
 <!-- app-update-notes:en:end -->
 
 <!-- app-update-notes:zh:start -->
 ### 变更
 - **安装：** 安装器结束时不再只说「无需重启」，而是明确告诉用户安装后会话右上角即可看到「旁边记」；入口没出现时，到「插件」页刷新并把插件关闭再开启一次，运行中的 Host 会随之重新组合。
-- **README：** 安装说明集中为「快速安装」一节，放在「为什么做旁边记」之前，分「通过 agent 安装」与「通过命令行安装」；原先并列的 npm 依赖、git checkout、Release 包三种方式与独立的安装提示词页面一并移除，贡献者需要的 link 写法则移入「开发」。「功能」清单从 28 条合并为 10 条。
-- **截图：** README 的图片按**旁边记**重新拍摄，并以 4 倍设备像素导出：浮窗标题、输入占位、空状态与设置 › 关于都已是新名字与 slogan；功能图加宽到 1080、整窗图到 1920，放大看依然清晰；四张预览图与功能图出自同一个演示会话，并隐藏侧栏账号菜单，不出现个人账号。
 <!-- app-update-notes:zh:end -->
 
 ## 1.0.0
@@ -119,15 +117,10 @@ The 1.0.0–2.0.1 iterations were development builds of the same plugin; the 2.x
 - **Settings:** a send/newline shortcut (⌘ or Ctrl aware), a one-click forward prefix, the version and author in About, and the full Chinese/English copy from one dictionary.
 - **Update centre:** Settings › About checks npm (npmmirror, then the GitHub Release fallback), lists pending releases newest-first, and updates in place through the plugin market with a refresh hint.
 - **Installer:** `npx dsh-aside-note install` (`scripts/install.mjs`, shipped as the package's `bin`) resolves the DSH profile (`DSH_PROFILE_DIR`, `--profile`, `--profile-dir`), backs up the manifest and lockfile, adds the dependency plus the `dsh.profile.bundles` entry, runs `pnpm install` and verifies the installed `client/client.js`; `--dry-run` and `--no-install` keep it reviewable and re-running is idempotent. `docs/install-prompt.md` carries a shareable agent prompt, and a page reload is enough after install or upgrade.
-- **Release pipeline:** tag-driven publish workflow with a changelog gate, `npm run release`, and `tools/release/notes.mjs`, which composes the Release body (English + 中文, install links, Full Changelog) carrying the `app-update-notes` markers the panel reads.
 
 ### Changed
 - **Design:** the panel is rebuilt on DSH semantic tokens — a 12/13/14 type scale at weight 500 or less, 0.5px hairlines, shared radii and elevation, the DSH scrollbar skin, and hover styles gated behind `@media (hover:hover)` — with feedback routed through `shell.overlay` toasts.
-- **Build:** the client is split into modules and built with tsdown into the committed `client/client.js`; the message dictionary lives in `src/client/i18n`, and `locale/*.json` carries package metadata only.
 - **Identity:** renamed 一点待办 → Memo → Notes → **AsideNote** (`dsh-aside-note`); storage moved to `dsh.aside-notes.*.v2` with a one-time copy of 1.x data, and the old keys are kept so a rollback still works.
-
-### Fixed
-- Build the CSS virtual module id with a forward slash, so a Windows build produces the same `client/client.js` bytes as Linux and the CI bundle check stays green.
 <!-- app-update-notes:en:end -->
 
 <!-- app-update-notes:zh:start -->
@@ -137,13 +130,8 @@ The 1.0.0–2.0.1 iterations were development builds of the same plugin; the 2.x
 - **设置：** 发送/换行快捷键（识别 ⌘ 与 Ctrl）、一键转发前缀、关于区的版本与作者，以及由同一份词典提供的中英文文案。
 - **更新中心：** 设置 › 关于 会检查 npm（失败时回退 npmmirror，再到 GitHub Release），按版本从新到旧列出待更新说明，并通过插件市场就地更新、完成后提示刷新。
 - **安装工具：** `npx dsh-aside-note install`（`scripts/install.mjs`，随包发布为 `bin`）会定位 DSH profile（支持 `DSH_PROFILE_DIR`、`--profile`、`--profile-dir`）、备份清单与 lockfile、写入依赖和 `dsh.profile.bundles` 条目、执行 `pnpm install` 并校验安装后的 `client/client.js`；`--dry-run` 与 `--no-install` 便于先审阅，重复执行是幂等的。`docs/install-prompt.md` 提供可直接交给 agent 的安装提示词；安装或升级后刷新页面即可，无需重启。
-- **发布链路：** tag 触发的发布 workflow、changelog 校验、`npm run release`，以及 `tools/release/notes.mjs`——它生成带 `app-update-notes` 标记的中英文 Release 正文（含安装链接与 Full Changelog），供面板直接读取。
 
 ### 变更
 - **设计：** 面板改用 DSH 语义 token 重建——12/13/14 字号、字重不超过 500、0.5px 描边、统一圆角与投影、DSH 滚动条皮肤，悬停样式只在支持悬停的设备生效，操作反馈统一走 `shell.overlay` toast。
-- **构建：** 客户端拆分为模块，由 tsdown 构建成提交进仓库的 `client/client.js`；文案词典放在 `src/client/i18n`，`locale/*.json` 只保留包元数据。
 - **命名：** 一点待办 → Memo → Notes → **AsideNote**（`dsh-aside-note`）；存储迁移到 `dsh.aside-notes.*.v2`，首次加载时复制 1.x 数据，旧键保留以便回退。
-
-### 修复
-- CSS 虚拟模块 id 统一用 `/` 分隔，Windows 构建产出的 `client/client.js` 与 Linux 逐字节一致，CI 的 bundle 校验不再失败。
 <!-- app-update-notes:zh:end -->

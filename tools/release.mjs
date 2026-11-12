@@ -16,12 +16,14 @@
  *   npm run release -- <version> [--dry-run] [--skip-check]
  */
 import { spawnSync } from 'node:child_process'
-import { readFileSync, realpathSync, writeFileSync } from 'node:fs'
+import { existsSync, readFileSync, realpathSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 
 export const NEXT_HEADING = 'next-released'
 export const CHANGELOG_FILE = 'CHANGELOG.md'
+/** Operations log: screenshots, listing material, docs and release plumbing. */
+export const CHANGELOG_OPS_FILE = 'CHANGELOG-OPS.md'
 
 /** Files a release commit is allowed to touch. `client/client.js` is rebuilt. */
 export const RELEASE_FILES = [
@@ -200,9 +202,18 @@ export function prepare(version, { dryRun = false, skipCheck = false } = {}) {
     fail('--skip-check is only supported together with --dry-run')
   }
   const root = repositoryRoot()
-  const paths = Object.fromEntries(RELEASE_FILES.map((file) => [file, join(root, file)]))
+  const opsPath = join(root, CHANGELOG_OPS_FILE)
+  // Only a tracked operations log joins the release commit: an untracked one
+  // would be written by the rotation but invisible to `git status
+  // --untracked-files=no`, so the "release did not update" gate would blame it.
+  const opsTracked =
+    existsSync(opsPath) &&
+    git(['ls-files', '--error-unmatch', '--', CHANGELOG_OPS_FILE], root).status === 0
+  const hasOps = opsTracked
+  const files = hasOps ? [...RELEASE_FILES, CHANGELOG_OPS_FILE] : [...RELEASE_FILES]
+  const paths = Object.fromEntries(files.map((file) => [file, join(root, file)]))
   const originals = Object.fromEntries(
-    RELEASE_FILES.map((file) => [file, readFileSync(paths[file], 'utf8')]),
+    files.map((file) => [file, readFileSync(paths[file], 'utf8')]),
   )
 
   const manifest = JSON.parse(originals['package.json'])
@@ -223,6 +234,10 @@ export function prepare(version, { dryRun = false, skipCheck = false } = {}) {
   }
 
   const nextChangelog = prepareChangelog(originals[CHANGELOG_FILE], version)
+  const nextOps = hasOps ? prepareOpsChangelog(originals[CHANGELOG_OPS_FILE], version) : null
+  // Files this release is expected to write; the operations log only joins when
+  // it actually carried notes under `## next-released`.
+  const expected = nextOps ? [...RELEASE_FILES, CHANGELOG_OPS_FILE] : [...RELEASE_FILES]
   manifest.version = version
   const nextConstants = originals['src/client/constants.ts'].replace(
     PLUGIN_VERSION_PATTERN,
@@ -237,6 +252,7 @@ export function prepare(version, { dryRun = false, skipCheck = false } = {}) {
     writeFileSync(paths['package.json'], `${JSON.stringify(manifest, null, 2)}\n`)
     writeFileSync(paths['src/client/constants.ts'], nextConstants)
     writeFileSync(paths[CHANGELOG_FILE], nextChangelog)
+    if (nextOps) writeFileSync(paths[CHANGELOG_OPS_FILE], nextOps)
 
     if (!skipCheck) {
       const npm = process.platform === 'win32' ? 'npm.cmd' : 'npm'
@@ -247,11 +263,11 @@ export function prepare(version, { dryRun = false, skipCheck = false } = {}) {
     const status = git(['status', '--porcelain', '--untracked-files=no'], root)
     if (status.status !== 0) fail(`git status failed: ${(status.stderr || '').trim()}`)
     const changed = parseStatusPaths(status.stdout)
-    const unexpected = changed.filter((file) => !RELEASE_FILES.includes(file))
+    const unexpected = changed.filter((file) => !expected.includes(file))
     if (unexpected.length > 0) {
       fail(`unexpected files changed during the release: ${unexpected.join(', ')}`)
     }
-    const missing = RELEASE_FILES.filter((file) => !changed.includes(file))
+    const missing = expected.filter((file) => !changed.includes(file))
     if (missing.length > 0) {
       fail(`the release did not update: ${missing.join(', ')}`)
     }
@@ -260,7 +276,7 @@ export function prepare(version, { dryRun = false, skipCheck = false } = {}) {
       return { version, tag, changed, dryRun: true }
     }
 
-    const add = git(['add', '--', ...RELEASE_FILES], root)
+    const add = git(['add', '--', ...expected], root)
     if (add.status !== 0) fail(`git add failed: ${(add.stderr || '').trim()}`)
     const commit = git(['commit', '-m', `release: ${version}`], root)
     if (commit.status !== 0) fail(`git commit failed: ${(commit.stderr || '').trim()}`)
@@ -277,10 +293,22 @@ export function prepare(version, { dryRun = false, skipCheck = false } = {}) {
   } catch (error) {
     if (!committed) {
       restore(root, originals)
-      git(['reset', '--quiet', 'HEAD', '--', ...RELEASE_FILES], root)
+      git(['reset', '--quiet', 'HEAD', '--', ...files], root)
     }
     throw error
   }
+}
+
+/**
+ * Rename the operations log's `## next-released` too, so both files carry the
+ * same version headings. Optional by design: a repo without the file, or with
+ * an empty `## next-released` under it, keeps the file untouched (null) instead
+ * of failing the release for a changelog nobody relies on.
+ */
+export function prepareOpsChangelog(text, version) {
+  const first = splitSections(text ?? '')[0]
+  if (!first || first.title !== NEXT_HEADING || !first.body.trim()) return null
+  return prepareChangelog(text, version)
 }
 
 function readChangelog(root) {

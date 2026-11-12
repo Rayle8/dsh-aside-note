@@ -33,6 +33,7 @@ const FAILURE_COPY: Record<string, string> = {
   UPDATE_FORBIDDEN: 'update.forbidden',
   UPDATE_REJECTED: 'update.rejected',
   OPERATION_BUSY: 'update.busy',
+  AGENTS_RUNNING: 'update.agentsRunning',
   UPDATE_TIMEOUT: 'update.timeout',
 }
 
@@ -96,11 +97,13 @@ export function UpdateNotice(props: {
   const failureKey = run.failureCode ? FAILURE_COPY[run.failureCode] : ''
   const canForce = run.failureCode === 'RELEASE_TOO_FRESH' || run.failureCode === 'VERSION_UNCHANGED'
   /**
-   * No market, or one that stayed busy: the user needs the command now, not a
-   * "try again later" with nothing behind it. A busy market keeps its retry
-   * button, so both paths stay reachable.
+   * No market, one that stayed busy, or one that refuses to replace files under
+   * a running agent: the user needs the command now, not a "try again later"
+   * with nothing behind it. The panel never runs a package manager itself, so
+   * the command is the way past a refusal — it does not go through the market.
+   * A busy market keeps its retry button, so both paths stay reachable.
    */
-  const manual = stopped || run.failureCode === 'OPERATION_BUSY'
+  const manual = stopped || run.failureCode === 'OPERATION_BUSY' || run.failureCode === 'AGENTS_RUNNING'
 
   const progress = phase === 'running'
     ? (run.percent === null
