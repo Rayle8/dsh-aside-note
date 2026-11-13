@@ -204,15 +204,6 @@ export function createMarketClient(options: MarketClientOptions = {}) {
       return operationView(asRecord(result.body)?.operation)
     },
 
-    /** Ask the market to restart the host; only offered when capabilities allow it. */
-    async restart(): Promise<boolean> {
-      const result = await request('/restart', {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: '{}',
-      })
-      return result !== null && result.status >= 200 && result.status < 300
-    },
   }
 }
 

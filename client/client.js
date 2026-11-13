@@ -2440,15 +2440,6 @@ function createMarketClient(options = {}) {
 			const result = await request(`/operations?operationId=${encodeURIComponent(operationId)}`);
 			if (!result || result.status !== 200) return null;
 			return operationView(asRecord(result.body)?.operation);
-		},
-		/** Ask the market to restart the host; only offered when capabilities allow it. */
-		async restart() {
-			const result = await request("/restart", {
-				method: "POST",
-				headers: { "content-type": "application/json" },
-				body: "{}"
-			});
-			return result !== null && result.status >= 200 && result.status < 300;
 		}
 	};
 }
@@ -2615,8 +2606,6 @@ function useUpdateCenter(localeId) {
 	const [notes, setNotes] = react.default.useState(NOTES_IDLE);
 	const [expandedVersions, setExpandedVersions] = react.default.useState({});
 	const [run, setRun] = react.default.useState(RUN_IDLE);
-	const [market, setMarket] = react.default.useState("unknown");
-	const [restartSupported, setRestartSupported] = react.default.useState(false);
 	const disposed = react.default.useRef(false);
 	const runRef = react.default.useRef(RUN_IDLE);
 	runRef.current = run;
@@ -2652,18 +2641,6 @@ function useUpdateCenter(localeId) {
 			active = false;
 		};
 	}, []);
-	react.default.useEffect(() => {
-		if (check.status !== "available" || market !== "unknown") return void 0;
-		let active = true;
-		marketClient.capabilities().then((caps) => {
-			if (!active) return;
-			setMarket(caps ? "ready" : "unsupported");
-			setRestartSupported(caps?.restartSupported === true);
-		});
-		return () => {
-			active = false;
-		};
-	}, [check.status, market]);
 	const checkNow = react.default.useCallback(async () => {
 		if (check.status === "checking") return;
 		resetUpdateChecks();
@@ -2784,15 +2761,12 @@ function useUpdateCenter(localeId) {
 			const caps = await marketClient.capabilities();
 			if (disposed.current) return;
 			if (!caps) {
-				setMarket("unsupported");
 				setRun(terminalRun("error", {
 					failureCode: "AUTO_UPDATE_UNAVAILABLE",
 					retryable: false
 				}));
 				return;
 			}
-			setMarket("ready");
-			setRestartSupported(caps.restartSupported);
 			let started = await marketClient.start(MARKET_PACKAGE, force);
 			if (disposed.current) return;
 			for (let attempt = 0; attempt < BUSY_RETRY_DELAYS_MS.length; attempt += 1) {
@@ -2873,10 +2847,6 @@ function useUpdateCenter(localeId) {
 			window.location.reload();
 		} catch {}
 	}, []);
-	const restartHost = react.default.useCallback(async () => {
-		await marketClient.restart();
-		refreshPage();
-	}, [refreshPage]);
 	/** Copy the ready-to-paste update prompt; the caller reports the outcome. */
 	const copyPrompt = react.default.useCallback((text) => copyText(text), []);
 	const fullReleaseUrl = notes.entries[0]?.url || (latestVersion ? `${"https://github.com/Rayle8/dsh-aside-note"}/releases/tag/v${latestVersion}` : null);
@@ -2887,14 +2857,11 @@ function useUpdateCenter(localeId) {
 		expandedVersions,
 		releasesUrl: `${PLUGIN_REPO_URL}/releases`,
 		run,
-		market,
-		restartSupported,
 		fullReleaseUrl,
 		checkNow,
 		toggleVersion,
 		startUpdate,
 		refreshPage,
-		restartHost,
 		copyPrompt
 	};
 }
@@ -3488,7 +3455,7 @@ const MANUAL_FALLBACK = /* @__PURE__ */ new Set([
 	"AUTO_UPDATE_UNAVAILABLE"
 ]);
 function UpdateNotice(props) {
-	const { say, latestVersion, market, restartSupported, notes, expandedVersions, run, fullReleaseUrl } = props;
+	const { say, latestVersion, notes, expandedVersions, run, fullReleaseUrl } = props;
 	const notesRef = react.default.useRef(null);
 	const [fade, setFade] = react.default.useState(false);
 	const syncFade = react.default.useCallback(() => {
@@ -3528,7 +3495,6 @@ function UpdateNotice(props) {
 	if (latestVersion === null) return null;
 	const phase = run.phase;
 	const busy = phase === "starting" || phase === "waiting" || phase === "running";
-	const stopped = market === "unsupported";
 	const failureKey = run.failureCode ? FAILURE_COPY[run.failureCode] : "";
 	const canForce = run.failureCode === "RELEASE_TOO_FRESH" || run.failureCode === "VERSION_UNCHANGED";
 	/**
@@ -3538,7 +3504,7 @@ function UpdateNotice(props) {
 	* the command is the way past a refusal — it does not go through the market.
 	* A busy market keeps its retry button, so both paths stay reachable.
 	*/
-	const manual = stopped || run.failureCode !== null && MANUAL_FALLBACK.has(run.failureCode);
+	const manual = run.failureCode !== null && MANUAL_FALLBACK.has(run.failureCode);
 	const progress = phase === "running" ? run.percent === null ? say("update.updating") : say("update.updatingPercent", { percent: run.percent }) : "";
 	/**
 	* Hand the user a prompt they can paste into an agent; report the outcome.
@@ -3591,11 +3557,7 @@ function UpdateNotice(props) {
 		role: "region",
 		"aria-label": say("update.notesTitle"),
 		"data-fade": fade ? "true" : void 0
-	}, notesBody), h$7("div", { className: "dsh-an-updateActions" }, stopped ? null : phase === "done" ? h$7("div", { className: "dsh-an-updateDone" }, h$7("span", { className: "dsh-an-updateHint" }, say("update.updated", { version: run.installedVersion ? `v${run.installedVersion}` : `v${latestVersion}` })), run.restartRequired && restartSupported ? h$7("button", {
-		type: "button",
-		className: "dsh-an-updatePrimary",
-		onClick: props.onRestart
-	}, say("update.restart")) : h$7("button", {
+	}, notesBody), h$7("div", { className: "dsh-an-updateActions" }, phase === "done" ? h$7("div", { className: "dsh-an-updateDone" }, h$7("span", { className: "dsh-an-updateHint" }, say("update.updated", { version: run.installedVersion ? `v${run.installedVersion}` : `v${latestVersion}` })), h$7("button", {
 		type: "button",
 		className: "dsh-an-updatePrimary",
 		onClick: props.onRefresh
@@ -3621,7 +3583,7 @@ function UpdateNotice(props) {
 		type: "button",
 		className: "dsh-an-updateCopy",
 		onClick: copyPrompt
-	}, say("update.copyPrompt"))) : null, run.phase === "done" && run.restartRequired && !restartSupported ? h$7("p", { className: "dsh-an-updateHint" }, say("update.restartHint")) : null);
+	}, say("update.copyPrompt"))) : null, run.phase === "done" && run.restartRequired ? h$7("p", { className: "dsh-an-updateHint" }, say("update.restartHint")) : null);
 }
 
 // src/client/ui/SettingsPanel.ts
@@ -3673,8 +3635,6 @@ function SettingsPanel(props) {
 	}, say("update.checkFailed")) : null), update.latestVersion ? h$6(UpdateNotice, {
 		say,
 		latestVersion: update.latestVersion,
-		market: update.market,
-		restartSupported: update.restartSupported,
 		notes: update.notes,
 		expandedVersions: update.expandedVersions,
 		releasesUrl: update.releasesUrl,
@@ -3683,7 +3643,6 @@ function SettingsPanel(props) {
 		onToggleVersion: update.toggleVersion,
 		onStartUpdate: update.startUpdate,
 		onRefresh: update.refreshPage,
-		onRestart: update.restartHost,
 		onCopyPrompt: update.copyPrompt,
 		onToast: props.onToast
 	}) : null, h$6("div", { className: "dsh-an-settingMetaRow" }, h$6("span", null, say("settings.author")), h$6("span", {

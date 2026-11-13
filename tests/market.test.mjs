@@ -165,21 +165,6 @@ test('operation polling normalises progress, outcome and retryability', async ()
   assert.equal(await market.operation(''), null)
 })
 
-test('restart is a POST and reports the market answer', async () => {
-  const seen = []
-  const ok = createMarketClient({
-    fetchImpl: async (url, init) => {
-      seen.push({ url, method: init.method })
-      return jsonResponse(200, { schema: 'dsh-market/update-api/v1', result: { ok: true } })
-    },
-  })
-  assert.equal(await ok.restart(), true)
-  assert.deepEqual(seen[0], { url: `${MARKET_API_BASE}/restart`, method: 'POST' })
-
-  const refused = createMarketClient({ fetchImpl: async () => jsonResponse(403, {}) })
-  assert.equal(await refused.restart(), false)
-})
-
 test('the default timeout is bounded', () => {
   assert.equal(MARKET_TIMEOUT_MS, 8000)
 })

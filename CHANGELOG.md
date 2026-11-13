@@ -6,6 +6,18 @@ This file records user-visible changes only. Screenshots, marketplace listing ma
 
 ## next-released
 
+<!-- app-update-notes:en:start -->
+### Changed
+- **Updating no longer requires the plugin market:** the card asks the host first and reads the market only when the host has no update route, so a DSH without the market can still update in-app. The terminal command now appears after an attempt finds no path, instead of whenever the market is missing.
+- **No more "Restart DSH" button:** this panel does not own the host's lifecycle. After an update it offers a page reload and says the new version lands at the next start.
+<!-- app-update-notes:en:end -->
+
+<!-- app-update-notes:zh:start -->
+### 变更
+- **更新不再依赖插件市场：** 卡片先问宿主，只有宿主没有更新路由时才去读市场，所以没装市场的 DSH 也能在应用内更新。终端命令改为「尝试过、确实无路可走」才出现，而不是一发现市场缺失就出现。
+- **去掉「重启 DSH」按钮：** 宿主生命周期不归这个面板管。更新后提供刷新页面，并说明新版本在下次启动生效。
+<!-- app-update-notes:zh:end -->
+
 ## 1.1.2-beta.2
 
 <!-- app-update-notes:en:start -->

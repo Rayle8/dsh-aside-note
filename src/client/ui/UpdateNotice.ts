@@ -64,8 +64,6 @@ const MANUAL_FALLBACK: ReadonlySet<string> = new Set([
 export function UpdateNotice(props: {
   say: (key: string, vars?: Record<string, any>) => string
   latestVersion: string | null
-  market: 'unknown' | 'unsupported' | 'ready'
-  restartSupported: boolean
   notes: NotesState
   expandedVersions: Record<string, boolean>
   releasesUrl: string
@@ -74,11 +72,10 @@ export function UpdateNotice(props: {
   onToggleVersion: (version: string) => void
   onStartUpdate: (force?: boolean) => void
   onRefresh: () => void
-  onRestart: () => void
   onCopyPrompt: (text: string) => Promise<boolean>
   onToast?: (kind: string) => void
 }) {
-  const { say, latestVersion, market, restartSupported, notes, expandedVersions, run, fullReleaseUrl } = props
+  const { say, latestVersion, notes, expandedVersions, run, fullReleaseUrl } = props
   const notesRef = React.useRef<HTMLDivElement | null>(null)
   const [fade, setFade] = React.useState(false)
 
@@ -117,7 +114,6 @@ export function UpdateNotice(props: {
 
   const phase: RunPhase = run.phase
   const busy = phase === 'starting' || phase === 'waiting' || phase === 'running'
-  const stopped = market === 'unsupported'
   const failureKey = run.failureCode ? FAILURE_COPY[run.failureCode] : ''
   const canForce = run.failureCode === 'RELEASE_TOO_FRESH' || run.failureCode === 'VERSION_UNCHANGED'
   /**
@@ -127,7 +123,7 @@ export function UpdateNotice(props: {
    * the command is the way past a refusal — it does not go through the market.
    * A busy market keeps its retry button, so both paths stay reachable.
    */
-  const manual = stopped || (run.failureCode !== null && MANUAL_FALLBACK.has(run.failureCode))
+  const manual = run.failureCode !== null && MANUAL_FALLBACK.has(run.failureCode)
 
   const progress = phase === 'running'
     ? (run.percent === null
@@ -243,18 +239,16 @@ export function UpdateNotice(props: {
     h(
       'div',
       { className: 'dsh-an-updateActions' },
-      stopped
-        ? null
-        : phase === 'done'
-          ? h(
-              'div',
-              { className: 'dsh-an-updateDone' },
+      phase === 'done'
+        ? h(
+          'div',
+          { className: 'dsh-an-updateDone' },
               h('span', { className: 'dsh-an-updateHint' }, say('update.updated', {
                 version: run.installedVersion ? `v${run.installedVersion}` : `v${latestVersion}`,
               })),
-              run.restartRequired && restartSupported
-                ? h('button', { type: 'button', className: 'dsh-an-updatePrimary', onClick: props.onRestart }, say('update.restart'))
-                : h('button', { type: 'button', className: 'dsh-an-updatePrimary', onClick: props.onRefresh }, say('update.refresh')),
+              // In-app restart belongs to the host, which this panel does not
+              // own; a page reload is the only action it can take.
+              h('button', { type: 'button', className: 'dsh-an-updatePrimary', onClick: props.onRefresh }, say('update.refresh')),
             )
           : h(
               'button',
@@ -320,7 +314,7 @@ export function UpdateNotice(props: {
           ),
         )
       : null,
-    run.phase === 'done' && run.restartRequired && !restartSupported
+    run.phase === 'done' && run.restartRequired
       ? h('p', { className: 'dsh-an-updateHint' }, say('update.restartHint'))
       : null,
   )

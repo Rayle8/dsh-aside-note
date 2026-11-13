@@ -26,13 +26,11 @@ import type { ReleaseNoteGroup } from '../update/releaseNotes'
 import { MARKET_PACKAGE, marketClient } from '../update/market'
 import { applyHostUpdate } from '../update/host'
 import { isPublishedChannel } from '../update/latest'
-import type { MarketCapabilities } from '../update/market'
 import { copyText } from '../domain/clipboard'
 
 export type CheckStatus = 'idle' | 'checking' | 'current' | 'available' | 'error'
 export type NotesStatus = 'idle' | 'loading' | 'ready' | 'error'
 export type RunPhase = 'idle' | 'starting' | 'waiting' | 'running' | 'done' | 'error'
-export type MarketState = 'unknown' | 'unsupported' | 'ready'
 
 export interface UpdateCheckState {
   status: CheckStatus
@@ -112,8 +110,6 @@ export function useUpdateCenter(localeId: string) {
   const [notes, setNotes] = React.useState<NotesState>(NOTES_IDLE)
   const [expandedVersions, setExpandedVersions] = React.useState<Record<string, boolean>>({})
   const [run, setRun] = React.useState<UpdateRunState>(RUN_IDLE)
-  const [market, setMarket] = React.useState<MarketState>('unknown')
-  const [restartSupported, setRestartSupported] = React.useState(false)
 
   const disposed = React.useRef(false)
   const runRef = React.useRef<UpdateRunState>(RUN_IDLE)
@@ -156,21 +152,6 @@ export function useUpdateCenter(localeId: string) {
       active = false
     }
   }, [])
-
-  // Only ask the market once a version is actually offered, so a current build
-  // never touches the market API.
-  React.useEffect(() => {
-    if (check.status !== 'available' || market !== 'unknown') return undefined
-    let active = true
-    marketClient.capabilities().then((caps: MarketCapabilities | null) => {
-      if (!active) return
-      setMarket(caps ? 'ready' : 'unsupported')
-      setRestartSupported(caps?.restartSupported === true)
-    })
-    return () => {
-      active = false
-    }
-  }, [check.status, market])
 
   const checkNow = React.useCallback(async () => {
     if (check.status === 'checking') return
@@ -290,12 +271,9 @@ export function useUpdateCenter(localeId: string) {
       if (!caps) {
         // Neither a host route nor a market: the card's command path is the
         // only thing left, and it has to render, so this is terminal.
-        setMarket('unsupported')
         setRun(terminalRun('error', { failureCode: 'AUTO_UPDATE_UNAVAILABLE', retryable: false }))
         return
       }
-      setMarket('ready')
-      setRestartSupported(caps.restartSupported)
 
       let started = await marketClient.start(MARKET_PACKAGE, force)
       if (disposed.current) return
@@ -371,11 +349,6 @@ export function useUpdateCenter(localeId: string) {
     }
   }, [])
 
-  const restartHost = React.useCallback(async () => {
-    await marketClient.restart()
-    refreshPage()
-  }, [refreshPage])
-
   /** Copy the ready-to-paste update prompt; the caller reports the outcome. */
   const copyPrompt = React.useCallback((text: string) => copyText(text), [])
 
@@ -390,14 +363,11 @@ export function useUpdateCenter(localeId: string) {
     expandedVersions,
     releasesUrl: `${PLUGIN_REPO_URL}/releases`,
     run,
-    market,
-    restartSupported,
     fullReleaseUrl,
     checkNow,
     toggleVersion,
     startUpdate,
     refreshPage,
-    restartHost,
     copyPrompt,
   }
 }
