@@ -6,6 +6,8 @@ This file records user-visible changes only. Screenshots, marketplace listing ma
 
 ## next-released
 
+## 1.1.2-beta.1
+
 <!-- app-update-notes:en:start -->
 ### Changed
 - **In-app update works on Desktop:** the panel now installs a newer build from the host instead of only asking the plugin market. The market replaces a package by removing it first, and Desktop refuses to remove a bundle that is in use — which this panel always is while it is open. The host installs over the running copy (DSH's installer, then `dsh plugin add`, then the profile's own package manager) and checks the version on disk before reporting success.
