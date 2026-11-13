@@ -18,6 +18,8 @@ export const DRAFT_STORAGE_KEY = 'dsh.aside-note.drafts'
 export const FORWARDED_STORAGE_KEY = 'dsh.aside-note.forwarded'
 /** Anonymous RUM visitor id; fills the SDK's `uin` so UV survives reloads. */
 export const ANONYMOUS_UIN_KEY = 'dsh.aside-note.uin'
+/** Opt-out switch for anonymous usage events; stored as "off" when disabled. */
+export const ANALYTICS_ENABLED_KEY = 'dsh.aside-note.analytics'
 /** Whether this browser has opened the panel before; reported once as `first`. */
 export const PANEL_OPENED_KEY = 'dsh.aside-note.panel-opened'
 /** Shown in the in-panel settings; keep in sync with package.json. */

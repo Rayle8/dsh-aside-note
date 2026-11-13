@@ -125,6 +125,13 @@ body{--an-space-1:4px;--an-space-2:8px;--an-space-3:12px;--an-space-4:16px;--an-
 .dsh-an-settingTextarea{display:block;height:auto;min-height:calc(var(--an-lh-row) + var(--an-space-4) + 2px);padding:var(--an-space-2);resize:none;overflow-y:auto;white-space:pre-wrap;overflow-wrap:anywhere}
 .dsh-an-settingHint{margin:0;font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);color:var(--dsw-alias-label-secondary)}
 .dsh-an-settingHintNote{margin-top:var(--an-space-1)}
+/* 匿名统计开关 · 32×18 轨道 + 14px 圆钮，开态用品牌色填充 */
+.dsh-an-settingToggle{display:flex;align-items:center;justify-content:space-between;gap:var(--an-space-2);font-size:var(--an-fs-row);line-height:var(--an-lh-row);color:var(--dsw-alias-label-primary);cursor:pointer}
+.dsh-an-switch{appearance:none;position:relative;flex:none;box-sizing:border-box;width:32px;height:18px;margin:0;border:0.5px solid var(--dsw-alias-label-tertiary);border-radius:var(--an-radius-pill);corner-shape:round;background:transparent;cursor:pointer;transition:var(--an-transition)}
+.dsh-an-switch::after{content:'';position:absolute;top:1.5px;left:1.5px;width:14px;height:14px;border-radius:var(--an-radius-pill);corner-shape:round;background:var(--dsw-alias-label-tertiary);transition:transform var(--an-dur-fast) var(--an-ease),background-color var(--an-dur-fast) var(--an-ease)}
+.dsh-an-switch:checked{border-color:var(--dsw-alias-brand-primary);background:var(--dsw-alias-brand-primary)}
+.dsh-an-switch:checked::after{background:var(--dsw-alias-label-primary-foreground);transform:translateX(14px)}
+.dsh-an-switch:focus-visible{outline:2px solid var(--dsw-alias-label-primary);outline-offset:1px}
 .dsh-an-settingBrand{display:flex;flex-direction:column;gap:2px;min-width:0}
 .dsh-an-settingBrandName{font-size:var(--an-fs-row);line-height:var(--an-lh-row);font-weight:500;color:var(--dsw-alias-label-primary)}
 .dsh-an-settingBrandTagline{font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);color:var(--dsw-alias-label-secondary);overflow-wrap:anywhere}
@@ -224,6 +231,7 @@ body{--an-space-1:4px;--an-space-2:8px;--an-space-3:12px;--an-space-4:16px;--an-
 .dsh-an-doneToggle:hover{background:var(--an-hover)}
 .dsh-an-check:hover .dsh-an-checkCircle{border-color:var(--dsw-alias-label-primary)}
 .dsh-an-settingChoice:hover input{border-color:var(--dsw-alias-label-primary)}
+.dsh-an-settingToggle:hover .dsh-an-switch:not(:checked){border-color:var(--dsw-alias-label-primary)}
 .dsh-an-settingLink:hover{text-decoration:underline;text-decoration-style:dotted;text-decoration-thickness:1px;text-underline-offset:3px}
 .dsh-an-updatePrimary:hover:not(:disabled){background:var(--dsw-alias-button-primary-hover)}
 .dsh-an-headerBtn:hover{background:var(--an-hover);color:var(--dsw-alias-label-primary)}

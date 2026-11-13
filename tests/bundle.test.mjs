@@ -273,6 +273,26 @@ test('the built bundle boots, applies, and seats its slots', async t => {
   await act(async () => { radios[1].click() })
   assert.equal(window.localStorage.getItem('dsh.aside-note.send-shortcut'), 'ctrl-enter')
 
+  // Anonymous analytics is opt-out, and the switch itself is the last report.
+  const reports = () => window.__asideNoteReports ?? []
+  const analyticsSwitch = popover.querySelector('input[role="switch"]')
+  assert.ok(analyticsSwitch, 'Settings must offer the anonymous statistics switch')
+  assert.equal(analyticsSwitch.checked, true, 'analytics is on by default')
+  assert.ok(popover.querySelector('#dsh-an-analytics-hint'), 'the switch must explain what is reported')
+  const beforeOff = reports().length
+  await act(async () => { analyticsSwitch.click() })
+  assert.equal(window.localStorage.getItem('dsh.aside-note.analytics'), 'off', 'the opt-out is persisted')
+  assert.equal(analyticsSwitch.checked, false, 'the switch reflects the stored choice')
+  assert.deepEqual(
+    Array.from(reports().slice(beforeOff), entry => entry.name),
+    ['analytics_disabled'],
+    'turning the switch off reports exactly one final event',
+  )
+  // Reopening Settings would report `settings_opened`; with analytics off it must not.
+  await act(async () => { popover.querySelector('.dsh-an-settingsBtn').click() })
+  await act(async () => { popover.querySelector('.dsh-an-settingsBtn').click() })
+  assert.equal(reports().length, beforeOff + 1, 'no report follows the switch being turned off')
+
   // The npmjs read fails, the mirror answers with a newer version: the gear
   // gains a dot and About shows the update card.
   await act(async () => { await new Promise(resolve => window.setTimeout(resolve, 20)) })

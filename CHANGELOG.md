@@ -6,6 +6,16 @@ This file records user-visible changes only. Screenshots, marketplace listing ma
 
 ## next-released
 
+<!-- app-update-notes:en:start -->
+### Added
+- **Privacy switch:** Settings now has a switch for anonymous usage statistics. Turning it off stops reporting immediately and sends one final event recording the choice; the preference is stored only in this browser.
+<!-- app-update-notes:en:end -->
+
+<!-- app-update-notes:zh:start -->
+### 新增
+- **隐私开关：** 设置里新增「匿名使用统计」开关。关闭后立即停止上报，并在关闭这一刻发送最后一条事件记录该选择；开关状态只保存在本机。
+<!-- app-update-notes:zh:end -->
+
 ## 1.1.2-beta.4
 
 <!-- app-update-notes:en:start -->

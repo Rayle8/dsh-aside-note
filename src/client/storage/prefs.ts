@@ -12,6 +12,7 @@ import {
   SEND_SHORTCUT_DEFAULT,
   SEND_SHORTCUT_KEY,
   FORWARD_PREFIX_STORAGE_KEY,
+  ANALYTICS_ENABLED_KEY,
   PANEL_OPENED_KEY,
 } from '../constants'
 import { storage } from './codec'
@@ -167,6 +168,27 @@ export function markPanelOpened() {
   if (!ls) return
   try {
     ls.setItem(PANEL_OPENED_KEY, '1')
+  } catch {
+    /* storage is best effort */
+  }
+}
+
+/** Anonymous usage events are opt-out: an explicit "off" disables them. */
+export function readAnalyticsEnabled() {
+  try {
+    return storage()?.getItem(ANALYTICS_ENABLED_KEY) !== 'off'
+  } catch {
+    return true
+  }
+}
+
+/** Persist the analytics choice; "on" drops the key so the default stays on. */
+export function writeAnalyticsEnabled(enabled: boolean) {
+  const ls = storage()
+  if (!ls) return
+  try {
+    if (enabled) ls.removeItem(ANALYTICS_ENABLED_KEY)
+    else ls.setItem(ANALYTICS_ENABLED_KEY, 'off')
   } catch {
     /* storage is best effort */
   }

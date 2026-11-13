@@ -58,7 +58,17 @@ export function MemoPopover(props) {
   const { record, syncError, commit } = useMemoStore(scope)
   const { sectionsRef, showOpen, showDone, toggleOpen, toggleDone, applySections } = useSections()
   const { forwardedIds, rememberForwarded, unrememberForwarded, forgetForwardedItems } = useForwardMarks(scopeKey(scope))
-  const { showSettings, setShowSettings, sendShortcut, chooseShortcut, forwardPrefix, changeForwardPrefix, prefixRef } = usePanelSettings()
+  const {
+    showSettings,
+    setShowSettings,
+    sendShortcut,
+    chooseShortcut,
+    forwardPrefix,
+    changeForwardPrefix,
+    prefixRef,
+    analyticsEnabled,
+    toggleAnalytics,
+  } = usePanelSettings()
   // Version check, release notes and the in-app update share one hook; the
   // registry answer is cached for an hour across panel opens.
   const update = useUpdateCenter(localeId)
@@ -219,6 +229,8 @@ export function MemoPopover(props) {
           forwardPrefix,
           changeForwardPrefix,
           prefixRef,
+          analyticsEnabled,
+          onToggleAnalytics: toggleAnalytics,
           update,
           onToast: report,
         })

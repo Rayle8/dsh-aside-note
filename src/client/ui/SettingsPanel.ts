@@ -12,7 +12,17 @@ import { UpdateNotice } from './UpdateNotice'
 const h = React.createElement
 
 export function SettingsPanel(props) {
-  const { say, sendShortcut, chooseShortcut, forwardPrefix, changeForwardPrefix, prefixRef, update } = props
+  const {
+    say,
+    sendShortcut,
+    chooseShortcut,
+    forwardPrefix,
+    changeForwardPrefix,
+    prefixRef,
+    analyticsEnabled,
+    onToggleAnalytics,
+    update,
+  } = props
   return h(
             'div',
             { className: 'dsh-an-settings' },
@@ -82,6 +92,29 @@ export function SettingsPanel(props) {
                   }),
                   h('p', { id: 'dsh-an-forward-prefix-hint', className: 'dsh-an-settingHint' }, say('settings.forwardPrefixHint')),
                 ),
+              ),
+            ),
+            h(
+              'div',
+              { className: 'dsh-an-settingGroup' },
+              h('div', { className: 'dsh-an-settingLabel' }, say('settings.privacy')),
+              h(
+                'div',
+                { className: 'dsh-an-settingBody' },
+                h(
+                  'label',
+                  { className: 'dsh-an-settingToggle' },
+                  h('span', null, say('settings.analytics')),
+                  h('input', {
+                    type: 'checkbox',
+                    role: 'switch',
+                    className: 'dsh-an-switch',
+                    checked: analyticsEnabled === true,
+                    onChange: event => onToggleAnalytics(event.target.checked),
+                    'aria-describedby': 'dsh-an-analytics-hint',
+                  }),
+                ),
+                h('p', { id: 'dsh-an-analytics-hint', className: 'dsh-an-settingHint' }, say('settings.analyticsHint')),
               ),
             ),
             h(
