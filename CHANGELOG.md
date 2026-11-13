@@ -10,12 +10,14 @@ This file records user-visible changes only. Screenshots, marketplace listing ma
 ### Changed
 - **In-app update works on Desktop:** the panel now installs a newer build from the host instead of only asking the plugin market. The market replaces a package by removing it first, and Desktop refuses to remove a bundle that is in use — which this panel always is while it is open. The host installs over the running copy (DSH's installer, then `dsh plugin add`, then the profile's own package manager) and checks the version on disk before reporting success.
 - **Update failures name their cause:** refusals such as `bundle-in-use`, `already-installed` and `management-required` now say what happened and offer the terminal command, instead of a bare "update failed".
+- **Pre-release builds update themselves:** a build installed from the `next` dist-tag now reads that tag too, so a beta tester is offered the next beta (and its notes). Stable builds keep reading `latest` alone, so a pre-release can never reach a regular user.
 <!-- app-update-notes:en:end -->
 
 <!-- app-update-notes:zh:start -->
 ### 变更
 - **桌面端可在应用内更新：** 面板现在由宿主安装新版本，不再只依赖插件市场。市场的更新会先移除再安装，而桌面端不允许移除正在使用的插件——面板打开时恰好一直是这个状态。宿主改为就地覆盖（DSH 安装器 → `dsh plugin add` → profile 自带包管理器），并在报告成功前核对磁盘上的版本。
 - **更新失败会说明原因：** `bundle-in-use`、`already-installed`、`management-required` 这类拒绝现在会讲清楚发生了什么，并给出终端命令，而不是只回一句"更新失败"。
+- **预发布版可自我更新：** 从 `next` 标签安装的版本也会读取该标签，beta 测试者能收到下一个 beta 及其说明。稳定版仍只读 `latest`，预发布永远不会推给普通用户。
 <!-- app-update-notes:zh:end -->
 
 ## 1.1.1

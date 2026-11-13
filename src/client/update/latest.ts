@@ -6,7 +6,7 @@
  * here is dependency-injected and free of widget state so the contract test can
  * exercise the source order, the one-hour cache and the comparison in Node.
  */
-import { PLUGIN_REPO_URL } from '../constants'
+import { PLUGIN_REPO_URL, PLUGIN_VERSION } from '../constants'
 import { MAX_RELEASE_HISTORY, selectReleaseHistory } from './releaseHistory'
 import type { ReleaseHistory } from './releaseHistory'
 
@@ -41,6 +41,13 @@ export interface UpdateProbeOptions {
   fetchImpl?: ProbeFetch
   now?: () => number
   ttlMs?: number
+  /**
+   * The build doing the asking. A prerelease build also reads the `next`
+   * dist-tag, because every prerelease is published there and `latest` never
+   * carries one; a stable build reads `latest` alone, so a prerelease cannot
+   * reach it even if a tag is misconfigured.
+   */
+  currentVersion?: string
 }
 
 /** Release notes for one published version, as the panel renders them. */
@@ -54,25 +61,60 @@ export interface ReleaseNotes {
 
 export interface ReleaseNotesProbeOptions extends UpdateProbeOptions {}
 
+/** A version carrying a prerelease part, e.g. `1.2.0-beta.1`. */
+export function isPrereleaseVersion(version: string): boolean {
+  return /^\D*\d+\.\d+\.\d+-/.test(version.trim())
+}
+
 /**
- * Numeric segment comparison, tolerant of a `v` prefix and short forms. A
- * pre-release tag on the same core is not newer ("2.0.0-rc.1" vs "2.0.0").
+ * Full ordering, tolerant of a `v` prefix and short forms, with the prerelease
+ * identifiers compared as semver does: a release outranks any prerelease on the
+ * same core, `rc.1` sorts below `rc.2`, and a numeric identifier sorts below an
+ * alphanumeric one.
+ *
+ * The prerelease part matters here: a beta build must see the next beta as an
+ * update, which a comparison over the core alone would call "the same version".
  */
-export function isNewerVersion(latest: string, current: string): boolean {
-  const parse = (version: string): number[] =>
-    version
-      .replace(/^v/, '')
-      .split('-', 1)[0]
-      .split('.')
-      .map(part => parseInt(part, 10) || 0)
-  const next = parse(latest)
-  const have = parse(current)
-  for (let index = 0; index < Math.max(next.length, have.length); index += 1) {
-    const a = next[index] || 0
-    const b = have[index] || 0
-    if (a !== b) return a > b
+export function compareVersionOrder(a: string, b: string): number {
+  const parse = (version: string): { core: number[]; prerelease: string[] } | null => {
+    const [core, ...rest] = version.trim().replace(/^v/, '').split('-')
+    const parts = core.split('.').map(part => parseInt(part, 10))
+    if (parts.length === 0 || parts.some(part => Number.isNaN(part))) return null
+    const prerelease = rest.join('-')
+    return { core: parts, prerelease: prerelease === '' ? [] : prerelease.split('.') }
   }
-  return false
+  const next = parse(a)
+  const have = parse(b)
+  if (next === null && have === null) return 0
+  if (next === null) return -1
+  if (have === null) return 1
+  for (let index = 0; index < Math.max(next.core.length, have.core.length); index += 1) {
+    const left = next.core[index] || 0
+    const right = have.core[index] || 0
+    if (left !== right) return left > right ? 1 : -1
+  }
+  if (next.prerelease.length === 0 && have.prerelease.length === 0) return 0
+  if (next.prerelease.length === 0) return 1
+  if (have.prerelease.length === 0) return -1
+  for (let index = 0; index < Math.max(next.prerelease.length, have.prerelease.length); index += 1) {
+    const left = next.prerelease[index]
+    const right = have.prerelease[index]
+    if (left === undefined) return -1
+    if (right === undefined) return 1
+    if (left === right) continue
+    const leftNumeric = /^\d+$/.test(left)
+    const rightNumeric = /^\d+$/.test(right)
+    if (leftNumeric && rightNumeric) return Number(left) > Number(right) ? 1 : -1
+    if (leftNumeric) return -1
+    if (rightNumeric) return 1
+    return left > right ? 1 : -1
+  }
+  return 0
+}
+
+/** Whether `latest` is a newer release than `current`. */
+export function isNewerVersion(latest: string, current: string): boolean {
+  return compareVersionOrder(latest, current) > 0
 }
 
 /** A fetch that gives up after {@link UPDATE_TIMEOUT_MS} instead of hanging. */
@@ -99,8 +141,8 @@ export function createUpdateProbe(options: UpdateProbeOptions = {}) {
       .catch(() => null)
   }
 
-  function readNpmVersion(host: string): Promise<string | null> {
-    return readJson(`${host}/dsh-aside-note/latest`).then(body =>
+  function readNpmVersion(host: string, channel: string): Promise<string | null> {
+    return readJson(`${host}/dsh-aside-note/${channel}`).then(body =>
       body !== null && typeof body.version === 'string' ? body.version : null,
     )
   }
@@ -115,14 +157,30 @@ export function createUpdateProbe(options: UpdateProbeOptions = {}) {
 
   function latest(): Promise<string | null> {
     if (cached === null || now() - cached.at >= ttlMs) {
+      // A prerelease build also reads `next`, which is where every prerelease is
+      // published; a stable build reads `latest` alone and can never be offered
+      // one, however a tag is configured.
+      const channels = isPrereleaseVersion(options.currentVersion ?? '') ? ['latest', 'next'] : ['latest']
       cached = {
         at: now(),
         promise: (async () => {
+          let best: string | null = null
+          // npmjs first, then the mirror: the first registry that answers wins,
+          // and its answer may be a miss for a channel that only exists upstream.
           for (const host of UPDATE_REGISTRY_HOSTS) {
-            const version = await readNpmVersion(host)
-            if (version !== null) return version
+            let answered = false
+            for (const channel of channels) {
+              const version = await readNpmVersion(host, channel)
+              if (version === null) continue
+              answered = true
+              // A channel that carries a release rather than a prerelease would
+              // silently promote it; `next` is prerelease-only by contract.
+              if (channel !== 'latest' && !isPrereleaseVersion(version)) continue
+              if (best === null || isNewerVersion(version, best)) best = version
+            }
+            if (answered) return best
           }
-          return readGitHubVersion()
+          return best ?? readGitHubVersion()
         })(),
       }
     }
@@ -138,7 +196,7 @@ export function createUpdateProbe(options: UpdateProbeOptions = {}) {
 }
 
 /** Process-wide probe: one fetch per hour no matter how often the panel opens. */
-export const updateProbe = createUpdateProbe()
+export const updateProbe = createUpdateProbe({ currentVersion: PLUGIN_VERSION })
 
 export function fetchLatestVersion(): Promise<string | null> {
   return updateProbe.latest()

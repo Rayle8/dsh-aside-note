@@ -96,7 +96,9 @@ test('the client checks for a newer release, reads its notes inline and falls ba
   assert.match(client, /https:\/\/registry\.npmjs\.org/)
   assert.match(client, /https:\/\/registry\.npmmirror\.com/)
   assert.match(client, /api\.github\.com\/repos/)
-  assert.match(client, /dsh-aside-note\/latest/)
+  // The tag is a variable now: a prerelease build also reads `next`.
+  assert.match(client, /dsh-aside-note\/\$\{channel\}/)
+  assert.match(client, /const channels = isPrereleaseVersion/)
   assert.match(client, /tag_name/)
   assert.match(client, /export function createUpdateProbe/)
   assert.match(client, /export function isNewerVersion/)
@@ -484,7 +486,7 @@ function readUpdateHelpers() {
   // that one line so the snippet stands alone outside the module scope.
   const repoLine = bundle.match(/const PLUGIN_REPO_URL = "[^"]+";/)[0]
   const start = bundle.indexOf('const UPDATE_REGISTRY_HOSTS = ')
-  const end = bundle.indexOf('const updateProbe = createUpdateProbe();', start)
+  const end = bundle.indexOf('const updateProbe = createUpdateProbe', start)
   assert.ok(start > 0 && end > start, 'update helpers not found in the bundle')
   return new Function(`${repoLine}\n${bundle.slice(start, end)}\nreturn { createUpdateProbe, isNewerVersion }`)()
 }

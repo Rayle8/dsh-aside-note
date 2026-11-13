@@ -1847,7 +1847,17 @@ const MAX_RELEASE_HISTORY = 6;
 function core(version) {
 	return String(version ?? "").replace(/^v/i, "").split("-", 1)[0].split(".").map((part) => Number.parseInt(part, 10) || 0);
 }
-/** Numeric comparison of two versions; prerelease suffixes compare as the core. */
+/** A version carrying a prerelease part, e.g. `1.2.0-beta.1`. */
+function isPrerelease(version) {
+	return /^\D*\d+\.\d+\.\d+-/.test(String(version ?? "").trim());
+}
+/**
+* Full ordering of two versions, prerelease identifiers included.
+*
+* A beta build asks for the notes between `1.2.0-beta.1` and `1.2.0-beta.2`;
+* comparing the cores alone would call those equal and leave the card with no
+* notes at all, which is exactly the case a beta test needs to read.
+*/
 function compareVersions(a, b) {
 	const left = core(a);
 	const right = core(b);
@@ -1855,12 +1865,38 @@ function compareVersions(a, b) {
 		const difference = (left[index] || 0) - (right[index] || 0);
 		if (difference !== 0) return difference > 0 ? 1 : -1;
 	}
+	const leftPre = prerelease(a);
+	const rightPre = prerelease(b);
+	if (leftPre.length === 0 && rightPre.length === 0) return 0;
+	if (leftPre.length === 0) return 1;
+	if (rightPre.length === 0) return -1;
+	for (let index = 0; index < Math.max(leftPre.length, rightPre.length); index += 1) {
+		const x = leftPre[index];
+		const y = rightPre[index];
+		if (x === void 0) return -1;
+		if (y === void 0) return 1;
+		if (x === y) continue;
+		const xNumeric = /^\d+$/.test(x);
+		const yNumeric = /^\d+$/.test(y);
+		if (xNumeric && yNumeric) return Number(x) > Number(y) ? 1 : -1;
+		if (xNumeric) return -1;
+		if (yNumeric) return 1;
+		return x > y ? 1 : -1;
+	}
 	return 0;
 }
-/** A plain `x.y.z` tag, with the `v` prefix and whitespace removed. */
+/** The prerelease identifiers of a version, or an empty list. */
+function prerelease(version) {
+	const normalized = String(version ?? "").trim().replace(/^v/i, "");
+	const dash = normalized.indexOf("-");
+	if (dash === -1) return [];
+	const tail = normalized.slice(dash + 1).split("+")[0];
+	return tail === "" ? [] : tail.split(".");
+}
+/** A `x.y.z` or `x.y.z-prerelease` tag, with the `v` prefix and whitespace removed. */
 function normalizeVersion(version) {
 	const normalized = String(version ?? "").trim().replace(/^v/i, "");
-	return /^\d+(\.\d+)*$/.test(normalized) ? normalized : "";
+	return /^\d+(\.\d+)*(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$/.test(normalized) ? normalized : "";
 }
 /**
 * Filter the feed down to the releases the user is about to receive:
@@ -1870,10 +1906,12 @@ function selectReleaseHistory(list, query) {
 	const max = query.max && query.max > 0 ? query.max : 6;
 	const seen = /* @__PURE__ */ new Set();
 	const entries = [];
+	const allowPrerelease = isPrerelease(query.current);
 	for (const item of Array.isArray(list) ? list : []) {
 		const release = item;
 		if (!release || typeof release !== "object") continue;
-		if (release.prerelease === true || release.draft === true) continue;
+		if (release.draft === true) continue;
+		if (release.prerelease === true && !allowPrerelease) continue;
 		const version = normalizeVersion(typeof release.version === "string" ? release.version : release.tag_name);
 		if (!version || seen.has(version)) continue;
 		if (compareVersions(version, query.current) <= 0) continue;
@@ -1916,20 +1954,61 @@ const UPDATE_GITHUB_RELEASES_URL = `${UPDATE_GITHUB_API}?per_page=50`;
 const UPDATE_TTL_MS = 36e5;
 /** A manual check should not hang the panel on a black-holed network. */
 const UPDATE_TIMEOUT_MS = 8e3;
+/** A version carrying a prerelease part, e.g. `1.2.0-beta.1`. */
+function isPrereleaseVersion(version) {
+	return /^\D*\d+\.\d+\.\d+-/.test(version.trim());
+}
 /**
-* Numeric segment comparison, tolerant of a `v` prefix and short forms. A
-* pre-release tag on the same core is not newer ("2.0.0-rc.1" vs "2.0.0").
+* Full ordering, tolerant of a `v` prefix and short forms, with the prerelease
+* identifiers compared as semver does: a release outranks any prerelease on the
+* same core, `rc.1` sorts below `rc.2`, and a numeric identifier sorts below an
+* alphanumeric one.
+*
+* The prerelease part matters here: a beta build must see the next beta as an
+* update, which a comparison over the core alone would call "the same version".
 */
-function isNewerVersion(latest, current) {
-	const parse = (version) => version.replace(/^v/, "").split("-", 1)[0].split(".").map((part) => parseInt(part, 10) || 0);
-	const next = parse(latest);
-	const have = parse(current);
-	for (let index = 0; index < Math.max(next.length, have.length); index += 1) {
-		const a = next[index] || 0;
-		const b = have[index] || 0;
-		if (a !== b) return a > b;
+function compareVersionOrder(a, b) {
+	const parse = (version) => {
+		const [core, ...rest] = version.trim().replace(/^v/, "").split("-");
+		const parts = core.split(".").map((part) => parseInt(part, 10));
+		if (parts.length === 0 || parts.some((part) => Number.isNaN(part))) return null;
+		const prerelease = rest.join("-");
+		return {
+			core: parts,
+			prerelease: prerelease === "" ? [] : prerelease.split(".")
+		};
+	};
+	const next = parse(a);
+	const have = parse(b);
+	if (next === null && have === null) return 0;
+	if (next === null) return -1;
+	if (have === null) return 1;
+	for (let index = 0; index < Math.max(next.core.length, have.core.length); index += 1) {
+		const left = next.core[index] || 0;
+		const right = have.core[index] || 0;
+		if (left !== right) return left > right ? 1 : -1;
 	}
-	return false;
+	if (next.prerelease.length === 0 && have.prerelease.length === 0) return 0;
+	if (next.prerelease.length === 0) return 1;
+	if (have.prerelease.length === 0) return -1;
+	for (let index = 0; index < Math.max(next.prerelease.length, have.prerelease.length); index += 1) {
+		const left = next.prerelease[index];
+		const right = have.prerelease[index];
+		if (left === void 0) return -1;
+		if (right === void 0) return 1;
+		if (left === right) continue;
+		const leftNumeric = /^\d+$/.test(left);
+		const rightNumeric = /^\d+$/.test(right);
+		if (leftNumeric && rightNumeric) return Number(left) > Number(right) ? 1 : -1;
+		if (leftNumeric) return -1;
+		if (rightNumeric) return 1;
+		return left > right ? 1 : -1;
+	}
+	return 0;
+}
+/** Whether `latest` is a newer release than `current`. */
+function isNewerVersion(latest, current) {
+	return compareVersionOrder(latest, current) > 0;
 }
 /** A fetch that gives up after {@link UPDATE_TIMEOUT_MS} instead of hanging. */
 function fetchWithTimeout(fetchImpl, url) {
@@ -1946,8 +2025,8 @@ function createUpdateProbe(options = {}) {
 	function readJson(url) {
 		return fetchWithTimeout(fetchImpl, url).then((response) => response.ok ? response.json() : null).catch(() => null);
 	}
-	function readNpmVersion(host) {
-		return readJson(`${host}/dsh-aside-note/latest`).then((body) => body !== null && typeof body.version === "string" ? body.version : null);
+	function readNpmVersion(host, channel) {
+		return readJson(`${host}/dsh-aside-note/${channel}`).then((body) => body !== null && typeof body.version === "string" ? body.version : null);
 	}
 	function readGitHubVersion() {
 		return readJson(UPDATE_GITHUB_RELEASE_URL).then((body) => {
@@ -1956,16 +2035,27 @@ function createUpdateProbe(options = {}) {
 		});
 	}
 	function latest() {
-		if (cached === null || now() - cached.at >= ttlMs) cached = {
-			at: now(),
-			promise: (async () => {
-				for (const host of UPDATE_REGISTRY_HOSTS) {
-					const version = await readNpmVersion(host);
-					if (version !== null) return version;
-				}
-				return readGitHubVersion();
-			})()
-		};
+		if (cached === null || now() - cached.at >= ttlMs) {
+			const channels = isPrereleaseVersion(options.currentVersion ?? "") ? ["latest", "next"] : ["latest"];
+			cached = {
+				at: now(),
+				promise: (async () => {
+					let best = null;
+					for (const host of UPDATE_REGISTRY_HOSTS) {
+						let answered = false;
+						for (const channel of channels) {
+							const version = await readNpmVersion(host, channel);
+							if (version === null) continue;
+							answered = true;
+							if (channel !== "latest" && !isPrereleaseVersion(version)) continue;
+							if (best === null || isNewerVersion(version, best)) best = version;
+						}
+						if (answered) return best;
+					}
+					return best ?? readGitHubVersion();
+				})()
+			};
+		}
 		return cached.promise;
 	}
 	/** Drop the cached answer so the next call reads the network again. */
@@ -1978,7 +2068,7 @@ function createUpdateProbe(options = {}) {
 	};
 }
 /** Process-wide probe: one fetch per hour no matter how often the panel opens. */
-const updateProbe = createUpdateProbe();
+const updateProbe = createUpdateProbe({ currentVersion: PLUGIN_VERSION });
 function fetchLatestVersion() {
 	return updateProbe.latest();
 }
