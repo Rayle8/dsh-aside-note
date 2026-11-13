@@ -6,6 +6,8 @@ This file records user-visible changes only. Screenshots, marketplace listing ma
 
 ## next-released
 
+## 1.1.2-beta.2
+
 <!-- app-update-notes:en:start -->
 ### Changed
 - **Second beta:** 1.1.2-beta.2 follows the first beta so the in-app update can be exercised between two prerelease builds; nothing outside the update path changed.
