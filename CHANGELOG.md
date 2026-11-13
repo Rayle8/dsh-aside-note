@@ -6,6 +6,8 @@ This file records user-visible changes only. Screenshots, marketplace listing ma
 
 ## next-released
 
+## 1.1.2-beta.5
+
 <!-- app-update-notes:en:start -->
 ### Added
 - **Privacy switch:** Settings now has a switch for anonymous usage statistics. Turning it off stops reporting immediately and sends one final event recording the choice; the preference is stored only in this browser.
