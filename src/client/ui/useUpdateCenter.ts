@@ -266,9 +266,9 @@ export function useUpdateCenter(localeId: string) {
         }
         // `unavailable`: no route on this host — keep the market path below.
       }
-      const caps = await marketClient.capabilities()
+      const usable = await marketClient.available()
       if (disposed.current) return
-      if (!caps) {
+      if (!usable) {
         // Neither a host route nor a market: the card's command path is the
         // only thing left, and it has to render, so this is terminal.
         setRun(terminalRun('error', { failureCode: 'AUTO_UPDATE_UNAVAILABLE', retryable: false }))

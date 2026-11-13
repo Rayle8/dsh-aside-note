@@ -96,7 +96,6 @@ export const en: Record<MessageKey, string> = {
   "update.updatingPercent": "Updating… {percent}%",
   "update.updated": "Updated to {version}",
   "update.refresh": "Refresh page",
-  "update.restart": "Restart DSH",
   "update.restartHint": "Restart DSH manually to finish the update",
   "update.failed": "Update failed: {reason}",
   "update.force": "Update anyway",

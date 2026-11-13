@@ -94,7 +94,6 @@ export const zh = {
   "update.updatingPercent": "正在更新… {percent}%",
   "update.updated": "已更新到 {version}",
   "update.refresh": "刷新页面",
-  "update.restart": "重启 DSH",
   "update.restartHint": "请手动重启 DSH 以完成更新",
   "update.failed": "更新失败：{reason}",
   "update.force": "仍要更新",

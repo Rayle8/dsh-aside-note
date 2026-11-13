@@ -195,7 +195,6 @@ const en = {
 	"update.updatingPercent": "Updating… {percent}%",
 	"update.updated": "Updated to {version}",
 	"update.refresh": "Refresh page",
-	"update.restart": "Restart DSH",
 	"update.restartHint": "Restart DSH manually to finish the update",
 	"update.failed": "Update failed: {reason}",
 	"update.force": "Update anyway",
@@ -318,7 +317,6 @@ const zh = {
 	"update.updatingPercent": "正在更新… {percent}%",
 	"update.updated": "已更新到 {version}",
 	"update.refresh": "刷新页面",
-	"update.restart": "重启 DSH",
 	"update.restartHint": "请手动重启 DSH 以完成更新",
 	"update.failed": "更新失败：{reason}",
 	"update.force": "仍要更新",
@@ -2378,35 +2376,15 @@ function createMarketClient(options = {}) {
 		}
 	}
 	return {
-		/** Feature discovery; `null` means "no usable market on this host". */
-		async capabilities() {
+		/**
+		* Whether this host has a usable market: the v1 schema answered. The panel
+		* needs no more than that — the endpoints it calls are fixed, and nothing
+		* reads the market's version, restart support or advertised paths.
+		*/
+		async available() {
 			const result = await request("/capabilities");
 			const body = asRecord(result?.body);
-			if (!result || result.status !== 200 || !body || body.schema !== "dsh-market/update-api/v1") return null;
-			const endpoints = asRecord(body.endpoints) || {};
-			return {
-				marketVersion: asText(body.marketVersion) || "",
-				stability: asText(body.stability) || "beta",
-				restartSupported: body.restart?.supported === true,
-				endpoints: {
-					updates: asText(endpoints.updates) || `${"/dsh-market/api/v1"}/updates`,
-					operations: asText(endpoints.operations) || `${"/dsh-market/api/v1"}/operations`,
-					restart: asText(endpoints.restart) || `${"/dsh-market/api/v1"}/restart`
-				}
-			};
-		},
-		/** The market's view of the installed vs published version. */
-		async check(name = MARKET_PACKAGE, force = true) {
-			const result = await request(`/updates${`?name=${encodeURIComponent(name)}${force ? "&force=1" : ""}`}`);
-			const pkg = asRecord(asRecord(result?.body)?.package);
-			if (!result || result.status !== 200 || !pkg) return null;
-			return {
-				name: asText(pkg.name) || name,
-				source: asText(pkg.source) || "unknown",
-				installedVersion: asText(pkg.installedVersion) || "",
-				latestVersion: asText(pkg.latestVersion) || "",
-				updateAvailable: pkg.updateAvailable === true
-			};
+			return result !== null && result.status === 200 && body !== null && body !== void 0 && body.schema === "dsh-market/update-api/v1";
 		},
 		/** Queue an update; returns the operation to poll or a stable failure code. */
 		async start(name = MARKET_PACKAGE, force = false) {
@@ -2758,9 +2736,9 @@ function useUpdateCenter(localeId) {
 					return;
 				}
 			}
-			const caps = await marketClient.capabilities();
+			const usable = await marketClient.available();
 			if (disposed.current) return;
-			if (!caps) {
+			if (!usable) {
 				setRun(terminalRun("error", {
 					failureCode: "AUTO_UPDATE_UNAVAILABLE",
 					retryable: false
