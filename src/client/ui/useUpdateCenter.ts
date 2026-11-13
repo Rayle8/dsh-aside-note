@@ -24,6 +24,7 @@ import {
 import { updateNotesForLocale } from '../update/releaseNotes'
 import type { ReleaseNoteGroup } from '../update/releaseNotes'
 import { MARKET_PACKAGE, marketClient } from '../update/market'
+import { applyHostUpdate } from '../update/host'
 import type { MarketCapabilities } from '../update/market'
 import { copyText } from '../domain/clipboard'
 
@@ -116,6 +117,9 @@ export function useUpdateCenter(localeId: string) {
   const disposed = React.useRef(false)
   const runRef = React.useRef<UpdateRunState>(RUN_IDLE)
   runRef.current = run
+  /** The offered version, readable from callbacks without re-creating them. */
+  const latestRef = React.useRef<string | null>(null)
+  latestRef.current = check.latestVersion
   /** Set before the first await so the same panel cannot start two operations. */
   const starting = React.useRef(false)
 
@@ -246,17 +250,46 @@ export function useUpdateCenter(localeId: string) {
     // market, and the second one comes back as the very OPERATION_BUSY refusal
     // this is meant to avoid.
     if (starting.current) return
-    if (runRef.current.phase === 'running' || runRef.current.phase === 'done') return
+    if (runRef.current.phase === 'running') return
+    // A finished run locks only the version it installed. Once a newer release
+    // is offered, the same click has to be able to fetch that one.
+    if (runRef.current.phase === 'done' && runRef.current.installedVersion === latestRef.current) return
     starting.current = true
     try {
       setRun(terminalRun('starting'))
+      // The host can install over the running copy without removing it, which
+      // is the only path that works while this panel is open on Desktop: the
+      // market removes first, and Desktop refuses that (bundle-in-use).
+      const target = latestRef.current
+      if (target !== null) {
+        const host = await applyHostUpdate(target)
+        if (disposed.current) return
+        if (host.kind === 'ok') {
+          setRun(terminalRun('done', {
+            percent: 100,
+            installedVersion: host.installedVersion,
+            refreshRequired: !host.restartRequired,
+            restartRequired: host.restartRequired,
+          }))
+          return
+        }
+        if (host.kind === 'error') {
+          setRun(terminalRun('error', {
+            failureCode: host.code,
+            message: host.hint ?? host.message,
+            retryable: host.retryable,
+          }))
+          return
+        }
+        // `unavailable`: no route on this host — keep the market path below.
+      }
       const caps = await marketClient.capabilities()
       if (disposed.current) return
       if (!caps) {
-        // No usable market: leave the card on the terminal path, not on an
-        // error the user cannot act on.
+        // Neither a host route nor a market: the card's command path is the
+        // only thing left, and it has to render, so this is terminal.
         setMarket('unsupported')
-        setRun(RUN_IDLE)
+        setRun(terminalRun('error', { failureCode: 'AUTO_UPDATE_UNAVAILABLE', retryable: false }))
         return
       }
       setMarket('ready')
@@ -297,6 +330,16 @@ export function useUpdateCenter(localeId: string) {
           continue
         }
         if (operation.state === 'succeeded') {
+          // The market verifies what pnpm placed on disk; the card still has to
+          // refuse to call an older build "updated" if that answer disagrees.
+          if (latestRef.current !== null && operation.installedVersion !== null && operation.installedVersion !== latestRef.current) {
+            setRun(terminalRun('error', {
+              failureCode: 'RESOLVED_VERSION_MISMATCH',
+              message: `${operation.installedVersion} installed, expected ${latestRef.current}`,
+              retryable: true,
+            }))
+            return
+          }
           setRun(terminalRun('done', {
             percent: 100,
             installedVersion: operation.installedVersion,

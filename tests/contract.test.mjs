@@ -222,7 +222,11 @@ test('the browser half never reaches for Node globals', () => {
 })
 
 test('host and browser entries use the package identity', () => {
-  assert.match(read('index.js'), /export function apply\(\)/)
+  // The host half carries the in-app update route now, so the entry takes the
+  // host context instead of being a loadable no-op row.
+  assert.match(read('index.js'), /export function apply\(ctx, config\)/)
+  assert.match(read('host/route.js'), /registerUpdateRoutes/)
+  assert.match(read('host/apply-update.js'), /already-installed/)
   // The client half is several modules now; identity checks span the tree.
   const client = readClientTree()
   // The loader shell is now emitted by tsdown, not hand-written in the source.

@@ -207,6 +207,15 @@ const en = {
 	"update.busy": "Another automatic update is already running — try again shortly",
 	"update.agentsRunning": "An agent is running, and the automatic update will not replace plugin files under it; wait for it to finish, or update with the command below",
 	"update.timeout": "Timed out waiting for the update result — try again later",
+	"update.bundleInUse": "This plugin is in use, and Desktop will not remove it first; the host route installs over it — if that still fails, run the command below",
+	"update.alreadyInstalled": "This DSH only replaces a package after removing it, so it cannot install over the current copy; run the command below",
+	"update.managementRequired": "This profile is managed by the desktop app, so the automatic update cannot change it; run the command below",
+	"update.notRemovable": "The desktop app manages this plugin and the automatic update cannot remove it; run the command below",
+	"update.stopProfile": "Removing it requires stopping this profile first; run the command below",
+	"update.incompatible": "This version is not compatible with the running DSH, so the host refused it",
+	"update.versionMismatch": "The installed version is not the one requested — a mirror or the release-age hold may have substituted it; retry later or install manually",
+	"update.downgrade": "Refused: the target version is older than the installed one",
+	"update.autoUnavailable": "This host offers no automatic update route; run the command below",
 	"update.manualHint": "Or update directly: run npx -y dsh-aside-note install in a terminal, or update from the Plugins page, then reload",
 	"update.copyPrompt": "Copy update prompt",
 	"update.prompt": "Update the DSH plugin AsideNote to the latest version by running: npx -y dsh-aside-note install."
@@ -321,6 +330,15 @@ const zh = {
 	"update.busy": "自动更新正在执行另一个任务，请稍后再试",
 	"update.agentsRunning": "有 agent 正在运行，自动更新不会在它运行期间替换插件文件；可以等它结束，或用下面的命令直接更新",
 	"update.timeout": "等待更新结果超时，请稍后再试",
+	"update.bundleInUse": "这个插件正被当前 DSH 使用中，桌面端不允许先移除再安装；宿主通道会就地覆盖，若仍失败请用下面的命令",
+	"update.alreadyInstalled": "这个 DSH 只支持先移除再安装，无法原地覆盖；请用下面的命令",
+	"update.managementRequired": "这个 profile 由桌面端自己管理，自动更新无法改动它；请用下面的命令",
+	"update.notRemovable": "这个插件由桌面端管理，自动更新不能移除它；请用下面的命令",
+	"update.stopProfile": "移除它需要先停止这个 profile；请用下面的命令",
+	"update.incompatible": "这个版本与当前 DSH 不兼容，宿主拒绝了安装",
+	"update.versionMismatch": "装到的版本与目标不一致（可能被镜像或发布保护替换）；可稍后重试或手动安装",
+	"update.downgrade": "拒绝降级：目标版本低于当前已装版本",
+	"update.autoUnavailable": "这台宿主没有可用的自动更新通道；请用下面的命令",
 	"update.manualHint": "也可以直接更新：在终端执行 npx -y dsh-aside-note install，或到「插件」页更新，装好后刷新页面即可",
 	"update.copyPrompt": "拷贝更新提示词",
 	"update.prompt": "帮我更新 DSH 插件 AsideNote（旁边记）到最新版本：在终端执行 npx -y dsh-aside-note install。"
@@ -365,17 +383,17 @@ const EMPTY = {
 	sessionIds: []
 };
 let binding = EMPTY;
-const text$1 = (value) => value ? String(value) : "";
+const text$2 = (value) => value ? String(value) : "";
 /** Resolve the workspace of the captured session; null clears the binding. */
 function bindWorkspace(sessionId, workspace) {
 	const next = workspace ? {
-		sessionId: text$1(sessionId),
-		workspaceId: text$1(workspace.workspaceId),
-		title: text$1(workspace.title),
-		sessionIds: Array.isArray(workspace.sessionIds) ? workspace.sessionIds.map(text$1).filter(Boolean) : []
+		sessionId: text$2(sessionId),
+		workspaceId: text$2(workspace.workspaceId),
+		title: text$2(workspace.title),
+		sessionIds: Array.isArray(workspace.sessionIds) ? workspace.sessionIds.map(text$2).filter(Boolean) : []
 	} : {
 		...EMPTY,
-		sessionId: text$1(sessionId)
+		sessionId: text$2(sessionId)
 	};
 	if (next.sessionId === binding.sessionId && next.workspaceId === binding.workspaceId && next.title === binding.title && next.sessionIds.join("\0") === binding.sessionIds.join("\0")) return false;
 	binding = next;
@@ -383,7 +401,7 @@ function bindWorkspace(sessionId, workspace) {
 }
 /** The workspace list available to this session, or null outside a workspace. */
 function workspaceScopeForSession(sessionId) {
-	const id = text$1(sessionId);
+	const id = text$2(sessionId);
 	if (id && binding.sessionId === id && binding.workspaceId) return {
 		kind: "workspace",
 		id: binding.workspaceId,
@@ -396,7 +414,7 @@ function workspaceScopeForSession(sessionId) {
 function scopeForSession(sessionId, mode = "workspace") {
 	const workspace = workspaceScopeForSession(sessionId);
 	if (workspace && mode !== "session") return workspace;
-	const id = text$1(sessionId);
+	const id = text$2(sessionId);
 	return {
 		kind: "session",
 		id,
@@ -420,7 +438,7 @@ function scopeKey(scope) {
 */
 function draftKeyForSession(sessionId) {
 	const workspace = workspaceScopeForSession(sessionId);
-	return workspace ? scopeKey(workspace) : text$1(sessionId);
+	return workspace ? scopeKey(workspace) : text$2(sessionId);
 }
 
 // src/client/domain/forward.ts
@@ -963,7 +981,7 @@ function writeSessionRecord(sessionId, record) {
 * `seededSessionIds` records that so a later delete is not undone by the merge
 * running again.
 */
-const text = (value) => value ? String(value) : "";
+const text$1 = (value) => value ? String(value) : "";
 const bucket = (value) => value && typeof value === "object" && !Array.isArray(value) ? value : {};
 function seededOf(record) {
 	const raw = record && record.seededSessionIds;
@@ -971,7 +989,7 @@ function seededOf(record) {
 	const seen = /* @__PURE__ */ new Set();
 	const next = [];
 	for (const value of raw) {
-		const id = text(value);
+		const id = text$1(value);
 		if (!id || seen.has(id)) continue;
 		seen.add(id);
 		next.push(id);
@@ -1019,7 +1037,7 @@ function writeWorkspaceStore(store) {
 }
 /** One workspace's memo record. */
 function readWorkspaceRecord(workspaceId) {
-	const key = text(workspaceId);
+	const key = text$1(workspaceId);
 	if (!key) return {
 		items: [],
 		updatedAt: 0,
@@ -1034,7 +1052,7 @@ function readWorkspaceRecord(workspaceId) {
 }
 /** Persist one workspace's memo record. */
 function writeWorkspaceRecord(workspaceId, record) {
-	const key = text(workspaceId);
+	const key = text$1(workspaceId);
 	if (!key) return false;
 	const store = readWorkspaceStore();
 	const previous = store.workspaces[key];
@@ -1052,7 +1070,7 @@ function writeWorkspaceRecord(workspaceId, record) {
 * Returns whether the store changed; repeated calls are cheap and idempotent.
 */
 function ensureWorkspaceRecord(workspaceId, sessionIds) {
-	const key = text(workspaceId);
+	const key = text$1(workspaceId);
 	if (!key) return false;
 	const previous = readWorkspaceStore().workspaces[key];
 	const seeded = new Set(seededOf(previous));
@@ -1060,7 +1078,7 @@ function ensureWorkspaceRecord(workspaceId, sessionIds) {
 	const seen = new Set(items.map((item) => item.id));
 	let changed = !previous;
 	if (!changed && Array.isArray(sessionIds)) for (const value of sessionIds) {
-		const sessionId = text(value);
+		const sessionId = text$1(value);
 		if (!sessionId) continue;
 		if (!seeded.has(sessionId)) {
 			changed = true;
@@ -1070,7 +1088,7 @@ function ensureWorkspaceRecord(workspaceId, sessionIds) {
 	if (!changed) return false;
 	const sessionStore = readSessionStore();
 	for (const value of Array.isArray(sessionIds) ? sessionIds : []) {
-		const sessionId = text(value);
+		const sessionId = text$1(value);
 		if (!sessionId || seeded.has(sessionId)) continue;
 		seeded.add(sessionId);
 		changed = true;
@@ -2337,6 +2355,69 @@ function createMarketClient(options = {}) {
 /** Process-wide market client: one request shape, shared by every panel open. */
 const marketClient = createMarketClient();
 
+// src/client/update/host.ts
+/**
+* The host-side update, as the panel sees it.
+*
+* The host half of this package exposes two same-origin endpoints; a browser
+* cannot install a package itself. Nothing here throws: every branch answers
+* with a value the card can render, because "the host has no update route"
+* (an older build, or a headless host) must fall back to the market path
+* rather than look like a failed update.
+*/
+/** Where the host listens; keep in sync with `host/route.js`. */
+const HOST_APPLY_PATH = "/dsh-aside-note/update/apply";
+/** An install can be slow (pnpm download, build scripts) but not unbounded. */
+const APPLY_TIMEOUT_MS = 3e5;
+function text(value) {
+	return typeof value === "string" && value.trim() !== "" ? value : void 0;
+}
+/**
+* Ask the host to install `target` over the running copy.
+*
+* @param target exact version, as the version check resolved it
+*/
+async function applyHostUpdate(target) {
+	const controller = typeof AbortController === "function" ? new AbortController() : void 0;
+	const timer = setTimeout(() => controller?.abort(), APPLY_TIMEOUT_MS);
+	let response;
+	try {
+		response = await fetch(HOST_APPLY_PATH, {
+			method: "POST",
+			headers: { "content-type": "application/json" },
+			body: JSON.stringify({ target }),
+			...controller === void 0 ? {} : { signal: controller.signal }
+		});
+	} catch {
+		return { kind: "unavailable" };
+	} finally {
+		clearTimeout(timer);
+	}
+	if (response.status === 404) return { kind: "unavailable" };
+	let body;
+	try {
+		body = await response.json();
+	} catch {
+		return { kind: "unavailable" };
+	}
+	if (body?.ok === true) return {
+		kind: "ok",
+		route: body.route === "dsh-plugin" || body.route === "package-manager" || body.route === "none" ? body.route : "dsh",
+		...text(body.previousVersion) === void 0 ? {} : { previousVersion: text(body.previousVersion) },
+		installedVersion: text(body.installedVersion) ?? target,
+		updated: body.updated === true,
+		restartRequired: body.restartRequired === true,
+		...text(body.output) === void 0 ? {} : { output: text(body.output) }
+	};
+	return {
+		kind: "error",
+		code: text(body?.code) ?? "UPDATE_FAILED",
+		message: text(body?.message) ?? "the host refused the update",
+		retryable: body?.retryable === true,
+		...text(body?.hint) === void 0 ? {} : { hint: text(body.hint) }
+	};
+}
+
 // src/client/domain/clipboard.ts
 /** Clipboard write with a synchronous fallback. */
 /** Copy plain text, with a synchronous fallback for restricted clipboards. */
@@ -2439,6 +2520,9 @@ function useUpdateCenter(localeId) {
 	const disposed = react.default.useRef(false);
 	const runRef = react.default.useRef(RUN_IDLE);
 	runRef.current = run;
+	/** The offered version, readable from callbacks without re-creating them. */
+	const latestRef = react.default.useRef(null);
+	latestRef.current = check.latestVersion;
 	/** Set before the first await so the same panel cannot start two operations. */
 	const starting = react.default.useRef(false);
 	react.default.useEffect(() => {
@@ -2570,15 +2654,41 @@ function useUpdateCenter(localeId) {
 	]);
 	const startUpdate = react.default.useCallback(async (force = false) => {
 		if (starting.current) return;
-		if (runRef.current.phase === "running" || runRef.current.phase === "done") return;
+		if (runRef.current.phase === "running") return;
+		if (runRef.current.phase === "done" && runRef.current.installedVersion === latestRef.current) return;
 		starting.current = true;
 		try {
 			setRun(terminalRun("starting"));
+			const target = latestRef.current;
+			if (target !== null) {
+				const host = await applyHostUpdate(target);
+				if (disposed.current) return;
+				if (host.kind === "ok") {
+					setRun(terminalRun("done", {
+						percent: 100,
+						installedVersion: host.installedVersion,
+						refreshRequired: !host.restartRequired,
+						restartRequired: host.restartRequired
+					}));
+					return;
+				}
+				if (host.kind === "error") {
+					setRun(terminalRun("error", {
+						failureCode: host.code,
+						message: host.hint ?? host.message,
+						retryable: host.retryable
+					}));
+					return;
+				}
+			}
 			const caps = await marketClient.capabilities();
 			if (disposed.current) return;
 			if (!caps) {
 				setMarket("unsupported");
-				setRun(RUN_IDLE);
+				setRun(terminalRun("error", {
+					failureCode: "AUTO_UPDATE_UNAVAILABLE",
+					retryable: false
+				}));
 				return;
 			}
 			setMarket("ready");
@@ -2627,6 +2737,14 @@ function useUpdateCenter(localeId) {
 					continue;
 				}
 				if (operation.state === "succeeded") {
+					if (latestRef.current !== null && operation.installedVersion !== null && operation.installedVersion !== latestRef.current) {
+						setRun(terminalRun("error", {
+							failureCode: "RESOLVED_VERSION_MISMATCH",
+							message: `${operation.installedVersion} installed, expected ${latestRef.current}`,
+							retryable: true
+						}));
+						return;
+					}
 					setRun(terminalRun("done", {
 						percent: 100,
 						installedVersion: operation.installedVersion,
@@ -3247,8 +3365,28 @@ const FAILURE_COPY = {
 	UPDATE_REJECTED: "update.rejected",
 	OPERATION_BUSY: "update.busy",
 	AGENTS_RUNNING: "update.agentsRunning",
-	UPDATE_TIMEOUT: "update.timeout"
+	UPDATE_TIMEOUT: "update.timeout",
+	"bundle-in-use": "update.bundleInUse",
+	"already-installed": "update.alreadyInstalled",
+	"management-required": "update.managementRequired",
+	"not-removable": "update.notRemovable",
+	"stop-profile": "update.stopProfile",
+	"incompatible-version": "update.incompatible",
+	RESOLVED_VERSION_MISMATCH: "update.versionMismatch",
+	DOWNGRADE_DETECTED: "update.downgrade",
+	AUTO_UPDATE_UNAVAILABLE: "update.autoUnavailable"
 };
+/** Refusals a terminal command can actually get past. */
+const MANUAL_FALLBACK = /* @__PURE__ */ new Set([
+	"OPERATION_BUSY",
+	"AGENTS_RUNNING",
+	"bundle-in-use",
+	"already-installed",
+	"management-required",
+	"not-removable",
+	"stop-profile",
+	"AUTO_UPDATE_UNAVAILABLE"
+]);
 function UpdateNotice(props) {
 	const { say, latestVersion, market, restartSupported, notes, expandedVersions, run, fullReleaseUrl } = props;
 	const notesRef = react.default.useRef(null);
@@ -3300,7 +3438,7 @@ function UpdateNotice(props) {
 	* the command is the way past a refusal — it does not go through the market.
 	* A busy market keeps its retry button, so both paths stay reachable.
 	*/
-	const manual = stopped || run.failureCode === "OPERATION_BUSY" || run.failureCode === "AGENTS_RUNNING";
+	const manual = stopped || run.failureCode !== null && MANUAL_FALLBACK.has(run.failureCode);
 	const progress = phase === "running" ? run.percent === null ? say("update.updating") : say("update.updatingPercent", { percent: run.percent }) : "";
 	/**
 	* Hand the user a prompt they can paste into an agent; report the outcome.

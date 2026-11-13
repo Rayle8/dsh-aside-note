@@ -6,6 +6,18 @@ This file records user-visible changes only. Screenshots, marketplace listing ma
 
 ## next-released
 
+<!-- app-update-notes:en:start -->
+### Changed
+- **In-app update works on Desktop:** the panel now installs a newer build from the host instead of only asking the plugin market. The market replaces a package by removing it first, and Desktop refuses to remove a bundle that is in use — which this panel always is while it is open. The host installs over the running copy (DSH's installer, then `dsh plugin add`, then the profile's own package manager) and checks the version on disk before reporting success.
+- **Update failures name their cause:** refusals such as `bundle-in-use`, `already-installed` and `management-required` now say what happened and offer the terminal command, instead of a bare "update failed".
+<!-- app-update-notes:en:end -->
+
+<!-- app-update-notes:zh:start -->
+### 变更
+- **桌面端可在应用内更新：** 面板现在由宿主安装新版本，不再只依赖插件市场。市场的更新会先移除再安装，而桌面端不允许移除正在使用的插件——面板打开时恰好一直是这个状态。宿主改为就地覆盖（DSH 安装器 → `dsh plugin add` → profile 自带包管理器），并在报告成功前核对磁盘上的版本。
+- **更新失败会说明原因：** `bundle-in-use`、`already-installed`、`management-required` 这类拒绝现在会讲清楚发生了什么，并给出终端命令，而不是只回一句"更新失败"。
+<!-- app-update-notes:zh:end -->
+
 ## 1.1.1
 
 <!-- app-update-notes:en:start -->

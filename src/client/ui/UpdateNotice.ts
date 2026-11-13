@@ -35,7 +35,31 @@ const FAILURE_COPY: Record<string, string> = {
   OPERATION_BUSY: 'update.busy',
   AGENTS_RUNNING: 'update.agentsRunning',
   UPDATE_TIMEOUT: 'update.timeout',
+  // DSH's own refusals, forwarded unchanged by the market's v1 API. Desktop
+  // answers `bundle-in-use` for every plugin that is loaded while it is asked
+  // to remove one — which is exactly this panel's state while it is open.
+  'bundle-in-use': 'update.bundleInUse',
+  'already-installed': 'update.alreadyInstalled',
+  'management-required': 'update.managementRequired',
+  'not-removable': 'update.notRemovable',
+  'stop-profile': 'update.stopProfile',
+  'incompatible-version': 'update.incompatible',
+  RESOLVED_VERSION_MISMATCH: 'update.versionMismatch',
+  DOWNGRADE_DETECTED: 'update.downgrade',
+  AUTO_UPDATE_UNAVAILABLE: 'update.autoUnavailable',
 }
+
+/** Refusals a terminal command can actually get past. */
+const MANUAL_FALLBACK: ReadonlySet<string> = new Set([
+  'OPERATION_BUSY',
+  'AGENTS_RUNNING',
+  'bundle-in-use',
+  'already-installed',
+  'management-required',
+  'not-removable',
+  'stop-profile',
+  'AUTO_UPDATE_UNAVAILABLE',
+])
 
 export function UpdateNotice(props: {
   say: (key: string, vars?: Record<string, any>) => string
@@ -103,7 +127,7 @@ export function UpdateNotice(props: {
    * the command is the way past a refusal — it does not go through the market.
    * A busy market keeps its retry button, so both paths stay reachable.
    */
-  const manual = stopped || run.failureCode === 'OPERATION_BUSY' || run.failureCode === 'AGENTS_RUNNING'
+  const manual = stopped || (run.failureCode !== null && MANUAL_FALLBACK.has(run.failureCode))
 
   const progress = phase === 'running'
     ? (run.percent === null

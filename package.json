@@ -37,6 +37,7 @@
   },
   "files": [
     "index.js",
+    "host",
     "client/client.js",
     "scripts/install.mjs",
     "cordis.patch.yml",
