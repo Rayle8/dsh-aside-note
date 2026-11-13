@@ -6,6 +6,8 @@ This file records user-visible changes only. Screenshots, marketplace listing ma
 
 ## next-released
 
+## 1.1.2-beta.3
+
 <!-- app-update-notes:en:start -->
 ### Changed
 - **Updating no longer requires the plugin market:** the card asks the host first and reads the market only when the host has no update route, so a DSH without the market can still update in-app. The terminal command now appears after an attempt finds no path, instead of whenever the market is missing.
