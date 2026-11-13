@@ -4243,7 +4243,7 @@ const ANONYMOUS_UIN_KEY = "dsh.aside-note.uin";
 /** Whether this browser has opened the panel before; reported once as `first`. */
 const PANEL_OPENED_KEY = "dsh.aside-note.panel-opened";
 /** Shown in the in-panel settings; keep in sync with package.json. */
-const PLUGIN_VERSION = "1.1.1";
+const PLUGIN_VERSION = "1.1.2-beta.3";
 const PLUGIN_AUTHOR = "阿三石";
 const PLUGIN_REPO_URL = "https://github.com/Rayle8/dsh-aside-note";
 const PLUGIN_REPO_LABEL = "github.com/Rayle8/dsh-aside-note";
@@ -4337,7 +4337,7 @@ const rum = inTestRealm ? null : new import_aegis_min.default({
 	id: APP_ID,
 	uin: anonymousUin(),
 	hostUrl: "https://rumt-zh.com",
-	version: "1.1.1",
+	version: "1.1.2-beta.3",
 	pagePerformance: false,
 	webVitals: false,
 	onError: false,
@@ -4453,7 +4453,6 @@ const en = {
 	"update.updatingPercent": "Updating… {percent}%",
 	"update.updated": "Updated to {version}",
 	"update.refresh": "Refresh page",
-	"update.restart": "Restart DSH",
 	"update.restartHint": "Restart DSH manually to finish the update",
 	"update.failed": "Update failed: {reason}",
 	"update.force": "Update anyway",
@@ -4465,6 +4464,15 @@ const en = {
 	"update.busy": "Another automatic update is already running — try again shortly",
 	"update.agentsRunning": "An agent is running, and the automatic update will not replace plugin files under it; wait for it to finish, or update with the command below",
 	"update.timeout": "Timed out waiting for the update result — try again later",
+	"update.bundleInUse": "This plugin is in use, and Desktop will not remove it first; the host route installs over it — if that still fails, run the command below",
+	"update.alreadyInstalled": "This DSH only replaces a package after removing it, so it cannot install over the current copy; run the command below",
+	"update.managementRequired": "This profile is managed by the desktop app, so the automatic update cannot change it; run the command below",
+	"update.notRemovable": "The desktop app manages this plugin and the automatic update cannot remove it; run the command below",
+	"update.stopProfile": "Removing it requires stopping this profile first; run the command below",
+	"update.incompatible": "This version is not compatible with the running DSH, so the host refused it",
+	"update.versionMismatch": "The installed version is not the one requested — a mirror or the release-age hold may have substituted it; retry later or install manually",
+	"update.downgrade": "Refused: the target version is older than the installed one",
+	"update.autoUnavailable": "This host offers no automatic update route; run the command below",
 	"update.manualHint": "Or update directly: run npx -y dsh-aside-note install in a terminal, or update from the Plugins page, then reload",
 	"update.copyPrompt": "Copy update prompt",
 	"update.prompt": "Update the DSH plugin AsideNote to the latest version by running: npx -y dsh-aside-note install."
@@ -4566,7 +4574,6 @@ const zh = {
 	"update.updatingPercent": "正在更新… {percent}%",
 	"update.updated": "已更新到 {version}",
 	"update.refresh": "刷新页面",
-	"update.restart": "重启 DSH",
 	"update.restartHint": "请手动重启 DSH 以完成更新",
 	"update.failed": "更新失败：{reason}",
 	"update.force": "仍要更新",
@@ -4578,6 +4585,15 @@ const zh = {
 	"update.busy": "自动更新正在执行另一个任务，请稍后再试",
 	"update.agentsRunning": "有 agent 正在运行，自动更新不会在它运行期间替换插件文件；可以等它结束，或用下面的命令直接更新",
 	"update.timeout": "等待更新结果超时，请稍后再试",
+	"update.bundleInUse": "这个插件正被当前 DSH 使用中，桌面端不允许先移除再安装；宿主通道会就地覆盖，若仍失败请用下面的命令",
+	"update.alreadyInstalled": "这个 DSH 只支持先移除再安装，无法原地覆盖；请用下面的命令",
+	"update.managementRequired": "这个 profile 由桌面端自己管理，自动更新无法改动它；请用下面的命令",
+	"update.notRemovable": "这个插件由桌面端管理，自动更新不能移除它；请用下面的命令",
+	"update.stopProfile": "移除它需要先停止这个 profile；请用下面的命令",
+	"update.incompatible": "这个版本与当前 DSH 不兼容，宿主拒绝了安装",
+	"update.versionMismatch": "装到的版本与目标不一致（可能被镜像或发布保护替换）；可稍后重试或手动安装",
+	"update.downgrade": "拒绝降级：目标版本低于当前已装版本",
+	"update.autoUnavailable": "这台宿主没有可用的自动更新通道；请用下面的命令",
 	"update.manualHint": "也可以直接更新：在终端执行 npx -y dsh-aside-note install，或到「插件」页更新，装好后刷新页面即可",
 	"update.copyPrompt": "拷贝更新提示词",
 	"update.prompt": "帮我更新 DSH 插件 AsideNote（旁边记）到最新版本：在终端执行 npx -y dsh-aside-note install。"
@@ -4622,17 +4638,17 @@ const EMPTY = {
 	sessionIds: []
 };
 let binding = EMPTY;
-const text$1 = (value) => value ? String(value) : "";
+const text$2 = (value) => value ? String(value) : "";
 /** Resolve the workspace of the captured session; null clears the binding. */
 function bindWorkspace(sessionId, workspace) {
 	const next = workspace ? {
-		sessionId: text$1(sessionId),
-		workspaceId: text$1(workspace.workspaceId),
-		title: text$1(workspace.title),
-		sessionIds: Array.isArray(workspace.sessionIds) ? workspace.sessionIds.map(text$1).filter(Boolean) : []
+		sessionId: text$2(sessionId),
+		workspaceId: text$2(workspace.workspaceId),
+		title: text$2(workspace.title),
+		sessionIds: Array.isArray(workspace.sessionIds) ? workspace.sessionIds.map(text$2).filter(Boolean) : []
 	} : {
 		...EMPTY,
-		sessionId: text$1(sessionId)
+		sessionId: text$2(sessionId)
 	};
 	if (next.sessionId === binding.sessionId && next.workspaceId === binding.workspaceId && next.title === binding.title && next.sessionIds.join("\0") === binding.sessionIds.join("\0")) return false;
 	binding = next;
@@ -4640,7 +4656,7 @@ function bindWorkspace(sessionId, workspace) {
 }
 /** The workspace list available to this session, or null outside a workspace. */
 function workspaceScopeForSession(sessionId) {
-	const id = text$1(sessionId);
+	const id = text$2(sessionId);
 	if (id && binding.sessionId === id && binding.workspaceId) return {
 		kind: "workspace",
 		id: binding.workspaceId,
@@ -4653,7 +4669,7 @@ function workspaceScopeForSession(sessionId) {
 function scopeForSession(sessionId, mode = "workspace") {
 	const workspace = workspaceScopeForSession(sessionId);
 	if (workspace && mode !== "session") return workspace;
-	const id = text$1(sessionId);
+	const id = text$2(sessionId);
 	return {
 		kind: "session",
 		id,
@@ -4677,7 +4693,7 @@ function scopeKey(scope) {
 */
 function draftKeyForSession(sessionId) {
 	const workspace = workspaceScopeForSession(sessionId);
-	return workspace ? scopeKey(workspace) : text$1(sessionId);
+	return workspace ? scopeKey(workspace) : text$2(sessionId);
 }
 
 // src/client/domain/forward.ts
@@ -5237,7 +5253,7 @@ function writeSessionRecord(sessionId, record) {
 * `seededSessionIds` records that so a later delete is not undone by the merge
 * running again.
 */
-const text = (value) => value ? String(value) : "";
+const text$1 = (value) => value ? String(value) : "";
 const bucket = (value) => value && typeof value === "object" && !Array.isArray(value) ? value : {};
 function seededOf(record) {
 	const raw = record && record.seededSessionIds;
@@ -5245,7 +5261,7 @@ function seededOf(record) {
 	const seen = /* @__PURE__ */ new Set();
 	const next = [];
 	for (const value of raw) {
-		const id = text(value);
+		const id = text$1(value);
 		if (!id || seen.has(id)) continue;
 		seen.add(id);
 		next.push(id);
@@ -5293,7 +5309,7 @@ function writeWorkspaceStore(store) {
 }
 /** One workspace's memo record. */
 function readWorkspaceRecord(workspaceId) {
-	const key = text(workspaceId);
+	const key = text$1(workspaceId);
 	if (!key) return {
 		items: [],
 		updatedAt: 0,
@@ -5308,7 +5324,7 @@ function readWorkspaceRecord(workspaceId) {
 }
 /** Persist one workspace's memo record. */
 function writeWorkspaceRecord(workspaceId, record) {
-	const key = text(workspaceId);
+	const key = text$1(workspaceId);
 	if (!key) return false;
 	const store = readWorkspaceStore();
 	const previous = store.workspaces[key];
@@ -5326,7 +5342,7 @@ function writeWorkspaceRecord(workspaceId, record) {
 * Returns whether the store changed; repeated calls are cheap and idempotent.
 */
 function ensureWorkspaceRecord(workspaceId, sessionIds) {
-	const key = text(workspaceId);
+	const key = text$1(workspaceId);
 	if (!key) return false;
 	const previous = readWorkspaceStore().workspaces[key];
 	const seeded = new Set(seededOf(previous));
@@ -5334,7 +5350,7 @@ function ensureWorkspaceRecord(workspaceId, sessionIds) {
 	const seen = new Set(items.map((item) => item.id));
 	let changed = !previous;
 	if (!changed && Array.isArray(sessionIds)) for (const value of sessionIds) {
-		const sessionId = text(value);
+		const sessionId = text$1(value);
 		if (!sessionId) continue;
 		if (!seeded.has(sessionId)) {
 			changed = true;
@@ -5344,7 +5360,7 @@ function ensureWorkspaceRecord(workspaceId, sessionIds) {
 	if (!changed) return false;
 	const sessionStore = readSessionStore();
 	for (const value of Array.isArray(sessionIds) ? sessionIds : []) {
-		const sessionId = text(value);
+		const sessionId = text$1(value);
 		if (!sessionId || seeded.has(sessionId)) continue;
 		seeded.add(sessionId);
 		changed = true;
@@ -6103,7 +6119,17 @@ const MAX_RELEASE_HISTORY = 6;
 function core(version) {
 	return String(version ?? "").replace(/^v/i, "").split("-", 1)[0].split(".").map((part) => Number.parseInt(part, 10) || 0);
 }
-/** Numeric comparison of two versions; prerelease suffixes compare as the core. */
+/** A version carrying a prerelease part, e.g. `1.2.0-beta.1`. */
+function isPrerelease(version) {
+	return /^\D*\d+\.\d+\.\d+-/.test(String(version ?? "").trim());
+}
+/**
+* Full ordering of two versions, prerelease identifiers included.
+*
+* A beta build asks for the notes between `1.2.0-beta.1` and `1.2.0-beta.2`;
+* comparing the cores alone would call those equal and leave the card with no
+* notes at all, which is exactly the case a beta test needs to read.
+*/
 function compareVersions(a, b) {
 	const left = core(a);
 	const right = core(b);
@@ -6111,12 +6137,38 @@ function compareVersions(a, b) {
 		const difference = (left[index] || 0) - (right[index] || 0);
 		if (difference !== 0) return difference > 0 ? 1 : -1;
 	}
+	const leftPre = prerelease(a);
+	const rightPre = prerelease(b);
+	if (leftPre.length === 0 && rightPre.length === 0) return 0;
+	if (leftPre.length === 0) return 1;
+	if (rightPre.length === 0) return -1;
+	for (let index = 0; index < Math.max(leftPre.length, rightPre.length); index += 1) {
+		const x = leftPre[index];
+		const y = rightPre[index];
+		if (x === void 0) return -1;
+		if (y === void 0) return 1;
+		if (x === y) continue;
+		const xNumeric = /^\d+$/.test(x);
+		const yNumeric = /^\d+$/.test(y);
+		if (xNumeric && yNumeric) return Number(x) > Number(y) ? 1 : -1;
+		if (xNumeric) return -1;
+		if (yNumeric) return 1;
+		return x > y ? 1 : -1;
+	}
 	return 0;
 }
-/** A plain `x.y.z` tag, with the `v` prefix and whitespace removed. */
+/** The prerelease identifiers of a version, or an empty list. */
+function prerelease(version) {
+	const normalized = String(version ?? "").trim().replace(/^v/i, "");
+	const dash = normalized.indexOf("-");
+	if (dash === -1) return [];
+	const tail = normalized.slice(dash + 1).split("+")[0];
+	return tail === "" ? [] : tail.split(".");
+}
+/** A `x.y.z` or `x.y.z-prerelease` tag, with the `v` prefix and whitespace removed. */
 function normalizeVersion(version) {
 	const normalized = String(version ?? "").trim().replace(/^v/i, "");
-	return /^\d+(\.\d+)*$/.test(normalized) ? normalized : "";
+	return /^\d+(\.\d+)*(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$/.test(normalized) ? normalized : "";
 }
 /**
 * Filter the feed down to the releases the user is about to receive:
@@ -6126,10 +6178,12 @@ function selectReleaseHistory(list, query) {
 	const max = query.max && query.max > 0 ? query.max : 6;
 	const seen = /* @__PURE__ */ new Set();
 	const entries = [];
+	const allowPrerelease = isPrerelease(query.current) && isPrerelease(query.latest ?? "");
 	for (const item of Array.isArray(list) ? list : []) {
 		const release = item;
 		if (!release || typeof release !== "object") continue;
-		if (release.prerelease === true || release.draft === true) continue;
+		if (release.draft === true) continue;
+		if (release.prerelease === true && !allowPrerelease) continue;
 		const version = normalizeVersion(typeof release.version === "string" ? release.version : release.tag_name);
 		if (!version || seen.has(version)) continue;
 		if (compareVersions(version, query.current) <= 0) continue;
@@ -6172,20 +6226,71 @@ const UPDATE_GITHUB_RELEASES_URL = `${UPDATE_GITHUB_API}?per_page=50`;
 const UPDATE_TTL_MS = 36e5;
 /** A manual check should not hang the panel on a black-holed network. */
 const UPDATE_TIMEOUT_MS = 8e3;
+/** A version carrying a prerelease part, e.g. `1.2.0-beta.1`. */
+function isPrereleaseVersion(version) {
+	return /^\D*\d+\.\d+\.\d+-/.test(version.trim());
+}
 /**
-* Numeric segment comparison, tolerant of a `v` prefix and short forms. A
-* pre-release tag on the same core is not newer ("2.0.0-rc.1" vs "2.0.0").
+* A prerelease on a channel this project actually publishes.
+*
+* `1.1.2-beta.1` is a build someone installed on purpose and it should check
+* for updates like any other release; `2.1.0-dev` is a local build and must not
+* nag. The suffix alone cannot tell them apart, so the channel names do.
 */
-function isNewerVersion(latest, current) {
-	const parse = (version) => version.replace(/^v/, "").split("-", 1)[0].split(".").map((part) => parseInt(part, 10) || 0);
-	const next = parse(latest);
-	const have = parse(current);
-	for (let index = 0; index < Math.max(next.length, have.length); index += 1) {
-		const a = next[index] || 0;
-		const b = have[index] || 0;
-		if (a !== b) return a > b;
+function isPublishedChannel(version) {
+	return /^\d+\.\d+\.\d+-(?:alpha|beta|rc)\./.test(version.trim());
+}
+/**
+* Full ordering, tolerant of a `v` prefix and short forms, with the prerelease
+* identifiers compared as semver does: a release outranks any prerelease on the
+* same core, `rc.1` sorts below `rc.2`, and a numeric identifier sorts below an
+* alphanumeric one.
+*
+* The prerelease part matters here: a beta build must see the next beta as an
+* update, which a comparison over the core alone would call "the same version".
+*/
+function compareVersionOrder(a, b) {
+	const parse = (version) => {
+		const [core, ...rest] = version.trim().replace(/^v/, "").split("-");
+		const parts = core.split(".").map((part) => parseInt(part, 10));
+		if (parts.length === 0 || parts.some((part) => Number.isNaN(part))) return null;
+		const prerelease = rest.join("-");
+		return {
+			core: parts,
+			prerelease: prerelease === "" ? [] : prerelease.split(".")
+		};
+	};
+	const next = parse(a);
+	const have = parse(b);
+	if (next === null && have === null) return 0;
+	if (next === null) return -1;
+	if (have === null) return 1;
+	for (let index = 0; index < Math.max(next.core.length, have.core.length); index += 1) {
+		const left = next.core[index] || 0;
+		const right = have.core[index] || 0;
+		if (left !== right) return left > right ? 1 : -1;
 	}
-	return false;
+	if (next.prerelease.length === 0 && have.prerelease.length === 0) return 0;
+	if (next.prerelease.length === 0) return 1;
+	if (have.prerelease.length === 0) return -1;
+	for (let index = 0; index < Math.max(next.prerelease.length, have.prerelease.length); index += 1) {
+		const left = next.prerelease[index];
+		const right = have.prerelease[index];
+		if (left === void 0) return -1;
+		if (right === void 0) return 1;
+		if (left === right) continue;
+		const leftNumeric = /^\d+$/.test(left);
+		const rightNumeric = /^\d+$/.test(right);
+		if (leftNumeric && rightNumeric) return Number(left) > Number(right) ? 1 : -1;
+		if (leftNumeric) return -1;
+		if (rightNumeric) return 1;
+		return left > right ? 1 : -1;
+	}
+	return 0;
+}
+/** Whether `latest` is a newer release than `current`. */
+function isNewerVersion(latest, current) {
+	return compareVersionOrder(latest, current) > 0;
 }
 /** A fetch that gives up after {@link UPDATE_TIMEOUT_MS} instead of hanging. */
 function fetchWithTimeout(fetchImpl, url) {
@@ -6202,8 +6307,8 @@ function createUpdateProbe(options = {}) {
 	function readJson(url) {
 		return fetchWithTimeout(fetchImpl, url).then((response) => response.ok ? response.json() : null).catch(() => null);
 	}
-	function readNpmVersion(host) {
-		return readJson(`${host}/dsh-aside-note/latest`).then((body) => body !== null && typeof body.version === "string" ? body.version : null);
+	function readNpmVersion(host, channel) {
+		return readJson(`${host}/dsh-aside-note/${channel}`).then((body) => body !== null && typeof body.version === "string" ? body.version : null);
 	}
 	function readGitHubVersion() {
 		return readJson(UPDATE_GITHUB_RELEASE_URL).then((body) => {
@@ -6212,16 +6317,27 @@ function createUpdateProbe(options = {}) {
 		});
 	}
 	function latest() {
-		if (cached === null || now() - cached.at >= ttlMs) cached = {
-			at: now(),
-			promise: (async () => {
-				for (const host of UPDATE_REGISTRY_HOSTS) {
-					const version = await readNpmVersion(host);
-					if (version !== null) return version;
-				}
-				return readGitHubVersion();
-			})()
-		};
+		if (cached === null || now() - cached.at >= ttlMs) {
+			const channels = isPrereleaseVersion(options.currentVersion ?? "") ? ["latest", "next"] : ["latest"];
+			cached = {
+				at: now(),
+				promise: (async () => {
+					let best = null;
+					for (const host of UPDATE_REGISTRY_HOSTS) {
+						let answered = false;
+						for (const channel of channels) {
+							const version = await readNpmVersion(host, channel);
+							if (version === null) continue;
+							answered = true;
+							if (channel !== "latest" && !isPrereleaseVersion(version)) continue;
+							if (best === null || isNewerVersion(version, best)) best = version;
+						}
+						if (answered) return best;
+					}
+					return best ?? readGitHubVersion();
+				})()
+			};
+		}
 		return cached.promise;
 	}
 	/** Drop the cached answer so the next call reads the network again. */
@@ -6234,7 +6350,7 @@ function createUpdateProbe(options = {}) {
 	};
 }
 /** Process-wide probe: one fetch per hour no matter how often the panel opens. */
-const updateProbe = createUpdateProbe();
+const updateProbe = createUpdateProbe({ currentVersion: PLUGIN_VERSION });
 function fetchLatestVersion() {
 	return updateProbe.latest();
 }
@@ -6534,35 +6650,15 @@ function createMarketClient(options = {}) {
 		}
 	}
 	return {
-		/** Feature discovery; `null` means "no usable market on this host". */
-		async capabilities() {
+		/**
+		* Whether this host has a usable market: the v1 schema answered. The panel
+		* needs no more than that — the endpoints it calls are fixed, and nothing
+		* reads the market's version, restart support or advertised paths.
+		*/
+		async available() {
 			const result = await request("/capabilities");
 			const body = asRecord(result?.body);
-			if (!result || result.status !== 200 || !body || body.schema !== "dsh-market/update-api/v1") return null;
-			const endpoints = asRecord(body.endpoints) || {};
-			return {
-				marketVersion: asText(body.marketVersion) || "",
-				stability: asText(body.stability) || "beta",
-				restartSupported: body.restart?.supported === true,
-				endpoints: {
-					updates: asText(endpoints.updates) || `${"/dsh-market/api/v1"}/updates`,
-					operations: asText(endpoints.operations) || `${"/dsh-market/api/v1"}/operations`,
-					restart: asText(endpoints.restart) || `${"/dsh-market/api/v1"}/restart`
-				}
-			};
-		},
-		/** The market's view of the installed vs published version. */
-		async check(name = MARKET_PACKAGE, force = true) {
-			const result = await request(`/updates${`?name=${encodeURIComponent(name)}${force ? "&force=1" : ""}`}`);
-			const pkg = asRecord(asRecord(result?.body)?.package);
-			if (!result || result.status !== 200 || !pkg) return null;
-			return {
-				name: asText(pkg.name) || name,
-				source: asText(pkg.source) || "unknown",
-				installedVersion: asText(pkg.installedVersion) || "",
-				latestVersion: asText(pkg.latestVersion) || "",
-				updateAvailable: pkg.updateAvailable === true
-			};
+			return result !== null && result.status === 200 && body !== null && body !== void 0 && body.schema === "dsh-market/update-api/v1";
 		},
 		/** Queue an update; returns the operation to poll or a stable failure code. */
 		async start(name = MARKET_PACKAGE, force = false) {
@@ -6596,20 +6692,74 @@ function createMarketClient(options = {}) {
 			const result = await request(`/operations?operationId=${encodeURIComponent(operationId)}`);
 			if (!result || result.status !== 200) return null;
 			return operationView(asRecord(result.body)?.operation);
-		},
-		/** Ask the market to restart the host; only offered when capabilities allow it. */
-		async restart() {
-			const result = await request("/restart", {
-				method: "POST",
-				headers: { "content-type": "application/json" },
-				body: "{}"
-			});
-			return result !== null && result.status >= 200 && result.status < 300;
 		}
 	};
 }
 /** Process-wide market client: one request shape, shared by every panel open. */
 const marketClient = createMarketClient();
+
+// src/client/update/host.ts
+/**
+* The host-side update, as the panel sees it.
+*
+* The host half of this package exposes two same-origin endpoints; a browser
+* cannot install a package itself. Nothing here throws: every branch answers
+* with a value the card can render, because "the host has no update route"
+* (an older build, or a headless host) must fall back to the market path
+* rather than look like a failed update.
+*/
+/** Where the host listens; keep in sync with `host/route.js`. */
+const HOST_APPLY_PATH = "/dsh-aside-note/update/apply";
+/** An install can be slow (pnpm download, build scripts) but not unbounded. */
+const APPLY_TIMEOUT_MS = 3e5;
+function text(value) {
+	return typeof value === "string" && value.trim() !== "" ? value : void 0;
+}
+/**
+* Ask the host to install `target` over the running copy.
+*
+* @param target exact version, as the version check resolved it
+*/
+async function applyHostUpdate(target) {
+	const controller = typeof AbortController === "function" ? new AbortController() : void 0;
+	const timer = setTimeout(() => controller?.abort(), APPLY_TIMEOUT_MS);
+	let response;
+	try {
+		response = await fetch(HOST_APPLY_PATH, {
+			method: "POST",
+			headers: { "content-type": "application/json" },
+			body: JSON.stringify({ target }),
+			...controller === void 0 ? {} : { signal: controller.signal }
+		});
+	} catch {
+		return { kind: "unavailable" };
+	} finally {
+		clearTimeout(timer);
+	}
+	if (response.status === 404) return { kind: "unavailable" };
+	let body;
+	try {
+		body = await response.json();
+	} catch {
+		return { kind: "unavailable" };
+	}
+	if (body?.ok === true) return {
+		kind: "ok",
+		route: body.route === "dsh-plugin" || body.route === "package-manager" || body.route === "none" ? body.route : "dsh",
+		...text(body.previousVersion) === void 0 ? {} : { previousVersion: text(body.previousVersion) },
+		installedVersion: text(body.installedVersion) ?? target,
+		updated: body.updated === true,
+		restartRequired: body.restartRequired === true,
+		...text(body.output) === void 0 ? {} : { output: text(body.output) }
+	};
+	return {
+		kind: "error",
+		code: text(body?.code) ?? "UPDATE_FAILED",
+		message: text(body?.message) ?? "the host refused the update",
+		retryable: body?.retryable === true,
+		...text(body?.hint) === void 0 ? {} : { hint: text(body.hint) }
+	};
+}
 
 // src/client/domain/clipboard.ts
 /** Clipboard write with a synchronous fallback. */
@@ -6708,11 +6858,12 @@ function useUpdateCenter(localeId) {
 	const [notes, setNotes] = react.default.useState(NOTES_IDLE);
 	const [expandedVersions, setExpandedVersions] = react.default.useState({});
 	const [run, setRun] = react.default.useState(RUN_IDLE);
-	const [market, setMarket] = react.default.useState("unknown");
-	const [restartSupported, setRestartSupported] = react.default.useState(false);
 	const disposed = react.default.useRef(false);
 	const runRef = react.default.useRef(RUN_IDLE);
 	runRef.current = run;
+	/** The offered version, readable from callbacks without re-creating them. */
+	const latestRef = react.default.useRef(null);
+	latestRef.current = check.latestVersion;
 	/** Set before the first await so the same panel cannot start two operations. */
 	const starting = react.default.useRef(false);
 	react.default.useEffect(() => {
@@ -6723,7 +6874,7 @@ function useUpdateCenter(localeId) {
 	}, []);
 	const latestVersion = check.latestVersion;
 	react.default.useEffect(() => {
-		if ("1.1.1".includes("-")) return void 0;
+		if ("1.1.2-beta.3".includes("-") && !isPublishedChannel("1.1.2-beta.3")) return void 0;
 		let active = true;
 		fetchLatestVersion().then((version) => {
 			if (!active) return;
@@ -6754,18 +6905,6 @@ function useUpdateCenter(localeId) {
 			active = false;
 		};
 	}, []);
-	react.default.useEffect(() => {
-		if (check.status !== "available" || market !== "unknown") return void 0;
-		let active = true;
-		marketClient.capabilities().then((caps) => {
-			if (!active) return;
-			setMarket(caps ? "ready" : "unsupported");
-			setRestartSupported(caps?.restartSupported === true);
-		});
-		return () => {
-			active = false;
-		};
-	}, [check.status, market]);
 	const checkNow = react.default.useCallback(async () => {
 		if (check.status === "checking") return;
 		resetUpdateChecks();
@@ -6794,9 +6933,9 @@ function useUpdateCenter(localeId) {
 		}
 		reportEvent("update_checked", {
 			ext1: "manual",
-			ext2: isNewerVersion(version, "1.1.1") ? "available" : "current"
+			ext2: isNewerVersion(version, "1.1.2-beta.3") ? "available" : "current"
 		});
-		if (isNewerVersion(version, "1.1.1")) {
+		if (isNewerVersion(version, "1.1.2-beta.3")) {
 			const sameRelease = previousOffer !== null && version === previousOffer;
 			setCheck({
 				status: "available",
@@ -6864,19 +7003,50 @@ function useUpdateCenter(localeId) {
 	]);
 	const startUpdate = react.default.useCallback(async (force = false) => {
 		if (starting.current) return;
-		if (runRef.current.phase === "running" || runRef.current.phase === "done") return;
+		if (runRef.current.phase === "running") return;
+		if (runRef.current.phase === "done" && runRef.current.installedVersion === latestRef.current) return;
 		starting.current = true;
 		try {
 			setRun(terminalRun("starting"));
-			const caps = await marketClient.capabilities();
+			const target = latestRef.current;
+			if (target !== null) {
+				const host = await applyHostUpdate(target);
+				if (disposed.current) return;
+				if (host.kind === "ok") {
+					reportEvent("update_started", {
+						ext1: "host",
+						ext2: "done"
+					});
+					setRun(terminalRun("done", {
+						percent: 100,
+						installedVersion: host.installedVersion,
+						refreshRequired: !host.restartRequired,
+						restartRequired: host.restartRequired
+					}));
+					return;
+				}
+				if (host.kind === "error") {
+					reportEvent("update_started", {
+						ext1: "host",
+						ext2: "failed"
+					});
+					setRun(terminalRun("error", {
+						failureCode: host.code,
+						message: host.hint ?? host.message,
+						retryable: host.retryable
+					}));
+					return;
+				}
+			}
+			const usable = await marketClient.available();
 			if (disposed.current) return;
-			if (!caps) {
-				setMarket("unsupported");
-				setRun(RUN_IDLE);
+			if (!usable) {
+				setRun(terminalRun("error", {
+					failureCode: "AUTO_UPDATE_UNAVAILABLE",
+					retryable: false
+				}));
 				return;
 			}
-			setMarket("ready");
-			setRestartSupported(caps.restartSupported);
 			let started = await marketClient.start(MARKET_PACKAGE, force);
 			if (disposed.current) return;
 			for (let attempt = 0; attempt < BUSY_RETRY_DELAYS_MS.length; attempt += 1) {
@@ -6925,6 +7095,18 @@ function useUpdateCenter(localeId) {
 					continue;
 				}
 				if (operation.state === "succeeded") {
+					if (latestRef.current !== null && operation.installedVersion !== null && operation.installedVersion !== latestRef.current) {
+						reportEvent("update_started", {
+							ext1: "market",
+							ext2: "failed"
+						});
+						setRun(terminalRun("error", {
+							failureCode: "RESOLVED_VERSION_MISMATCH",
+							message: `${operation.installedVersion} installed, expected ${latestRef.current}`,
+							retryable: true
+						}));
+						return;
+					}
 					reportEvent("update_started", {
 						ext1: "market",
 						ext2: "done"
@@ -6961,10 +7143,6 @@ function useUpdateCenter(localeId) {
 			window.location.reload();
 		} catch {}
 	}, []);
-	const restartHost = react.default.useCallback(async () => {
-		await marketClient.restart();
-		refreshPage();
-	}, [refreshPage]);
 	/** Copy the ready-to-paste update prompt; the caller reports the outcome. */
 	const copyPrompt = react.default.useCallback((text) => copyText(text), []);
 	const fullReleaseUrl = notes.entries[0]?.url || (latestVersion ? `${"https://github.com/Rayle8/dsh-aside-note"}/releases/tag/v${latestVersion}` : null);
@@ -6975,14 +7153,11 @@ function useUpdateCenter(localeId) {
 		expandedVersions,
 		releasesUrl: `${PLUGIN_REPO_URL}/releases`,
 		run,
-		market,
-		restartSupported,
 		fullReleaseUrl,
 		checkNow,
 		toggleVersion,
 		startUpdate,
 		refreshPage,
-		restartHost,
 		copyPrompt
 	};
 }
@@ -7561,10 +7736,30 @@ const FAILURE_COPY = {
 	UPDATE_REJECTED: "update.rejected",
 	OPERATION_BUSY: "update.busy",
 	AGENTS_RUNNING: "update.agentsRunning",
-	UPDATE_TIMEOUT: "update.timeout"
+	UPDATE_TIMEOUT: "update.timeout",
+	"bundle-in-use": "update.bundleInUse",
+	"already-installed": "update.alreadyInstalled",
+	"management-required": "update.managementRequired",
+	"not-removable": "update.notRemovable",
+	"stop-profile": "update.stopProfile",
+	"incompatible-version": "update.incompatible",
+	RESOLVED_VERSION_MISMATCH: "update.versionMismatch",
+	DOWNGRADE_DETECTED: "update.downgrade",
+	AUTO_UPDATE_UNAVAILABLE: "update.autoUnavailable"
 };
+/** Refusals a terminal command can actually get past. */
+const MANUAL_FALLBACK = /* @__PURE__ */ new Set([
+	"OPERATION_BUSY",
+	"AGENTS_RUNNING",
+	"bundle-in-use",
+	"already-installed",
+	"management-required",
+	"not-removable",
+	"stop-profile",
+	"AUTO_UPDATE_UNAVAILABLE"
+]);
 function UpdateNotice(props) {
-	const { say, latestVersion, market, restartSupported, notes, expandedVersions, run, fullReleaseUrl } = props;
+	const { say, latestVersion, notes, expandedVersions, run, fullReleaseUrl } = props;
 	const notesRef = react.default.useRef(null);
 	const [fade, setFade] = react.default.useState(false);
 	const syncFade = react.default.useCallback(() => {
@@ -7604,7 +7799,6 @@ function UpdateNotice(props) {
 	if (latestVersion === null) return null;
 	const phase = run.phase;
 	const busy = phase === "starting" || phase === "waiting" || phase === "running";
-	const stopped = market === "unsupported";
 	const failureKey = run.failureCode ? FAILURE_COPY[run.failureCode] : "";
 	const canForce = run.failureCode === "RELEASE_TOO_FRESH" || run.failureCode === "VERSION_UNCHANGED";
 	/**
@@ -7614,7 +7808,7 @@ function UpdateNotice(props) {
 	* the command is the way past a refusal — it does not go through the market.
 	* A busy market keeps its retry button, so both paths stay reachable.
 	*/
-	const manual = stopped || run.failureCode === "OPERATION_BUSY" || run.failureCode === "AGENTS_RUNNING";
+	const manual = run.failureCode !== null && MANUAL_FALLBACK.has(run.failureCode);
 	const progress = phase === "running" ? run.percent === null ? say("update.updating") : say("update.updatingPercent", { percent: run.percent }) : "";
 	/**
 	* Hand the user a prompt they can paste into an agent; report the outcome.
@@ -7671,11 +7865,7 @@ function UpdateNotice(props) {
 		role: "region",
 		"aria-label": say("update.notesTitle"),
 		"data-fade": fade ? "true" : void 0
-	}, notesBody), h$7("div", { className: "dsh-an-updateActions" }, stopped ? null : phase === "done" ? h$7("div", { className: "dsh-an-updateDone" }, h$7("span", { className: "dsh-an-updateHint" }, say("update.updated", { version: run.installedVersion ? `v${run.installedVersion}` : `v${latestVersion}` })), run.restartRequired && restartSupported ? h$7("button", {
-		type: "button",
-		className: "dsh-an-updatePrimary",
-		onClick: props.onRestart
-	}, say("update.restart")) : h$7("button", {
+	}, notesBody), h$7("div", { className: "dsh-an-updateActions" }, phase === "done" ? h$7("div", { className: "dsh-an-updateDone" }, h$7("span", { className: "dsh-an-updateHint" }, say("update.updated", { version: run.installedVersion ? `v${run.installedVersion}` : `v${latestVersion}` })), h$7("button", {
 		type: "button",
 		className: "dsh-an-updatePrimary",
 		onClick: props.onRefresh
@@ -7701,7 +7891,7 @@ function UpdateNotice(props) {
 		type: "button",
 		className: "dsh-an-updateCopy",
 		onClick: copyPrompt
-	}, say("update.copyPrompt"))) : null, run.phase === "done" && run.restartRequired && !restartSupported ? h$7("p", { className: "dsh-an-updateHint" }, say("update.restartHint")) : null);
+	}, say("update.copyPrompt"))) : null, run.phase === "done" && run.restartRequired ? h$7("p", { className: "dsh-an-updateHint" }, say("update.restartHint")) : null);
 }
 
 // src/client/ui/SettingsPanel.ts
@@ -7753,8 +7943,6 @@ function SettingsPanel(props) {
 	}, say("update.checkFailed")) : null), update.latestVersion ? h$6(UpdateNotice, {
 		say,
 		latestVersion: update.latestVersion,
-		market: update.market,
-		restartSupported: update.restartSupported,
 		notes: update.notes,
 		expandedVersions: update.expandedVersions,
 		releasesUrl: update.releasesUrl,
@@ -7763,7 +7951,6 @@ function SettingsPanel(props) {
 		onToggleVersion: update.toggleVersion,
 		onStartUpdate: update.startUpdate,
 		onRefresh: update.refreshPage,
-		onRestart: update.restartHost,
 		onCopyPrompt: update.copyPrompt,
 		onToast: props.onToast
 	}) : null, h$6("div", { className: "dsh-an-settingMetaRow" }, h$6("span", null, say("settings.author")), h$6("span", {

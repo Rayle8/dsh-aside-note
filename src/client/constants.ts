@@ -21,7 +21,7 @@ export const ANONYMOUS_UIN_KEY = 'dsh.aside-note.uin'
 /** Whether this browser has opened the panel before; reported once as `first`. */
 export const PANEL_OPENED_KEY = 'dsh.aside-note.panel-opened'
 /** Shown in the in-panel settings; keep in sync with package.json. */
-export const PLUGIN_VERSION = '1.1.1'
+export const PLUGIN_VERSION = '1.1.2-beta.3'
 export const PLUGIN_AUTHOR = '阿三石'
 export const PLUGIN_REPO_URL = 'https://github.com/Rayle8/dsh-aside-note'
 export const PLUGIN_REPO_LABEL = 'github.com/Rayle8/dsh-aside-note'

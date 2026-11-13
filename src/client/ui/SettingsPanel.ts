@@ -130,8 +130,6 @@ export function SettingsPanel(props) {
                   ? h(UpdateNotice, {
                       say,
                       latestVersion: update.latestVersion,
-                      market: update.market,
-                      restartSupported: update.restartSupported,
                       notes: update.notes,
                       expandedVersions: update.expandedVersions,
                       releasesUrl: update.releasesUrl,
@@ -140,7 +138,6 @@ export function SettingsPanel(props) {
                       onToggleVersion: update.toggleVersion,
                       onStartUpdate: update.startUpdate,
                       onRefresh: update.refreshPage,
-                      onRestart: update.restartHost,
                       onCopyPrompt: update.copyPrompt,
                       onToast: props.onToast,
                     })

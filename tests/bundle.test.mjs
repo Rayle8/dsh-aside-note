@@ -23,7 +23,14 @@ const manifest = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'ut
 // and OLD is below the build so it must never be listed. Pinning these broke
 // every release: the build bumps and the "newer" fixture silently becomes older.
 const RUNNING = manifest.version
-const [MAJOR, MINOR, PATCH] = RUNNING.split('.').map(Number)
+// A build from a published channel (`X.Y.Z-beta.N`) also reads `next`; a stable
+// build reads `latest` alone. The expected request list follows the shipped
+// version instead of pinning one shape, which broke every release.
+const CHANNELS = /-(?:alpha|beta|rc)\./.test(RUNNING) ? ['latest', 'next'] : ['latest']
+const REGISTRY_URLS = ['https://registry.npmjs.org', 'https://registry.npmmirror.com']
+  .flatMap(host => CHANNELS.map(channel => `${host}/dsh-aside-note/${channel}`))
+// The core only: a prerelease build (1.1.2-beta.1) would otherwise make PATCH NaN.
+const [MAJOR, MINOR, PATCH] = RUNNING.replace(/-.*$/, '').split('.').map(Number)
 const LATEST = `${MAJOR + 1}.0.0`
 const IN_BETWEEN = `${MAJOR}.${MINOR}.${PATCH + 1}`
 const OLD = '0.0.1'
@@ -269,14 +276,11 @@ test('the built bundle boots, applies, and seats its slots', async t => {
   // The npmjs read fails, the mirror answers with a newer version: the gear
   // gains a dot and About shows the update card.
   await act(async () => { await new Promise(resolve => window.setTimeout(resolve, 20)) })
-  assert.deepEqual(registryCalls().map(call => call.url), [
-    'https://registry.npmjs.org/dsh-aside-note/latest',
-    'https://registry.npmmirror.com/dsh-aside-note/latest',
-  ], 'the npmjs miss must fall back to the npmmirror host')
+  assert.deepEqual(registryCalls().map(call => call.url), REGISTRY_URLS, 'the npmjs miss must fall back to the npmmirror host')
   assert.ok(popover.querySelector('.dsh-an-updateDot'), 'the gear carries the update dot')
   const updateCard = popover.querySelector('.dsh-an-updateCard')
   assert.ok(updateCard, 'a newer version must surface in Settings > About')
-  assert.ok(updateCard.textContent.includes(IN_BETWEEN), 'the release in the gap is part of the notes')
+  assert.ok(updateCard.textContent.includes(IN_BETWEEN), 'gap | html=' + updateCard.outerHTML.replace(/\\s+/g, ' ').slice(0, 900))
   // Notes are part of the card, loaded without a disclosure click.
   await act(async () => { await new Promise(resolve => window.setTimeout(resolve, 80)) })
   assert.ok(popover.querySelector('.dsh-an-updateNotes'), 'release notes must load by default')
@@ -292,7 +296,7 @@ test('the built bundle boots, applies, and seats its slots', async t => {
   assert.equal(popover.querySelector('.dsh-an-updateCheck').textContent, '正在检查…', 'only the button reports progress')
   releaseManualCheck()
   await act(async () => { await new Promise(resolve => window.setTimeout(resolve, 80)) })
-  assert.equal(registryCalls().length, beforeCheck + 2, 'a manual check must bypass the cache')
+  assert.equal(registryCalls().length, beforeCheck + REGISTRY_URLS.length, 'a manual check must bypass the cache')
   // The checking state is deliberately held for at least three seconds; wait it
   // out before expecting an available release again.
   await act(async () => { await new Promise(resolve => window.setTimeout(resolve, 3200)) })
@@ -395,7 +399,7 @@ test('the built bundle boots, applies, and seats its slots', async t => {
   assert.equal(document.querySelector('.dsh-an-popover'), null, 'the close button removes the panel')
   await act(async () => { button.click() })
   await act(async () => { await new Promise(resolve => window.setTimeout(resolve, 20)) })
-  assert.equal(registryCalls().length, beforeCheck + 2, 'the cached answer must be reused by a reopened panel')
+  assert.equal(registryCalls().length, beforeCheck + REGISTRY_URLS.length, 'the cached answer must be reused by a reopened panel')
   assert.ok(document.querySelector('.dsh-an-popover').querySelector('.dsh-an-updateDot'))
 
   await act(async () => { reactRoot.unmount() })

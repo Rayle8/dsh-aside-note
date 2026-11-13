@@ -22,25 +22,6 @@ export type MarketFetch = (
   init?: { method?: string; headers?: Record<string, string>; body?: string; signal?: any },
 ) => Promise<{ ok: boolean; status: number; json: () => Promise<any> }>
 
-export interface MarketCapabilities {
-  marketVersion: string
-  stability: string
-  restartSupported: boolean
-  endpoints: {
-    updates: string
-    operations: string
-    restart: string
-  }
-}
-
-export interface MarketUpdateInfo {
-  name: string
-  source: string
-  installedVersion: string
-  latestVersion: string
-  updateAvailable: boolean
-}
-
 export type MarketOperationState = 'queued' | 'running' | 'succeeded' | 'failed' | 'cancelled' | 'rolled-back'
 
 export interface MarketOperationView {
@@ -146,37 +127,15 @@ export function createMarketClient(options: MarketClientOptions = {}) {
   }
 
   return {
-    /** Feature discovery; `null` means "no usable market on this host". */
-    async capabilities(): Promise<MarketCapabilities | null> {
+    /**
+     * Whether this host has a usable market: the v1 schema answered. The panel
+     * needs no more than that — the endpoints it calls are fixed, and nothing
+     * reads the market's version, restart support or advertised paths.
+     */
+    async available(): Promise<boolean> {
       const result = await request('/capabilities')
       const body = asRecord(result?.body)
-      if (!result || result.status !== 200 || !body || body.schema !== 'dsh-market/update-api/v1') return null
-      const endpoints = asRecord(body.endpoints) || {}
-      return {
-        marketVersion: asText(body.marketVersion) || '',
-        stability: asText(body.stability) || 'beta',
-        restartSupported: body.restart?.supported === true,
-        endpoints: {
-          updates: asText(endpoints.updates) || `${MARKET_API_BASE}/updates`,
-          operations: asText(endpoints.operations) || `${MARKET_API_BASE}/operations`,
-          restart: asText(endpoints.restart) || `${MARKET_API_BASE}/restart`,
-        },
-      }
-    },
-
-    /** The market's view of the installed vs published version. */
-    async check(name: string = MARKET_PACKAGE, force = true): Promise<MarketUpdateInfo | null> {
-      const query = `?name=${encodeURIComponent(name)}${force ? '&force=1' : ''}`
-      const result = await request(`/updates${query}`)
-      const pkg = asRecord(asRecord(result?.body)?.package)
-      if (!result || result.status !== 200 || !pkg) return null
-      return {
-        name: asText(pkg.name) || name,
-        source: asText(pkg.source) || 'unknown',
-        installedVersion: asText(pkg.installedVersion) || '',
-        latestVersion: asText(pkg.latestVersion) || '',
-        updateAvailable: pkg.updateAvailable === true,
-      }
+      return result !== null && result.status === 200 && body !== null && body !== undefined && body.schema === 'dsh-market/update-api/v1'
     },
 
     /** Queue an update; returns the operation to poll or a stable failure code. */
@@ -204,15 +163,6 @@ export function createMarketClient(options: MarketClientOptions = {}) {
       return operationView(asRecord(result.body)?.operation)
     },
 
-    /** Ask the market to restart the host; only offered when capabilities allow it. */
-    async restart(): Promise<boolean> {
-      const result = await request('/restart', {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: '{}',
-      })
-      return result !== null && result.status >= 200 && result.status < 300
-    },
   }
 }
 

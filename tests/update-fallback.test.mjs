@@ -228,17 +228,22 @@ test('a market that refuses under a running agent hands over the command', async
   dom.window.close()
 })
 
-test('an absent market shows the command straight away, without an error', async t => {
+test('a host with neither the update route nor a market hands over the command', async t => {
   const { window, act, popover, until, reactRoot, disposers, dom } = await boot(t, {
     capabilities: () => json(404, {}),
     start: () => json(404, {}),
     operation: () => json(404, {}),
   })
 
-  const fallback = await until(() => popover.querySelector('.dsh-an-updateFallback'), 4000)
-  assert.equal(popover.querySelector('.dsh-an-updateError'), null, 'no market is not a failure')
-  assert.equal(popover.querySelector('.dsh-an-updatePrimary'), null, 'there is nothing to click in-app')
+  // The one-click path stays offered until it is tried: with no host route and
+  // no market, the attempt is what discovers there is nothing behind it.
+  const button = await until(() => popover.querySelector('.dsh-an-updatePrimary'), 4000)
+  assert.equal(button.textContent, '立即更新')
+  await act(async () => { button.click() })
+
+  const fallback = await until(() => popover.querySelector('.dsh-an-updateFallback'), 6000)
   assert.match(fallback.textContent, /npx -y dsh-aside-note install/)
+  assert.match(popover.textContent, /没有可用的自动更新通道/, 'the card names the reason instead of ending silently')
 
   const copied = clipboard(window)
   await act(async () => { fallback.querySelector('.dsh-an-updateCopy').click() })

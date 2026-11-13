@@ -4,7 +4,7 @@
 
 ## 1. 形态与运行时契约
 
-旁边记是**纯客户端插件**：宿主半侧 `index.js` 是 8 行 no-op，只为了让 `cordis.patch.yml` 能插入一行；真正的实现全部在浏览器半侧。
+旁边记的**数据与界面全部在浏览器半侧**；宿主半侧只做浏览器做不到的一件事——把新版本装进 profile（见 §8）。`index.js` 因此仍然保留 `cordis.patch.yml` 需要的那一行，同时在宿主里注册两个更新端点，不读写任何便笺数据。
 
 - `package.json` 的 `dsh.bundle.patch` 指向 `cordis.patch.yml`，`dsh.client` 声明 `./client` 与需要预注入的宿主模块。
 - 壳把 `./client`（即 `client/client.js`）当 classic script 加载：`window.__ModuleLoader__.load({ id, factory })`。`factory(require)` 里的 `require` 绑定到冻结的模块表，只认 `react`、`react/jsx-runtime`、`react-dom`、`react-dom/client`、`@deepseek-ai/dsh-client-ui-primitives`；其余依赖全部内联。
@@ -27,10 +27,13 @@ src/client/
 │                        # 更新中心：useUpdateCenter（检查/说明/更新与命令兜底）、UpdateNotice
 ├─ update/               # latest（版本与 Release 探测）、releaseNotes（标记解析）、
 │                        # releaseHistory（多版本区间）、
-│                        # market（插件市场公开更新 API 客户端）
+│                        # market（插件市场公开更新 API 客户端）、
+│                        # host（宿主更新端点客户端）
 └─ styles/panel.css      # 全局 .dsh-an-* 规则与 --an-* 尺度
+host/                    # 宿主半边：route（两个更新端点）、apply-update（三级安装）、
+                         # profile（定位与版本读取）、versions（版本比较）、exec（进程）
 client/client.js         # tsdown 产物，入库，CI 校验与源码一致
-index.js                 # 宿主半侧 no-op
+index.js                 # 宿主半侧：只注册更新端点，无状态
 cordis.patch.yml         # profile 组合里的一行
 tests/                   # contract.test.mjs（契约）+ bundle.test.mjs（jsdom 集成）
 tools/screenshots/       # 截图流水线（见 screenshot-sop.md）
@@ -107,3 +110,26 @@ docs/assets/             # README 截图（preview-* 与 features/）
 - 新增面板状态：优先放 `ui/use*.ts`；纯逻辑放 `domain/`，不要 import React。
 - 改样式：只动 `src/client/styles/panel.css`，遵守 [面板 UI 规则](./panel-ui-rules.md)（语义别名、三档字号、0.5px 发丝线、hover 门控）。
 - 不要手改 `client/client.js`：改源码后 `npm run build`，把它和源码一起提交。
+
+## 8. 更新路径
+
+自 1.1.2 起，更新走**宿主**，不走插件市场。市场的更新是「先移除 bundle 再安装」，而运行中的 Desktop 拒绝移除正被 fiber 使用的插件（`bundle-in-use`）——面板打开时它永远处于这个状态。宿主改为就地覆盖，三级降级：
+
+1. `pluginManager.installBundle('dsh-aside-note@<v>', { enabled: false })`（`enabled: false` 表示只换包，不动 profile 的 bundle 选择）
+2. 若被拒为 `already-installed`：`dsh plugin add <spec> --save-exact`
+3. 仍不可用：用该 profile 自带的包管理器 `add <spec> --save-exact`
+
+装完回读 `node_modules/dsh-aside-note/package.json`，必须等于目标版本，否则报 `RESOLVED_VERSION_MISMATCH`。成功返回 `restartRequired: true`——DSH 不重载已加载的包，新版本在下次启动生效。
+
+端点只有两个，同源、POST 才可写：`GET /dsh-aside-note/update/probe`、`POST /dsh-aside-note/update/apply`（body `{ target }`）。`link:` 安装会被直接拒绝：覆盖 checkout 的依赖声明等于把工作副本悄悄换成 registry 版本。
+
+### 为何不查「有 agent 正在运行」
+
+DSH 插件市场在更新前会拒绝 `runningAgentsForGuard()` 非空的请求（除非显式 `confirmAgentsRunning`）。**本插件的更新端点刻意不做这项检查**，理由：
+
+- 便笺是纯 UI：agent 不 import 本包的任何文件；宿主半边只是两个路由函数，且随宿主启动就已在内存里。替换包文件不改变 agent 正在执行的代码。
+- 反过来，把「更新一个界面插件」挡在「别的 agent 正在跑」后面，会让用户在等待时无法升级，成本大于收益。
+
+所以这是**有意的行为差异，不是漏检**。审查时看到 apply 里没有 `agents` 判断，请先读本节，不要直接补检查。
+
+**需要重新评估的条件**：一旦本包出现 agent 会加载的东西——tools、skills、agent 侧 provider，或宿主半边开始被 agent 调用——就必须补上与市场一致的守卫（含 `confirmAgentsRunning` 逃生阀），并让 `useUpdateCenter` 把该拒绝码交给 `UpdateNotice` 的命令兜底路径。

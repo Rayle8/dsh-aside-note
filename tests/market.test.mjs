@@ -35,57 +35,24 @@ const CAPABILITIES = {
   },
 }
 
-test('capabilities are discovered before any mutation and can be absent', async () => {
+test('the market answers one question: is it there at all', async () => {
   const calls = []
   const market = createMarketClient({
     fetchImpl: async (url, init) => {
       calls.push({ url, init })
-      if (url === `${MARKET_API_BASE}/capabilities`) return jsonResponse(200, CAPABILITIES)
-      return jsonResponse(404, {})
+      return jsonResponse(200, CAPABILITIES)
     },
   })
-  const caps = await market.capabilities()
-  assert.equal(caps.marketVersion, '1.73.3')
-  assert.equal(caps.restartSupported, false)
-  assert.deepEqual(caps.endpoints, CAPABILITIES.endpoints)
+  assert.equal(await market.available(), true, 'a v1 capabilities answer is enough')
   assert.deepEqual(calls.map(call => call.url), [`${MARKET_API_BASE}/capabilities`])
 
   const absent = createMarketClient({ fetchImpl: async () => jsonResponse(404, null) })
-  assert.equal(await absent.capabilities(), null)
+  assert.equal(await absent.available(), false, 'an absent market is a fact, not an error')
 
   const wrongSchema = createMarketClient({
     fetchImpl: async () => jsonResponse(200, { schema: 'something-else' }),
   })
-  assert.equal(await wrongSchema.capabilities(), null)
-})
-
-test('the package check carries force and normalises the row', async () => {
-  const urls = []
-  const market = createMarketClient({
-    fetchImpl: async url => {
-      urls.push(url)
-      return jsonResponse(200, {
-        schema: 'dsh-market/update-api/v1',
-        package: {
-          name: 'dsh-aside-note',
-          source: 'npm',
-          installedVersion: '2.0.0',
-          latestVersion: '2.0.1',
-          updateAvailable: true,
-          channelSwitch: null,
-        },
-      })
-    },
-  })
-  const info = await market.check('dsh-aside-note', true)
-  assert.deepEqual(info, {
-    name: 'dsh-aside-note',
-    source: 'npm',
-    installedVersion: '2.0.0',
-    latestVersion: '2.0.1',
-    updateAvailable: true,
-  })
-  assert.equal(urls[0], `${MARKET_API_BASE}/updates?name=dsh-aside-note&force=1`)
+  assert.equal(await wrongSchema.available(), false, 'another API is not this one')
 })
 
 test('starting an update returns the operation, or a retryable failure code', async () => {
@@ -163,21 +130,6 @@ test('operation polling normalises progress, outcome and retryability', async ()
   assert.equal(operation.failure.retryable, true)
 
   assert.equal(await market.operation(''), null)
-})
-
-test('restart is a POST and reports the market answer', async () => {
-  const seen = []
-  const ok = createMarketClient({
-    fetchImpl: async (url, init) => {
-      seen.push({ url, method: init.method })
-      return jsonResponse(200, { schema: 'dsh-market/update-api/v1', result: { ok: true } })
-    },
-  })
-  assert.equal(await ok.restart(), true)
-  assert.deepEqual(seen[0], { url: `${MARKET_API_BASE}/restart`, method: 'POST' })
-
-  const refused = createMarketClient({ fetchImpl: async () => jsonResponse(403, {}) })
-  assert.equal(await refused.restart(), false)
 })
 
 test('the default timeout is bounded', () => {

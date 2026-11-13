@@ -41,7 +41,18 @@ function core(version: string): number[] {
     .map(part => Number.parseInt(part, 10) || 0)
 }
 
-/** Numeric comparison of two versions; prerelease suffixes compare as the core. */
+/** A version carrying a prerelease part, e.g. `1.2.0-beta.1`. */
+export function isPrerelease(version: string): boolean {
+  return /^\D*\d+\.\d+\.\d+-/.test(String(version ?? '').trim())
+}
+
+/**
+ * Full ordering of two versions, prerelease identifiers included.
+ *
+ * A beta build asks for the notes between `1.2.0-beta.1` and `1.2.0-beta.2`;
+ * comparing the cores alone would call those equal and leave the card with no
+ * notes at all, which is exactly the case a beta test needs to read.
+ */
 export function compareVersions(a: string, b: string): number {
   const left = core(a)
   const right = core(b)
@@ -49,13 +60,40 @@ export function compareVersions(a: string, b: string): number {
     const difference = (left[index] || 0) - (right[index] || 0)
     if (difference !== 0) return difference > 0 ? 1 : -1
   }
+  const leftPre = prerelease(a)
+  const rightPre = prerelease(b)
+  if (leftPre.length === 0 && rightPre.length === 0) return 0
+  if (leftPre.length === 0) return 1
+  if (rightPre.length === 0) return -1
+  for (let index = 0; index < Math.max(leftPre.length, rightPre.length); index += 1) {
+    const x = leftPre[index]
+    const y = rightPre[index]
+    if (x === undefined) return -1
+    if (y === undefined) return 1
+    if (x === y) continue
+    const xNumeric = /^\d+$/.test(x)
+    const yNumeric = /^\d+$/.test(y)
+    if (xNumeric && yNumeric) return Number(x) > Number(y) ? 1 : -1
+    if (xNumeric) return -1
+    if (yNumeric) return 1
+    return x > y ? 1 : -1
+  }
   return 0
 }
 
-/** A plain `x.y.z` tag, with the `v` prefix and whitespace removed. */
+/** The prerelease identifiers of a version, or an empty list. */
+function prerelease(version: string): string[] {
+  const normalized = String(version ?? '').trim().replace(/^v/i, '')
+  const dash = normalized.indexOf('-')
+  if (dash === -1) return []
+  const tail = normalized.slice(dash + 1).split('+')[0]
+  return tail === '' ? [] : tail.split('.')
+}
+
+/** A `x.y.z` or `x.y.z-prerelease` tag, with the `v` prefix and whitespace removed. */
 export function normalizeVersion(version: string): string {
   const normalized = String(version ?? '').trim().replace(/^v/i, '')
-  return /^\d+(\.\d+)*$/.test(normalized) ? normalized : ''
+  return /^\d+(\.\d+)*(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$/.test(normalized) ? normalized : ''
 }
 
 /**
@@ -67,10 +105,17 @@ export function selectReleaseHistory(list: unknown, query: ReleaseHistoryQuery):
   const seen = new Set<string>()
   const entries: ReleaseEntry[] = []
 
+  // Prerelease entries are notes only when the release being offered is itself
+  // a prerelease: a beta tester upgrading beta.1 -> beta.2 needs beta.2's notes,
+  // while someone crossing into a stable release reads the stable notes and not
+  // a prerelease of that same release crowding the list.
+  const allowPrerelease = isPrerelease(query.current) && isPrerelease(query.latest ?? '')
+
   for (const item of Array.isArray(list) ? list : []) {
     const release = item as Record<string, any> | null
     if (!release || typeof release !== 'object') continue
-    if (release.prerelease === true || release.draft === true) continue
+    if (release.draft === true) continue
+    if (release.prerelease === true && !allowPrerelease) continue
     const version = normalizeVersion(typeof release.version === 'string' ? release.version : release.tag_name)
     if (!version || seen.has(version)) continue
     if (compareVersions(version, query.current) <= 0) continue

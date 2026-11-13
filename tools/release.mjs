@@ -256,7 +256,9 @@ export function prepare(version, { dryRun = false, skipCheck = false } = {}) {
 
     if (!skipCheck) {
       const npm = process.platform === 'win32' ? 'npm.cmd' : 'npm'
-      const check = spawnSync(npm, ['run', 'check'], { cwd: root, stdio: 'inherit' })
+      // Node refuses to start a `.cmd` shim without a shell (EINVAL on
+      // Windows), which read as a failed check before it ever ran.
+      const check = spawnSync(npm, ['run', 'check'], { cwd: root, stdio: 'inherit', shell: process.platform === 'win32' })
       if (check.status !== 0) fail('npm run check failed; no commit or tag was created')
     }
 

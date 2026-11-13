@@ -24,14 +24,14 @@ import {
 import { updateNotesForLocale } from '../update/releaseNotes'
 import type { ReleaseNoteGroup } from '../update/releaseNotes'
 import { MARKET_PACKAGE, marketClient } from '../update/market'
-import type { MarketCapabilities } from '../update/market'
+import { applyHostUpdate } from '../update/host'
+import { isPublishedChannel } from '../update/latest'
 import { copyText } from '../domain/clipboard'
 import { reportEvent } from '../rum'
 
 export type CheckStatus = 'idle' | 'checking' | 'current' | 'available' | 'error'
 export type NotesStatus = 'idle' | 'loading' | 'ready' | 'error'
 export type RunPhase = 'idle' | 'starting' | 'waiting' | 'running' | 'done' | 'error'
-export type MarketState = 'unknown' | 'unsupported' | 'ready'
 
 export interface UpdateCheckState {
   status: CheckStatus
@@ -111,12 +111,13 @@ export function useUpdateCenter(localeId: string) {
   const [notes, setNotes] = React.useState<NotesState>(NOTES_IDLE)
   const [expandedVersions, setExpandedVersions] = React.useState<Record<string, boolean>>({})
   const [run, setRun] = React.useState<UpdateRunState>(RUN_IDLE)
-  const [market, setMarket] = React.useState<MarketState>('unknown')
-  const [restartSupported, setRestartSupported] = React.useState(false)
 
   const disposed = React.useRef(false)
   const runRef = React.useRef<UpdateRunState>(RUN_IDLE)
   runRef.current = run
+  /** The offered version, readable from callbacks without re-creating them. */
+  const latestRef = React.useRef<string | null>(null)
+  latestRef.current = check.latestVersion
   /** Set before the first await so the same panel cannot start two operations. */
   const starting = React.useRef(false)
 
@@ -135,9 +136,10 @@ export function useUpdateCenter(localeId: string) {
   const latestVersion = check.latestVersion
 
   // Quiet check on open: keeps the gear dot meaningful without a click. A local
-  // dev build (`2.1.0-dev`) never nags, but a manual check still works.
+  // dev build (`2.1.0-dev`) never nags, but a build from a published channel
+  // (`1.1.2-beta.1`) is one a tester installed on purpose and must be checked.
   React.useEffect(() => {
-    if (PLUGIN_VERSION.includes('-')) return undefined
+    if (PLUGIN_VERSION.includes('-') && !isPublishedChannel(PLUGIN_VERSION)) return undefined
     let active = true
     fetchLatestVersion().then(version => {
       if (!active) return
@@ -157,21 +159,6 @@ export function useUpdateCenter(localeId: string) {
       active = false
     }
   }, [])
-
-  // Only ask the market once a version is actually offered, so a current build
-  // never touches the market API.
-  React.useEffect(() => {
-    if (check.status !== 'available' || market !== 'unknown') return undefined
-    let active = true
-    marketClient.capabilities().then((caps: MarketCapabilities | null) => {
-      if (!active) return
-      setMarket(caps ? 'ready' : 'unsupported')
-      setRestartSupported(caps?.restartSupported === true)
-    })
-    return () => {
-      active = false
-    }
-  }, [check.status, market])
 
   const checkNow = React.useCallback(async () => {
     if (check.status === 'checking') return
@@ -255,22 +242,49 @@ export function useUpdateCenter(localeId: string) {
     // market, and the second one comes back as the very OPERATION_BUSY refusal
     // this is meant to avoid.
     if (starting.current) return
-    if (runRef.current.phase === 'running' || runRef.current.phase === 'done') return
+    if (runRef.current.phase === 'running') return
+    // A finished run locks only the version it installed. Once a newer release
+    // is offered, the same click has to be able to fetch that one.
+    if (runRef.current.phase === 'done' && runRef.current.installedVersion === latestRef.current) return
     starting.current = true
     try {
       setRun(terminalRun('starting'))
-      const caps = await marketClient.capabilities()
+      // The host can install over the running copy without removing it, which
+      // is the only path that works while this panel is open on Desktop: the
+      // market removes first, and Desktop refuses that (bundle-in-use).
+      const target = latestRef.current
+      if (target !== null) {
+        const host = await applyHostUpdate(target)
+        if (disposed.current) return
+        if (host.kind === 'ok') {
+          reportEvent('update_started', { ext1: 'host', ext2: 'done' })
+          setRun(terminalRun('done', {
+            percent: 100,
+            installedVersion: host.installedVersion,
+            refreshRequired: !host.restartRequired,
+            restartRequired: host.restartRequired,
+          }))
+          return
+        }
+        if (host.kind === 'error') {
+          reportEvent('update_started', { ext1: 'host', ext2: 'failed' })
+          setRun(terminalRun('error', {
+            failureCode: host.code,
+            message: host.hint ?? host.message,
+            retryable: host.retryable,
+          }))
+          return
+        }
+        // `unavailable`: no route on this host — keep the market path below.
+      }
+      const usable = await marketClient.available()
       if (disposed.current) return
-      if (!caps) {
-        // No usable market: leave the card on the terminal path, not on an
-        // error the user cannot act on. The card hands over the terminal
-        // command instead, which is reported where that button lives.
-        setMarket('unsupported')
-        setRun(RUN_IDLE)
+      if (!usable) {
+        // Neither a host route nor a market: the card's command path is the
+        // only thing left, and it has to render, so this is terminal.
+        setRun(terminalRun('error', { failureCode: 'AUTO_UPDATE_UNAVAILABLE', retryable: false }))
         return
       }
-      setMarket('ready')
-      setRestartSupported(caps.restartSupported)
 
       let started = await marketClient.start(MARKET_PACKAGE, force)
       if (disposed.current) return
@@ -308,6 +322,17 @@ export function useUpdateCenter(localeId: string) {
           continue
         }
         if (operation.state === 'succeeded') {
+          // The market verifies what pnpm placed on disk; the card still has to
+          // refuse to call an older build "updated" if that answer disagrees.
+          if (latestRef.current !== null && operation.installedVersion !== null && operation.installedVersion !== latestRef.current) {
+            reportEvent('update_started', { ext1: 'market', ext2: 'failed' })
+            setRun(terminalRun('error', {
+              failureCode: 'RESOLVED_VERSION_MISMATCH',
+              message: `${operation.installedVersion} installed, expected ${latestRef.current}`,
+              retryable: true,
+            }))
+            return
+          }
           reportEvent('update_started', { ext1: 'market', ext2: 'done' })
           setRun(terminalRun('done', {
             percent: 100,
@@ -339,11 +364,6 @@ export function useUpdateCenter(localeId: string) {
     }
   }, [])
 
-  const restartHost = React.useCallback(async () => {
-    await marketClient.restart()
-    refreshPage()
-  }, [refreshPage])
-
   /** Copy the ready-to-paste update prompt; the caller reports the outcome. */
   const copyPrompt = React.useCallback((text: string) => copyText(text), [])
 
@@ -358,14 +378,11 @@ export function useUpdateCenter(localeId: string) {
     expandedVersions,
     releasesUrl: `${PLUGIN_REPO_URL}/releases`,
     run,
-    market,
-    restartSupported,
     fullReleaseUrl,
     checkNow,
     toggleVersion,
     startUpdate,
     refreshPage,
-    restartHost,
     copyPrompt,
   }
 }
