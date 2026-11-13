@@ -7,11 +7,17 @@ This file records user-visible changes only. Screenshots, marketplace listing ma
 ## next-released
 
 <!-- app-update-notes:en:start -->
+### Added
+- **Anonymous usage statistics:** the panel reports a few anonymous events to Tencent Cloud RUM — panel opened (first / repeat), panel closed with a dwell-time bucket, settings opened, update checked (auto / manual + result), update started (in-app market / copy-update-prompt + result), note created, completed/uncompleted, edited, deleted, forwarded, scope switched, and how many completed notes a clear removed. Events carry the scope kind and a `done` / `open` status only, plus an anonymous visitor id (`uin`) so the console can count unique users. Only custom events are reported: page performance, web vitals, global JS errors, API and asset speed stay off, the reported page name is a constant, and Do Not Track drops the reports.
+
 ### Changed
 - **Footer:** the panel footer no longer names the Workspace/Session scope; both scopes now read “Notes are saved only on this device”, and the switch under the title says which list is showing.
 <!-- app-update-notes:en:end -->
 
 <!-- app-update-notes:zh:start -->
+### 新增
+- **匿名使用统计：** 面板会向腾讯云 RUM 上报几条匿名事件——打开面板（首次 / 再次）、关闭面板（停留时长按 `<5s` / `5-30s` / `30-120s` / `2-10m` / `>=10m` 分档）、打开设置、检查更新（自动 / 手动 + 结果）、开始更新（应用内市场 / 复制更新提示词 + 结果）、新建、完成/取消完成、编辑、删除、转发便笺，切换清单范围，以及一次清空删掉了多少条已完成。事件只带清单范围（`workspace` / `session`）、`done` / `open` 状态和一个匿名访客 ID（`uin`，用于统计 UV），不含便笺正文、会话 ID 或对话内容；只上报自定义事件，页面性能、web vitals、全局 JS 报错、接口与资源测速都关闭，页面名固定为常量，浏览器开启「请勿追踪」时丢弃上报。
+
 ### 变更
 - **页脚：** 面板页脚不再区分工作区 / 会话，两种范围都显示「便笺数据仅保存在本地」；当前清单看标题下方的范围切换。
 <!-- app-update-notes:zh:end -->

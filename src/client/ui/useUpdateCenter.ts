@@ -26,6 +26,7 @@ import type { ReleaseNoteGroup } from '../update/releaseNotes'
 import { MARKET_PACKAGE, marketClient } from '../update/market'
 import type { MarketCapabilities } from '../update/market'
 import { copyText } from '../domain/clipboard'
+import { reportEvent } from '../rum'
 
 export type CheckStatus = 'idle' | 'checking' | 'current' | 'available' | 'error'
 export type NotesStatus = 'idle' | 'loading' | 'ready' | 'error'
@@ -139,8 +140,14 @@ export function useUpdateCenter(localeId: string) {
     if (PLUGIN_VERSION.includes('-')) return undefined
     let active = true
     fetchLatestVersion().then(version => {
-      if (!active || version === null) return
-      if (isNewerVersion(version, PLUGIN_VERSION)) {
+      if (!active) return
+      if (version === null) {
+        reportEvent('update_checked', { ext1: 'auto', ext2: 'error' })
+        return
+      }
+      const newer = isNewerVersion(version, PLUGIN_VERSION)
+      reportEvent('update_checked', { ext1: 'auto', ext2: newer ? 'available' : 'current' })
+      if (newer) {
         setCheck({ status: 'available', latestVersion: version, checkedAt: Date.now() })
       } else {
         setCheck({ status: 'current', latestVersion: null, checkedAt: Date.now() })
@@ -185,9 +192,11 @@ export function useUpdateCenter(localeId: string) {
     if (version === null) {
       // Keep the version already on offer; when the build was up to date, the
       // failure stays in the button and no card is conjured up.
+      reportEvent('update_checked', { ext1: 'manual', ext2: 'error' })
       setCheck({ status: 'error', latestVersion: previousOffer, checkedAt: Date.now() })
       return
     }
+    reportEvent('update_checked', { ext1: 'manual', ext2: isNewerVersion(version, PLUGIN_VERSION) ? 'available' : 'current' })
     if (isNewerVersion(version, PLUGIN_VERSION)) {
       const sameRelease = previousOffer !== null && version === previousOffer
       setCheck({ status: 'available', latestVersion: version, checkedAt: Date.now() })
@@ -254,7 +263,8 @@ export function useUpdateCenter(localeId: string) {
       if (disposed.current) return
       if (!caps) {
         // No usable market: leave the card on the terminal path, not on an
-        // error the user cannot act on.
+        // error the user cannot act on. The card hands over the terminal
+        // command instead, which is reported where that button lives.
         setMarket('unsupported')
         setRun(RUN_IDLE)
         return
@@ -275,6 +285,7 @@ export function useUpdateCenter(localeId: string) {
         if (disposed.current) return
       }
       if ('error' in started) {
+        reportEvent('update_started', { ext1: 'market', ext2: 'failed' })
         setRun(terminalRun('error', {
           failureCode: started.error.code,
           message: started.error.message || null,
@@ -297,6 +308,7 @@ export function useUpdateCenter(localeId: string) {
           continue
         }
         if (operation.state === 'succeeded') {
+          reportEvent('update_started', { ext1: 'market', ext2: 'done' })
           setRun(terminalRun('done', {
             percent: 100,
             installedVersion: operation.installedVersion,
@@ -305,6 +317,7 @@ export function useUpdateCenter(localeId: string) {
           }))
           return
         }
+        reportEvent('update_started', { ext1: 'market', ext2: 'failed' })
         setRun(terminalRun('error', {
           failureCode: operation.failure?.code || 'UPDATE_FAILED',
           message: operation.failure?.message || null,

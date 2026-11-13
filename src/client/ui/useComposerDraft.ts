@@ -3,8 +3,9 @@ import React from 'react'
 import { MAX_TEXT, isSendModifier } from '../constants'
 import { clearAddDraft, readScopeDrafts, saveAddDraft } from '../storage/drafts'
 import { uid } from '../domain/id'
+import { reportEvent } from '../rum'
 
-export function useComposerDraft({ draftKey, commit, report, sendShortcut }) {
+export function useComposerDraft({ draftKey, commit, report, sendShortcut, scopeKind }) {
   const key = draftKey ? String(draftKey) : ''
   const [draft, setDraft] = React.useState(() => readScopeDrafts(key).add)
   const addRef = React.useRef(null)
@@ -47,6 +48,7 @@ export function useComposerDraft({ draftKey, commit, report, sendShortcut }) {
     }
     setDraft('')
     clearAddDraft(key)
+    reportEvent('note_created', { ext1: scopeKind })
   }
 
   const insertDraftNewline = node => {

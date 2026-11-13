@@ -10,6 +10,7 @@
 
 /** The browser half is a classic script; the build wraps it in the loader's closure factory. */
 declare const module: { exports: unknown }
+declare const __PLUGIN_VERSION__: string
 
 /** Chromium exposes the platform hint behind this non-standard shape. */
 interface Navigator {

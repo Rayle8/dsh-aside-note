@@ -8,6 +8,7 @@ var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
 var __getOwnPropNames = Object.getOwnPropertyNames;
 var __getProtoOf = Object.getPrototypeOf;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __commonJSMin = (cb, mod) => () => (mod || (cb((mod = { exports: {} }).exports, mod, mod.exports), cb = null), mod.exports);
 var __copyProps = (to, from, except, desc) => {
 	if (from && typeof from === "object" || typeof from === "function") {
 		for (var keys = __getOwnPropNames(from), i = 0, n = keys.length, key; i < n; i++) {
@@ -36,10 +37,4189 @@ _deepseek_ai_dsh_client_ui_primitives = __toESM(_deepseek_ai_dsh_client_ui_primi
 let react_dom = require("react-dom");
 react_dom = __toESM(react_dom, 1);
 
-// \0dsh-css:src/client/styles/panel.css.mjs
-var panel_css_default = "/*\n * Panel, composer dock, header entry and toast styles.\n *\n * Only DSH semantic aliases and the shared scale are used here — no palette of\n * its own. The entry point injects this sheet once for the whole frame, because\n * the dock mounts outside the panel tree.\n */\n/* ── 1 令牌 · 只映射 DSH 语义别名与共享尺度，不新建调色板 ─────────── */\nbody{--an-space-1:4px;--an-space-2:8px;--an-space-3:12px;--an-space-4:16px;--an-space-5:24px;--an-space-6:32px;--an-radius-pill:999px;--an-fs-caption:12px;--an-lh-caption:20px;--an-fs-row:13px;--an-lh-row:20px;--an-fs-title:14px;--an-lh-title:20px;--an-hover:var(--dsw-alias-interactive-bg-hover);--an-active:var(--dsw-alias-interactive-bg-active);--an-field:var(--dsw-alias-bg-layer-1);--an-field-line:var(--dsw-alias-border-l4);--an-divider:var(--dsw-alias-border-l2);--an-dur-fast:var(--ds-transition-duration-fast);--an-dur-base:var(--ds-transition-duration);--an-dur-spin:700ms;--an-ease:var(--ds-ease-in-out);--an-transition:background-color var(--an-dur-fast) var(--an-ease),border-color var(--an-dur-fast) var(--an-ease),color var(--an-dur-fast) var(--an-ease),opacity var(--an-dur-fast) var(--an-ease),transform var(--an-dur-fast) var(--an-ease),box-shadow var(--an-dur-fast) var(--an-ease)}\n\n/* ── 2 浮层 · 菜单材质 + 三层阴影，边框为 0（发丝线在阴影第一层） ── */\n.dsh-an-popover{position:fixed;z-index:1000;box-sizing:border-box;display:flex;flex-direction:column;gap:var(--an-space-3);min-height:0;padding:var(--an-space-4);border:0;border-radius:var(--dsw-radius-panel);background:var(--dsh-an-panelSurface);box-shadow:var(--dsw-elevation-panel);color:var(--dsw-alias-label-primary);font-size:var(--an-fs-row);line-height:var(--an-lh-row);--dsw-elevation-stroke-color:var(--dsw-alias-border-l2);--dsh-scrollbar-thumb:var(--dsw-alias-scrollbar-bg-l2,var(--an-divider));--dsh-scrollbar-thumb-hover:var(--dsw-alias-scrollbar-hover-l2,var(--dsw-alias-scrollbar-bg-l2,var(--an-divider)));--dsh-an-panelSurface:var(--dsw-alias-bg-layer-2);--dsh-an-listGutter:var(--an-space-4);--dsh-an-scrollRail:9px;--dsh-an-scrollInset:2px;overflow:hidden;animation:dsh-an-pop-in var(--an-dur-base) var(--an-ease) both}\n.dsh-an-popoverRight{padding-left:var(--an-space-4)}\n\n/* ── 3 面板头 · 标题与计数同一行，动作收在右侧 ───────────────────── */\n.dsh-an-popHead{display:flex;align-items:center;justify-content:space-between;gap:var(--an-space-3);min-width:0}\n.dsh-an-popTitleLine{display:flex;align-items:center;gap:var(--an-space-3);flex:1 1 auto;min-width:0}\n.dsh-an-popTitle{min-width:0;overflow:hidden;font-size:var(--an-fs-title);line-height:var(--an-lh-title);font-weight:500;color:var(--dsw-alias-label-primary);white-space:nowrap;text-overflow:ellipsis}\n.dsh-an-popMeta{min-width:0;margin:0;overflow:hidden;font-size:var(--an-fs-caption);line-height:16px;color:var(--dsw-alias-label-secondary);font-weight:400;font-variant-numeric:tabular-nums;white-space:nowrap;text-overflow:ellipsis}\n.dsh-an-popActions{display:flex;align-items:center;flex:none;gap:var(--an-space-2)}\n.dsh-an-popClose,.dsh-an-settingsBtn{display:grid;place-items:center;flex:none;width:24px;height:24px;padding:0;border:0;border-radius:var(--dsw-radius-sm);background:transparent;color:var(--dsw-alias-label-secondary);font:inherit;cursor:pointer;transition:var(--an-transition)}\n.dsh-an-popClose:active,.dsh-an-settingsBtn:active{background:var(--an-active)}\n.dsh-an-settingsBtn[data-active=\"true\"]{background:var(--an-hover);color:var(--dsw-alias-label-primary)}\n.dsh-an-settingsBtn{position:relative}\n.dsh-an-updateDot{position:absolute;top:3px;right:3px;width:6px;height:6px;border-radius:var(--an-radius-pill);corner-shape:round;background:var(--dsw-alias-brand-primary);box-shadow:0 0 0 2px var(--dsh-an-panelSurface)}\n/* The list-scope switch sits at the far right of the title line. */\n.dsh-an-scope{display:inline-flex;align-items:center;flex:none;box-sizing:border-box;height:24px;padding:1px;margin-left:auto;border:0.5px solid var(--dsw-alias-border-l2);border-radius:var(--an-radius-pill);corner-shape:round;background:var(--dsw-alias-bg-layer-1)}\n.dsh-an-scopeBtn{display:inline-flex;align-items:center;justify-content:center;height:20px;padding:0 var(--an-space-2);border:0;border-radius:var(--an-radius-pill);corner-shape:round;background:transparent;color:var(--dsw-alias-label-secondary);font:inherit;font-size:var(--an-fs-caption);line-height:16px;font-weight:500;cursor:pointer;transition:var(--an-transition)}\n.dsh-an-scopeBtn[data-active=\"true\"]{background:var(--dsw-alias-interactive-bg-hover-solid);color:var(--dsw-alias-label-primary)}\n.dsh-an-scopeBtn:focus-visible{outline:2px solid var(--dsw-alias-label-primary);outline-offset:1px}\n\n/* ── 4 添加区 · 嵌套表单组 R16，字段 0.5px 发丝线 ──────────────────── */\n.dsh-an-add{display:flex;flex-direction:column;gap:var(--an-space-2);padding:var(--an-space-3);border:0.5px solid var(--dsw-alias-settings-card-stroke);border-radius:var(--dsw-radius-lg);background:var(--dsw-alias-settings-card-fill);transition:var(--an-transition)}\n.dsh-an-add:focus-within{border-color:var(--dsw-alias-state-business-primary)}\n.dsh-an-input{display:block;flex:0 0 auto;width:100%;min-width:0;box-sizing:border-box;min-height:var(--an-lh-row);max-height:120px;padding:0;border:0;outline:0;background:transparent;color:var(--dsw-alias-label-primary);font:inherit;font-size:var(--an-fs-row);line-height:var(--an-lh-row);resize:none;overflow-y:auto;overflow-x:hidden}\n.dsh-an-input::placeholder{color:var(--dsw-alias-label-secondary)}\n.dsh-an-addFoot{display:flex;align-items:center;justify-content:space-between;gap:var(--an-space-2);width:100%;min-width:0}\n.dsh-an-addShortcut{min-width:0;overflow:hidden;font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);color:var(--dsw-alias-label-secondary);white-space:nowrap;text-overflow:ellipsis}\n.dsh-an-addBtn{display:inline-flex;align-items:center;justify-content:center;flex:none;height:28px;padding:0 var(--an-space-2);border:0;border-radius:var(--dsw-radius-sm);background:var(--dsw-alias-button-primary-fill);color:var(--dsw-alias-label-primary-foreground);font:inherit;font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);font-weight:500;cursor:pointer;transition:var(--an-transition)}\n.dsh-an-addBtn:active{background:var(--dsw-alias-button-primary-dimmed);transform:scale(.97)}\n.dsh-an-addBtn[disabled]{background:transparent;color:var(--dsw-alias-label-secondary);box-shadow:inset 0 0 0 0.5px var(--an-field-line);cursor:not-allowed}\n\n/* ── 5 分区与列表 · 9px 轨道内嵌 2px，底部羽化只盖内容不盖滚动条 ──── */\n/* The viewport grows into the popover padding so the 9px rail does not steal from the cards; the list pays the padding back minus the rail, so cards and the add field keep one content width at every panel size. */\n.dsh-an-listViewport{position:relative;display:flex;flex-direction:column;flex:1 1 auto;min-height:0;margin-right:calc(var(--dsh-an-listGutter) * -1)}\n/* Bottom edge treatment: a viewport-fixed alpha mask over the scroller itself, exactly like the DSH scroll areas. The first gradient fades the last 48px to transparent; the second keeps the 9px scrollbar rail opaque so the thumb stays crisp. There is no backdrop-filter layer, so there is no hard compositing edge to see. */\n.dsh-an-listViewport[data-bottom=\"true\"] .dsh-an-listArea{--dsh-an-fadeHeight:calc(var(--an-space-6) + var(--an-space-4));-webkit-mask-image:linear-gradient(to bottom,currentColor 0,currentColor calc(100% - var(--dsh-an-fadeHeight)),transparent 100%),linear-gradient(to right,transparent calc(100% - var(--dsh-an-scrollRail)),currentColor calc(100% - var(--dsh-an-scrollRail)));mask-image:linear-gradient(to bottom,currentColor 0,currentColor calc(100% - var(--dsh-an-fadeHeight)),transparent 100%),linear-gradient(to right,transparent calc(100% - var(--dsh-an-scrollRail)),currentColor calc(100% - var(--dsh-an-scrollRail)));-webkit-mask-composite:source-over;mask-composite:add}\n/* Geometry only: the shared DSH skin paints the thumb, so the plugin declares no scrollbar pseudo-elements. The popover already binds the l2 thumb pair for the menu material. */\n.dsh-an-listArea{--dsh-scrollbar-width:var(--dsh-an-scrollRail);--dsh-scrollbar-thumb-border:var(--dsh-an-scrollInset);display:flex;flex-direction:column;flex:1 1 auto;min-height:0;padding-right:calc(var(--dsh-an-listGutter) - var(--dsh-an-scrollRail));overflow-x:hidden;overflow-y:auto;scrollbar-gutter:stable}\n.dsh-an-listSection{display:flex;flex-direction:column;gap:var(--an-space-2);min-width:0}\n.dsh-an-listSection+.dsh-an-listSection{margin-top:var(--an-space-2)}\n.dsh-an-sectionHead,.dsh-an-doneHead{position:sticky;top:0;z-index:3;display:flex;align-items:center;justify-content:space-between;gap:var(--an-space-3);min-height:28px;margin:0;padding:var(--an-space-1) 0;background:transparent;transition:background-color var(--an-dur-fast) var(--an-ease)}\n.dsh-an-sectionHead[data-stuck],.dsh-an-doneHead[data-stuck]{background:var(--dsh-an-panelSurface,var(--dsw-alias-bg-layer-2))}\n.dsh-an-doneToggle{display:flex;align-items:center;gap:var(--an-space-2);flex:none;min-width:0;margin:0;padding:var(--an-space-1) var(--an-space-2) var(--an-space-1) 0;border:0;border-radius:var(--dsw-radius-sm);background:transparent;color:var(--dsw-alias-label-secondary);font:inherit;font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);font-weight:500;text-align:left;cursor:pointer;transition:var(--an-transition)}\n.dsh-an-doneToggle:active{background:var(--an-active)}\n.dsh-an-doneToggle[disabled]{color:var(--dsw-alias-label-tertiary);cursor:not-allowed;pointer-events:none}\n.dsh-an-chevron{display:flex;align-items:center;justify-content:center;flex:none;width:16px;height:16px;color:var(--dsw-alias-label-secondary);transition:transform var(--an-dur-fast) var(--an-ease)}\n.dsh-an-chevron[data-open=\"true\"]{transform:rotate(90deg)}\n.dsh-an-sectionCount{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;padding:0 var(--an-space-1);border:0.5px solid var(--dsw-alias-border-l3);border-radius:var(--an-radius-pill);corner-shape:round;background:var(--dsw-alias-interactive-bg-hover-solid);color:var(--dsw-alias-label-primary);font-size:var(--an-fs-caption);line-height:16px;font-weight:500;font-variant-numeric:tabular-nums}\n.dsh-an-clear{display:inline-flex;align-items:center;flex:none;height:24px;margin-left:auto;padding:0 var(--an-space-2);border:0;border-radius:var(--dsw-radius-sm);background:transparent;color:var(--dsw-alias-label-secondary);font:inherit;font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);font-weight:500;cursor:pointer;transition:var(--an-transition)}\n.dsh-an-clear:active{background:var(--an-active);color:var(--dsw-alias-label-primary)}\n.dsh-an-clearConfirm{display:flex;align-items:center;justify-content:space-between;gap:var(--an-space-2);min-width:0;margin-top:var(--an-space-1);padding:var(--an-space-2);border:0.5px solid var(--dsw-alias-settings-card-stroke);border-radius:var(--dsw-radius-lg);background:var(--dsw-alias-settings-card-fill)}\n.dsh-an-clearConfirmText{flex:1 1 auto;min-width:0;margin:0;font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);color:var(--dsw-alias-label-primary);overflow-wrap:anywhere}\n.dsh-an-clearConfirmActions{display:flex;align-items:center;flex:none;gap:var(--an-space-1)}\n.dsh-an-doneRows{margin-top:var(--an-space-2)}\n.dsh-an-rows{list-style:none;margin:0;padding:0;border:0.5px solid var(--dsw-alias-settings-card-stroke);border-radius:var(--dsw-radius-lg);background:var(--dsw-alias-settings-card-fill);overflow:hidden}\n.dsh-an-row{display:flex;align-items:flex-start;gap:var(--an-space-2);padding:var(--an-space-2);border-top:0.5px solid var(--an-divider);transition:var(--an-transition)}\n.dsh-an-row:first-child{border-top:0}\n\n/* ── 6 一行便笺 · 勾选圈 14px，命中区 24px ─────────────────────────── */\n.dsh-an-check{display:flex;align-items:center;justify-content:center;flex:none;width:24px;height:24px;margin:-2px 0 0;padding:0;border:0;border-radius:var(--an-radius-pill);corner-shape:round;background:transparent;color:transparent;font:inherit;cursor:pointer;transition:var(--an-transition)}\n.dsh-an-checkCircle{display:flex;align-items:center;justify-content:center;width:14px;height:14px;box-sizing:border-box;border:0.5px solid var(--dsw-alias-label-tertiary);border-radius:var(--an-radius-pill);corner-shape:round;background:transparent;color:transparent;transition:border-color var(--an-dur-fast) var(--an-ease),background-color var(--an-dur-fast) var(--an-ease),color var(--an-dur-fast) var(--an-ease),transform var(--an-dur-fast) var(--an-ease)}\n.dsh-an-check:active .dsh-an-checkCircle{transform:scale(.9)}\n.dsh-an-check[aria-checked=\"true\"] .dsh-an-checkCircle{border-color:var(--dsw-alias-brand-primary);background:var(--dsw-alias-brand-primary);color:var(--dsw-alias-label-primary-foreground)}\n.dsh-an-itemBody{display:flex;flex:1;flex-direction:column;gap:var(--an-space-1);min-width:0}\n.dsh-an-text{display:block;width:100%;margin:0;padding:0;border:0;background:transparent;color:var(--dsw-alias-label-primary);font:inherit;font-size:var(--an-fs-row);line-height:var(--an-lh-row);text-align:left;white-space:pre-wrap;overflow-wrap:anywhere;cursor:text;user-select:text;-webkit-user-select:text}\n.dsh-an-rowDone .dsh-an-text{color:var(--dsw-alias-label-secondary);text-decoration:line-through;text-decoration-thickness:1px;text-decoration-color:var(--dsw-alias-label-tertiary)}\n.dsh-an-rowFoot{display:flex;align-items:center;justify-content:space-between;gap:var(--an-space-2);min-height:24px}\n.dsh-an-meta{flex:0 1 auto;min-width:0;overflow:hidden;font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);color:var(--dsw-alias-label-secondary);font-variant-numeric:tabular-nums;white-space:nowrap;text-overflow:ellipsis}\n\n/* ── 7 行操作 · 图标按钮 H24/R8，触摸端常显 ────────────────────────── */\n.dsh-an-actions{display:flex;flex:none;gap:var(--an-space-1)}\n.dsh-an-iconBtn{position:relative;display:flex;align-items:center;justify-content:center;width:24px;height:24px;padding:0;border:0;border-radius:var(--dsw-radius-sm);background:transparent;color:var(--dsw-alias-label-secondary);font:inherit;cursor:pointer;transition:var(--an-transition)}\n.dsh-an-iconBtn:active{background:var(--an-active);color:var(--dsw-alias-label-primary);transform:scale(.94)}\n.dsh-an-iconBtn:disabled,.dsh-an-iconBtn[disabled]{color:var(--dsw-alias-label-tertiary);cursor:not-allowed;pointer-events:none}\n.dsh-an-forwardMark{position:absolute;right:0;bottom:0;display:flex;align-items:center;justify-content:center;width:10px;height:10px;border-radius:var(--an-radius-pill);corner-shape:round;background:var(--dsw-alias-label-secondary);color:var(--dsw-alias-label-primary-foreground);pointer-events:none}\n\n/* ── 8 就地编辑 · 保存/取消为紧凑描边按钮 ──────────────────────────── */\n.dsh-an-edit{display:flex;flex-direction:column;gap:var(--an-space-1);width:100%}\n.dsh-an-editInput{display:block;width:100%;box-sizing:border-box;min-height:var(--an-lh-row);max-height:160px;padding:var(--an-space-1) var(--an-space-2);border:0.5px solid var(--an-field-line);border-radius:var(--dsw-radius-sm);background:var(--an-field);color:var(--dsw-alias-label-primary);font:inherit;font-size:var(--an-fs-row);line-height:var(--an-lh-row);outline:0;resize:none;overflow-y:auto;overflow-x:hidden;transition:var(--an-transition)}\n.dsh-an-editInput:focus{border-color:var(--dsw-alias-state-business-primary)}\n.dsh-an-editActions{display:flex;align-items:center;gap:var(--an-space-1)}\n.dsh-an-editHint{flex:1 1 auto;min-width:0;margin-left:auto;overflow:hidden;font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);text-align:right;color:var(--dsw-alias-label-secondary);white-space:nowrap;text-overflow:ellipsis}\n.dsh-an-mini{display:inline-flex;align-items:center;justify-content:center;flex:none;height:24px;padding:0 var(--an-space-2);border:0.5px solid var(--dsw-alias-border-l3);border-radius:var(--dsw-radius-sm);background:transparent;color:var(--dsw-alias-label-primary);font:inherit;font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);font-weight:500;cursor:pointer;transition:var(--an-transition)}\n.dsh-an-mini:active{background:var(--an-active)}\n.dsh-an-mini[disabled]{color:var(--dsw-alias-label-tertiary);cursor:not-allowed;pointer-events:none}\n.dsh-an-miniPrimary{border-color:transparent;background:var(--dsw-alias-button-primary-fill);color:var(--dsw-alias-label-primary-foreground)}\n.dsh-an-miniPrimary:active{background:var(--dsw-alias-button-primary-dimmed)}\n.dsh-an-miniDanger{border-color:transparent;background:var(--dsw-alias-state-error-primary);color:var(--dsw-alias-label-primary-foreground)}\n.dsh-an-miniDanger:active{background:var(--dsw-alias-state-error-primary)}\n\n/* ── 9 空态 · 虚线 1px，说明 12/次级墨色 ──────────────────────────── */\n.dsh-an-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:var(--an-space-2);padding:var(--an-space-5) var(--an-space-4);border:1px dashed var(--an-divider);border-radius:var(--dsw-radius-lg);text-align:center}\n.dsh-an-emptyIcon{display:flex;align-items:center;justify-content:center;width:32px;height:32px;margin:0 0 var(--an-space-1);border-radius:var(--dsw-radius-md);background:var(--an-hover);color:var(--dsw-alias-label-secondary)}\n.dsh-an-emptyTitle{font-size:var(--an-fs-row);line-height:var(--an-lh-row);font-weight:500;color:var(--dsw-alias-label-primary)}\n.dsh-an-emptyBody{max-width:36ch;font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);color:var(--dsw-alias-label-secondary);overflow-wrap:anywhere}\n\n/* ── 10 设置 · 分组 R16，项间 0.5px 分隔线，链接走 --dsw-alias-link ── */\n.dsh-an-settings{--dsh-an-settingIndent:var(--an-space-3);display:flex;flex-direction:column;gap:var(--an-space-2);margin:0;padding:var(--an-space-3);border:0.5px solid var(--dsw-alias-settings-card-stroke);border-radius:var(--dsw-radius-lg);background:var(--dsw-alias-settings-card-fill)}\n.dsh-an-settingsHead{font-size:var(--an-fs-row);line-height:var(--an-lh-row);font-weight:500;color:var(--dsw-alias-label-primary)}\n.dsh-an-settingGroup{display:flex;flex-direction:column;gap:var(--an-space-1);min-width:0}\n.dsh-an-settingGroup+.dsh-an-settingGroup{margin-top:var(--an-space-2);padding-top:var(--an-space-2);border-top:0.5px solid var(--an-divider)}\n.dsh-an-settingLabel{font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);font-weight:500;color:var(--dsw-alias-label-secondary)}\n.dsh-an-settingBody{display:flex;flex-direction:column;gap:var(--an-space-1);padding-left:var(--dsh-an-settingIndent)}\n.dsh-an-settingItem{display:flex;flex-direction:column;gap:var(--an-space-1);min-width:0}\n.dsh-an-settingItem+.dsh-an-settingItem{margin-top:var(--an-space-2);padding-top:var(--an-space-2);border-top:0.5px solid var(--an-divider)}\n.dsh-an-settingChoices{display:flex;flex-direction:column;gap:var(--an-space-1)}\n.dsh-an-settingChoice{display:flex;align-items:flex-start;gap:var(--an-space-2);font-size:var(--an-fs-row);line-height:var(--an-lh-row);color:var(--dsw-alias-label-primary);cursor:pointer}\n.dsh-an-settingChoice input{appearance:none;flex:none;width:14px;height:14px;margin:calc((var(--an-lh-row) - 14px) / 2) 0 0;box-sizing:border-box;border:0.5px solid var(--dsw-alias-label-tertiary);border-radius:var(--an-radius-pill);corner-shape:round;background:transparent;cursor:pointer;transition:var(--an-transition)}\n.dsh-an-settingChoice input:checked{border-color:var(--dsw-alias-brand-primary);background:var(--dsw-alias-brand-primary);box-shadow:inset 0 0 0 3px var(--an-field)}\n.dsh-an-settingInput{box-sizing:border-box;width:100%;height:28px;padding:0 var(--an-space-2);border:0.5px solid var(--an-field-line);border-radius:var(--dsw-radius-sm);background:var(--an-field);color:var(--dsw-alias-label-primary);font-family:inherit;font-size:var(--an-fs-row);line-height:var(--an-lh-row);font-weight:500;outline:0;transition:var(--an-transition)}\n.dsh-an-settingItem>.dsh-an-settingInput{font-family:inherit;font-size:var(--an-fs-row);line-height:var(--an-lh-row);font-weight:500}\n.dsh-an-settingInput:focus{border-color:var(--dsw-alias-state-business-primary)}\n/* 前缀提示词改为文本域：min-height 兜住三行，空态也不会被内联高度压扁 */\n.dsh-an-settingTextarea{display:block;height:auto;min-height:calc(var(--an-lh-row) + var(--an-space-4) + 2px);padding:var(--an-space-2);resize:none;overflow-y:auto;white-space:pre-wrap;overflow-wrap:anywhere}\n.dsh-an-settingHint{margin:0;font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);color:var(--dsw-alias-label-secondary)}\n.dsh-an-settingHintNote{margin-top:var(--an-space-1)}\n.dsh-an-settingBrand{display:flex;flex-direction:column;gap:2px;min-width:0}\n.dsh-an-settingBrandName{font-size:var(--an-fs-row);line-height:var(--an-lh-row);font-weight:500;color:var(--dsw-alias-label-primary)}\n.dsh-an-settingBrandTagline{font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);color:var(--dsw-alias-label-secondary);overflow-wrap:anywhere}\n.dsh-an-settingAbout{display:flex;align-items:center;gap:var(--an-space-2);flex-wrap:wrap;min-width:0;font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);color:var(--dsw-alias-label-secondary)}\n.dsh-an-settingAbout>span{flex:none}\n.dsh-an-settingAbout .dsh-an-updateHint{flex:0 1 auto;min-width:0}\n.dsh-an-settingMetaRow{display:flex;align-items:baseline;gap:var(--an-space-1);min-width:0;overflow:hidden;font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);color:var(--dsw-alias-label-secondary);white-space:nowrap}\n.dsh-an-settingMetaRow>span{flex:none}\n.dsh-an-settingDot{flex:none;color:var(--dsw-alias-label-tertiary)}\n.dsh-an-settingLink{flex:0 1 auto;min-width:0;overflow:hidden;color:var(--dsw-alias-link);font-weight:500;text-decoration:none;text-overflow:ellipsis;transition:var(--an-transition)}\n.dsh-an-settingLink:focus-visible{text-decoration:underline;text-decoration-style:dotted;text-decoration-thickness:1px;text-underline-offset:3px}\n/* 更新中心：检查入口、可展开的更新说明与更新动作，全部走共享令牌 */\n.dsh-an-updateCheck{flex:none;height:24px;padding:0 var(--an-space-2);border:0.5px solid var(--dsw-alias-border-l3);border-radius:var(--dsw-radius-sm);background:transparent;color:var(--dsw-alias-label-primary);font:inherit;font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);font-weight:500;cursor:pointer;transition:var(--an-transition)}\n.dsh-an-updateCheck:active{background:var(--an-active)}\n.dsh-an-updateCheck:disabled{color:var(--dsw-alias-label-tertiary);cursor:default}\n.dsh-an-updateCheck:focus-visible{outline-offset:2px}\n.dsh-an-updateHint{margin:0;font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);color:var(--dsw-alias-label-secondary);overflow-wrap:anywhere}\n.dsh-an-updateHintError{color:var(--dsw-alias-state-error-primary)}\n.dsh-an-updateCard{display:flex;flex-direction:column;gap:var(--an-space-2);margin-top:var(--an-space-1);padding:var(--an-space-2);border:0.5px solid var(--dsw-alias-border-l2);border-radius:var(--dsw-radius-md);background:var(--dsw-alias-bg-layer-1)}\n.dsh-an-updateTitle{font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);font-weight:500;color:var(--dsw-alias-label-primary)}\n.dsh-an-updateFull:focus-visible,.dsh-an-updateLinkBtn:focus-visible{text-decoration:underline;text-decoration-style:dotted;text-decoration-thickness:1px;text-underline-offset:3px}\n.dsh-an-updateFull{flex:none;color:var(--dsw-alias-link);font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);font-weight:500;text-decoration:none;transition:var(--an-transition)}\n.dsh-an-updateNotes{display:flex;flex-direction:column;gap:var(--an-space-2);max-height:220px;overflow-y:auto;padding-right:0;overscroll-behavior:contain;--dsh-scrollbar-width:var(--dsh-an-scrollRail);--dsh-scrollbar-thumb-border:var(--dsh-an-scrollInset);scrollbar-gutter:stable}\n.dsh-an-updateNotes[data-fade=\"true\"]{--dsh-an-fadeHeight:var(--an-space-5);-webkit-mask-image:linear-gradient(to bottom,currentColor 0,currentColor calc(100% - var(--dsh-an-fadeHeight)),transparent 100%),linear-gradient(to right,transparent calc(100% - var(--dsh-an-scrollRail)),currentColor calc(100% - var(--dsh-an-scrollRail)));mask-image:linear-gradient(to bottom,currentColor 0,currentColor calc(100% - var(--dsh-an-fadeHeight)),transparent 100%),linear-gradient(to right,transparent calc(100% - var(--dsh-an-scrollRail)),currentColor calc(100% - var(--dsh-an-scrollRail)));-webkit-mask-composite:source-over;mask-composite:add}\n.dsh-an-updateVersions{display:flex;flex-direction:column;gap:var(--an-space-1);min-width:0}\n.dsh-an-updateVersion{display:flex;flex-direction:column;gap:var(--an-space-1);min-width:0}\n.dsh-an-updateVersion+.dsh-an-updateVersion{padding-top:var(--an-space-1);border-top:0.5px solid var(--an-divider)}\n.dsh-an-updateVersionHead{display:flex;align-items:center;gap:var(--an-space-1);width:100%;padding:2px 0;border:0;border-radius:var(--dsw-radius-sm);background:transparent;color:var(--dsw-alias-label-primary);font:inherit;font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);font-weight:500;text-align:left;cursor:pointer}\n.dsh-an-updateVersionHead:active{background:var(--an-active)}\n.dsh-an-updateVersionHead:focus-visible{text-decoration:underline;text-decoration-style:dotted;text-decoration-thickness:1px;text-underline-offset:3px}\n.dsh-an-updateChevron{display:flex;align-items:center;justify-content:center;flex:none;width:16px;height:16px;color:var(--dsw-alias-label-secondary);font-size:var(--an-fs-caption);transition:transform var(--an-dur-fast) var(--an-ease)}\n.dsh-an-updateChevron[data-open=\"true\"]{transform:rotate(90deg)}\n.dsh-an-updateVersionLabel{font-variant-numeric:tabular-nums}\n.dsh-an-updateLatest{display:inline-flex;align-items:center;justify-content:center;flex:none;min-width:18px;height:18px;padding:0 var(--an-space-1);border:0.5px solid var(--dsw-alias-border-l3);border-radius:var(--an-radius-pill);corner-shape:round;background:var(--dsw-alias-interactive-bg-hover-solid);color:var(--dsw-alias-label-primary);font-size:var(--an-fs-caption);line-height:16px;font-weight:500}\n.dsh-an-updateVersionBody{display:flex;flex-direction:column;gap:var(--an-space-2);padding-left:var(--an-space-4);min-width:0}\n.dsh-an-updateGroup{display:flex;flex-direction:column;gap:var(--an-space-1);min-width:0}\n.dsh-an-updateGroupTitle{font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);font-weight:500;color:var(--dsw-alias-label-secondary)}\n.dsh-an-updateItems{display:flex;flex-direction:column;gap:var(--an-space-1);margin:0;padding-left:var(--an-space-4);color:var(--dsw-alias-label-primary)}\n.dsh-an-updateItem{font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);overflow-wrap:anywhere}\n.dsh-an-updateItem strong{font-weight:500}\n.dsh-an-updateActions{display:flex;align-items:center;gap:var(--an-space-2);flex-wrap:wrap;min-width:0}\n.dsh-an-updatePrimary{display:inline-flex;align-items:center;justify-content:center;flex:none;height:24px;padding:0 var(--an-space-3);border:0;border-radius:var(--dsw-radius-sm);background:var(--dsw-alias-button-primary-fill);color:var(--dsw-alias-label-primary-foreground);font:inherit;font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);font-weight:500;cursor:pointer;transition:var(--an-transition)}\n.dsh-an-updatePrimary:active{background:var(--dsw-alias-button-primary-dimmed)}\n.dsh-an-updatePrimary:disabled{opacity:.55;cursor:default}\n.dsh-an-updatePrimary:focus-visible{outline-offset:2px}\n.dsh-an-updateDone{display:flex;align-items:center;gap:var(--an-space-2);flex-wrap:wrap;min-width:0}\n.dsh-an-updateErrorRow{display:flex;align-items:baseline;gap:var(--an-space-2);flex-wrap:wrap;min-width:0}\n.dsh-an-updateError{flex:1 1 auto;min-width:0;margin:0;font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);color:var(--dsw-alias-state-error-primary);overflow-wrap:anywhere}\n.dsh-an-updateLinkBtn{padding:0;border:0;background:transparent;color:var(--dsw-alias-link);font:inherit;font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);font-weight:500;cursor:pointer}\n.dsh-an-updateFallback{display:flex;align-items:center;gap:var(--an-space-2);flex-wrap:wrap;min-width:0;padding-top:var(--an-space-1);border-top:0.5px solid var(--an-divider)}\n.dsh-an-updateFallback .dsh-an-updateHint{flex:1 1 100%;min-width:0}\n.dsh-an-updateCopy{flex:none;height:24px;padding:0 var(--an-space-2);border:0.5px solid var(--dsw-alias-border-l3);border-radius:var(--dsw-radius-sm);background:transparent;color:var(--dsw-alias-label-primary);font:inherit;font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);font-weight:500;cursor:pointer;transition:var(--an-transition)}\n.dsh-an-updateCopy:active{background:var(--an-active)}\n.dsh-an-updateCopy:focus-visible{outline-offset:2px}\n\n/* ── 11 面板脚注 · 存储状态就地提示，错误用状态色 ─────────────────── */\n.dsh-an-popFoot{margin:0;font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);color:var(--dsw-alias-label-secondary)}\n.dsh-an-error{color:var(--dsw-alias-state-error-primary)}\n\n/* ── 12 会话顶部入口 · H28/R8，计数徽标为胶囊 ──────────────────────── */\n.dsh-an-headerBtn{position:relative;display:inline-flex;align-items:center;justify-content:center;flex:none;width:28px;height:28px;padding:0;border:0;border-radius:var(--dsw-radius-sm);background:transparent;color:var(--dsw-alias-label-secondary);font:inherit;cursor:pointer;transition:var(--an-transition)}\n.dsh-an-headerBtn:active{background:var(--an-active);color:var(--dsw-alias-label-primary)}\n.dsh-an-headerBtn[data-active=\"true\"]{background:var(--an-hover);color:var(--dsw-alias-label-primary)}\n.dsh-an-headerBtn[data-disabled=\"true\"]{color:var(--dsw-alias-label-tertiary);cursor:not-allowed;pointer-events:none}\n.dsh-an-headerIcon{display:flex;align-items:center;justify-content:center;flex:none;width:16px;height:16px;color:currentColor}\n.dsh-an-headerCount{position:absolute;top:-2px;right:-2px;box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;min-width:16px;height:16px;padding:0 var(--an-space-1);border:0.5px solid var(--dsw-alias-bg-base);border-radius:var(--an-radius-pill);corner-shape:round;background:var(--dsw-alias-interactive-bg-hover-solid);color:var(--dsw-alias-label-secondary);font-size:var(--an-fs-caption);line-height:14px;font-weight:500;font-variant-numeric:tabular-nums}\n\n/* ── 13 拖拽把手 · 8px 命中带，3px 视觉条 ─────────────────────────── */\n.dsh-an-resizeHandle{position:absolute;left:0;top:0;bottom:0;z-index:2;display:flex;align-items:center;justify-content:center;width:var(--an-space-2);cursor:ew-resize;touch-action:none;outline:0}\n.dsh-an-resizeHandle::before{content:\"\";width:3px;height:var(--an-space-6);border-radius:var(--an-radius-pill);corner-shape:round;background:var(--dsw-alias-border-l4);transition:transform var(--an-dur-fast) var(--an-ease),background-color var(--an-dur-fast) var(--an-ease)}\n.dsh-an-resizeHandle:focus-visible::before{background:var(--dsw-alias-label-secondary)}\n.dsh-an-resizeHandle:focus-visible{outline-offset:-2px;border-radius:var(--dsw-radius-sm)}\n.dsh-an-resizeHandleBottom{position:absolute;left:50%;bottom:0;z-index:2;display:flex;align-items:center;justify-content:center;width:var(--an-space-6);height:var(--an-space-3);transform:translateX(-50%);cursor:ns-resize;touch-action:none;outline:0}\n.dsh-an-resizeHandleBottom::before{content:\"\";width:var(--an-space-5);height:3px;border-radius:var(--an-radius-pill);corner-shape:round;background:var(--dsw-alias-border-l4);transition:transform var(--an-dur-fast) var(--an-ease),background-color var(--an-dur-fast) var(--an-ease)}\n.dsh-an-resizeHandleBottom:focus-visible::before{background:var(--dsw-alias-label-secondary)}\n.dsh-an-resizeHandleBottom:focus-visible{outline-offset:-2px;border-radius:var(--dsw-radius-sm)}\n\n/* ── 14 加载 · 控件内 12px 环，文字隐藏，不报\"进行中\" ──────────────── */\n[data-loading=\"true\"]{position:relative;color:transparent!important;pointer-events:none;cursor:progress}\n[data-loading=\"true\"]>*{visibility:hidden}\n[data-loading=\"true\"]::after{content:\"\";position:absolute;left:50%;top:50%;box-sizing:border-box;width:12px;height:12px;margin:-6px 0 0 -6px;border:1.5px solid var(--dsw-alias-label-secondary);border-top-color:transparent;border-radius:var(--an-radius-pill);corner-shape:round;animation:dsh-an-spin var(--an-dur-spin) linear infinite}\n\n/* ── 15 悬停 · 只在支持 hover 的设备上启用（触摸端常显操作） ────────── */\n@media (hover:hover){\n.dsh-an-row:hover{background:var(--an-hover)}\n.dsh-an-actions{opacity:0;pointer-events:none}\n.dsh-an-row:hover .dsh-an-actions,.dsh-an-row:focus-within .dsh-an-actions{opacity:1;pointer-events:auto}\n.dsh-an-iconBtn:hover{background:var(--an-hover);color:var(--dsw-alias-label-primary)}\n.dsh-an-iconBtnDanger:hover{background:var(--dsw-alias-interactive-bg-hover-danger);color:var(--dsw-alias-state-error-primary)}\n.dsh-an-popClose:hover,.dsh-an-settingsBtn:hover{background:var(--an-hover);color:var(--dsw-alias-label-primary)}\n.dsh-an-scopeBtn:hover:not([data-active=\"true\"]){background:var(--an-hover);color:var(--dsw-alias-label-primary)}\n.dsh-an-addBtn:hover:not([disabled]){background:var(--dsw-alias-button-primary-hover)}\n.dsh-an-mini:hover:not([disabled]){background:var(--an-hover)}\n.dsh-an-miniPrimary:hover:not([disabled]){background:var(--dsw-alias-button-primary-hover);color:var(--dsw-alias-label-primary-foreground)}\n.dsh-an-miniDanger:hover:not([disabled]){background:var(--dsw-alias-interactive-bg-hover-danger);color:var(--dsw-alias-state-error-primary)}\n.dsh-an-clear:hover{background:var(--an-hover);color:var(--dsw-alias-label-primary)}\n.dsh-an-doneToggle:hover{background:var(--an-hover)}\n.dsh-an-check:hover .dsh-an-checkCircle{border-color:var(--dsw-alias-label-primary)}\n.dsh-an-settingChoice:hover input{border-color:var(--dsw-alias-label-primary)}\n.dsh-an-settingLink:hover{text-decoration:underline;text-decoration-style:dotted;text-decoration-thickness:1px;text-underline-offset:3px}\n.dsh-an-updatePrimary:hover:not(:disabled){background:var(--dsw-alias-button-primary-hover)}\n.dsh-an-headerBtn:hover{background:var(--an-hover);color:var(--dsw-alias-label-primary)}\n.dsh-an-resizeHandle:hover::before{transform:scaleY(1.4);background:var(--dsw-alias-label-secondary)}\n.dsh-an-resizeHandleBottom:hover::before{transform:scaleX(1.4);background:var(--dsw-alias-label-secondary)}\n}\n\n/* ── 16 动效 · 只动 opacity/transform，错峰出场封顶 ─────────────────── */\n@media (prefers-reduced-motion:no-preference){\n.dsh-an-rows>.dsh-an-row{animation:dsh-an-row-in var(--an-dur-base) var(--an-ease) both}\n.dsh-an-rows>.dsh-an-row:nth-child(2){animation-delay:var(--an-space-1)}\n.dsh-an-rows>.dsh-an-row:nth-child(3){animation-delay:var(--an-space-2)}\n.dsh-an-rows>.dsh-an-row:nth-child(4){animation-delay:calc(var(--an-space-2) + var(--an-space-1))}\n.dsh-an-rows>.dsh-an-row:nth-child(n+5){animation-delay:var(--an-space-3)}\n}\n@keyframes dsh-an-pop-in{from{opacity:0}to{opacity:1}}\n@keyframes dsh-an-row-in{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}\n@keyframes dsh-an-spin{to{transform:rotate(360deg)}}\n@media (prefers-reduced-motion:reduce){\n.dsh-an-popover,.dsh-an-rows>.dsh-an-row,.dsh-an-chevron,[data-loading=\"true\"]::after{animation:none}\n.dsh-an-popover,.dsh-an-row,.dsh-an-actions,.dsh-an-iconBtn{transition-duration:1ms}\n}\n\n/* ── 17 窄视口 · 390 基准下收紧内边距，主操作全部可达 ──────────────── */\n@media (max-width:480px){\n.dsh-an-popover{padding:var(--an-space-3);--dsh-an-listGutter:var(--an-space-3)}\n.dsh-an-popoverRight{padding-left:var(--an-space-4)}\n.dsh-an-popHead{gap:var(--an-space-2)}\n.dsh-an-add{padding:var(--an-space-2) var(--an-space-3)}\n.dsh-an-sectionHead,.dsh-an-doneHead{min-height:24px}\n}\n\n";
+// node_modules/aegis-web-sdk/lib/aegis.min.js
+var require_aegis_min = /* @__PURE__ */ __commonJSMin(((exports, module, this$1) => {
+	/**
+	*  ===========================================================================
+	* aegis-web-sdk@1.41.17 (c) 2026 TencentCloud Real User Monitoring.
+	* Author pumpkincai.
+	* Last Release Time Tue Oct 27 2026 19:43:24 GMT+0800 (China Standard Time).
+	* Released under the MIT License.
+	* Thanks for supporting RUM & Aegis!
+	* ===========================================================================
+	**/
+	((e, t) => {
+		"object" == typeof exports && "undefined" != typeof module ? module.exports = t() : "function" == typeof define && define.amd ? define(t) : (e = "undefined" != typeof globalThis ? globalThis : e || self).Aegis = t();
+	})(this$1, function() {
+		var I, A;
+		function M(e) {
+			this.name = "__st" + (1e9 * Math.random() >>> 0) + I + "__", e?.forEach(this.add, this), I += 1;
+		}
+		Array.prototype.find || Object.defineProperty(Array.prototype, "find", {
+			configurable: !0,
+			writable: !0,
+			value: function(e) {
+				if (null === this) throw new TypeError("\"this\" is null or not defined");
+				var t = Object(this), n = t.length >>> 0;
+				if ("function" != typeof e) throw new TypeError("predicate must be a function");
+				for (var r = arguments[1], i = 0; i < n;) {
+					var o = t[i];
+					if (e.call(r, o, i, t)) return o;
+					i += 1;
+				}
+			}
+		}), window.WeakSet || (I = Date.now() % 1e9, M.prototype.add = function(e) {
+			var t = this.name;
+			return e[t] || Object.defineProperty(e, t, {
+				value: !0,
+				writable: !0
+			}), this;
+		}, M.prototype.delete = function(e) {
+			return !!e[this.name] && !(e[this.name] = void 0);
+		}, M.prototype.has = function(e) {
+			return !!e[this.name];
+		}, A = M, Object.defineProperty(window, "WeakSet", { value: function(e) {
+			return new A(e);
+		} })), Object.assign || Object.defineProperty(Object, "assign", {
+			enumerable: !1,
+			configurable: !0,
+			writable: !0,
+			value: function(e) {
+				if (null == e) throw new TypeError("Cannot convert first argument to object");
+				for (var t = Object(e), n = 1; n < arguments.length; n++) if (null != (r = arguments[n])) for (var r = Object(r), i = Object.keys(Object(r)), o = 0, a = i.length; o < a; o++) {
+					var s = i[o], l = Object.getOwnPropertyDescriptor(r, s);
+					null != l && l.enumerable && (t[s] = r[s]);
+				}
+				return t;
+			}
+		});
+		var N = function(e, t) {
+			return (N = Object.setPrototypeOf || ({ __proto__: [] } instanceof Array ? function(e, t) {
+				e.__proto__ = t;
+			} : function(e, t) {
+				for (var n in t) Object.prototype.hasOwnProperty.call(t, n) && (e[n] = t[n]);
+			}))(e, t);
+		}, oe = function() {
+			return (oe = Object.assign || function(e) {
+				for (var t, n = 1, r = arguments.length; n < r; n++) for (var i in t = arguments[n]) Object.prototype.hasOwnProperty.call(t, i) && (e[i] = t[i]);
+				return e;
+			}).apply(this, arguments);
+		};
+		function ae(e, a, s, l) {
+			return new (s = s || Promise)(function(n, t) {
+				function r(e) {
+					try {
+						o(l.next(e));
+					} catch (e) {
+						t(e);
+					}
+				}
+				function i(e) {
+					try {
+						o(l.throw(e));
+					} catch (e) {
+						t(e);
+					}
+				}
+				function o(e) {
+					var t;
+					e.done ? n(e.value) : ((t = e.value) instanceof s ? t : new s(function(e) {
+						e(t);
+					})).then(r, i);
+				}
+				o((l = l.apply(e, a || [])).next());
+			});
+		}
+		function se(r, i) {
+			var o, a, s, l = {
+				label: 0,
+				sent: function() {
+					if (1 & s[0]) throw s[1];
+					return s[1];
+				},
+				trys: [],
+				ops: []
+			}, e = {
+				next: t(0),
+				throw: t(1),
+				return: t(2)
+			};
+			return "function" == typeof Symbol && (e[Symbol.iterator] = function() {
+				return this;
+			}), e;
+			function t(n) {
+				return function(e) {
+					var t = [n, e];
+					if (o) throw new TypeError("Generator is already executing.");
+					for (; l;) try {
+						if (o = 1, a && (s = 2 & t[0] ? a.return : t[0] ? a.throw || ((s = a.return) && s.call(a), 0) : a.next) && !(s = s.call(a, t[1])).done) return s;
+						switch (a = 0, (t = s ? [2 & t[0], s.value] : t)[0]) {
+							case 0:
+							case 1:
+								s = t;
+								break;
+							case 4: return l.label++, {
+								value: t[1],
+								done: !1
+							};
+							case 5:
+								l.label++, a = t[1], t = [0];
+								continue;
+							case 7:
+								t = l.ops.pop(), l.trys.pop();
+								continue;
+							default:
+								if (!((s = 0 < (s = l.trys).length && s[s.length - 1]) || 6 !== t[0] && 2 !== t[0])) {
+									l = 0;
+									continue;
+								}
+								if (3 === t[0] && (!s || t[1] > s[0] && t[1] < s[3])) l.label = t[1];
+								else if (6 === t[0] && l.label < s[1]) l.label = s[1], s = t;
+								else {
+									if (!(s && l.label < s[2])) {
+										s[2] && l.ops.pop(), l.trys.pop();
+										continue;
+									}
+									l.label = s[2], l.ops.push(t);
+								}
+						}
+						t = i.call(r, l);
+					} catch (e) {
+						t = [6, e], a = 0;
+					} finally {
+						o = s = 0;
+					}
+					if (5 & t[0]) throw t[1];
+					return {
+						value: t[0] ? t[1] : void 0,
+						done: !0
+					};
+				};
+			}
+		}
+		function C() {
+			for (var e = 0, t = 0, n = arguments.length; t < n; t++) e += arguments[t].length;
+			for (var r = Array(e), i = 0, t = 0; t < n; t++) for (var o = arguments[t], a = 0, s = o.length; a < s; a++, i++) r[i] = o[a];
+			return r;
+		}
+		var le, m, u, _ = /_?t(\d)?(imestamp)?=\d+&?/g, F = [
+			"aegis.qq.com",
+			"tamaegis.com",
+			"/aegis-sdk",
+			"rumt-",
+			"/flog.core.min.js",
+			"pingfore.qq.com",
+			"pingfore.tencent.com",
+			"zhiyan.tencent-cloud.net",
+			"h.trace.qq.com",
+			"btrace.qq.com",
+			"beacon.qq.com",
+			"dmplog.qq.com",
+			"qq.com/report",
+			"svibeacon.onezapp.com",
+			"cube.weixinbridge.com",
+			"doubleclick.net",
+			"pcmgrmonitor.3g.qq.com",
+			"tdm.qq.com",
+			"report.qqweb.qq.com",
+			"tpstelemetry.tencent.com",
+			"galileotelemetry.tencent.com",
+			"insight.cloud.tencent.com",
+			"facebook.com",
+			"facebook.net",
+			"google",
+			"yahoo.com",
+			"twitter.com",
+			"ga-audiences",
+			"report.idqqimg.com",
+			"arms-retcode.aliyuncs.com",
+			"px.effirst.com",
+			"sentry",
+			"baidu.com",
+			"hot-update.json",
+			"u.c.b.r.o.w.s.e.r",
+			"report.url.cn",
+			"sockjs-node",
+			"m3u8",
+			"flv"
+		], H = [
+			"ResizeObserver loop limit exceeded",
+			"ResizeObserver loop completed",
+			"Failed to execute 'transaction'",
+			"window.indexedDB.deleteDatabase is not a function"
+		], U = [
+			"ext1",
+			"ext2",
+			"ext3",
+			"ext4",
+			"ext5",
+			"ext6",
+			"ext7",
+			"ext8",
+			"ext9",
+			"ext10",
+			"level",
+			"trace",
+			"tag",
+			"seq",
+			"code"
+		], D = ["static", "fetch"], R = "unknown";
+		(n = le = le || {}).INFO_ALL = "-1", n.API_RESPONSE = "1", n.INFO = "2", n.ERROR = "4", n.PROMISE_ERROR = "8", n.AJAX_ERROR = "16", n.SCRIPT_ERROR = "32", n.IMAGE_ERROR = "64", n.CSS_ERROR = "128", n.CONSOLE_ERROR = "256", n.MEDIA_ERROR = "512", n.RET_ERROR = "1024", n.PAGE_LOAD = "1025", n.SLOW_PAGE_LOAD = "1026", n.SLOW_NET_REQUEST = "1027", n.ASSERT_REQUEST = "1028", n.SLOW_ASSET_REQUEST = "1029", n.CLICK_EVENT = "1030", n.CONSOLE_LOG = "1031", n.BLANK_SCREEN = "1032", n.MEMORY_OOM = "1033", n.LAG_MONITOR = "1034", n.NORESPONSE_LOG = "1035", n.REPORT = "2048", n.PV = "4096", n.EVENT = "8192", n.SPEED_EVENT = "8193", n.PAGE_NOT_FOUND_ERROR = "16384", n.WEBSOCKET_ERROR = "32768", n.BRIDGE_ERROR = "65536", n.LAZY_LOAD_ERROR = "131072", n.CRASH_ERROR = "262144", (n = m = m || {}).LOG = "log", n.SPEED = "speed", n.PERFORMANCE = "performance", n.OFFLINE = "offline", n.WHITE_LIST = "whiteList", n.VITALS = "vitals", n.PV = "pv", n.CUSTOM_PV = "customPV", n.EVENT = "event", n.CUSTOM = "custom", n.SDK_ERROR = "sdkError", n.SET_DATA = "setData", n.LOAD_PACKAGE = "loadPackage", n.MEMORY = "memory", (n = u = u || {}).production = "production", n.development = "development", n.gray = "gray", n.pre = "pre", n.daily = "daily", n.local = "local", n.test = "test", n.others = "others";
+		function q(e, n) {
+			var t;
+			return "string" != typeof e ? "" : "object" == typeof n && n ? (t = Object.getOwnPropertyNames(n).map(function(e) {
+				var t = n[e];
+				return e + "=" + ("string" == typeof t ? encodeURIComponent(t) : encodeURIComponent(JSON.stringify(t)));
+			}).join("&").replace(/eval/gi, "evaI"), e + (-1 === e.indexOf("?") ? "?" : "&") + t) : e;
+		}
+		z.prototype.indexOf = function(e, t) {
+			for (var n = 0; n < e.length; n++) if (e[n].callback === t) return n;
+			return -1;
+		}, z.prototype.on = function(e, t, n) {
+			var r;
+			if (void 0 === n && (n = 0), this) return (r = this.eventsList[e]) || (this.eventsList[e] = [], r = this.eventsList[e]), -1 === this.indexOf(r, t) && r.push({
+				name: e,
+				type: n || 0,
+				callback: t
+			}), this;
+		}, z.prototype.one = function(e, t) {
+			this.on(e, t, 1);
+		}, z.prototype.remove = function(e, t) {
+			if (this) {
+				var n = this.eventsList[e];
+				if (n) {
+					if (t) return n.length && (t = this.indexOf(n, t), n.splice(t, 1)), this;
+					try {
+						delete this.eventsList[e];
+					} catch (e) {}
+				}
+				return null;
+			}
+		}, z.prototype.clear = function() {
+			this.eventsList = {};
+		};
+		var j, W = z, B = function(e) {
+			if (!e || 0 === e.length) return "{}";
+			e = Array.isArray(e) ? e : [e];
+			var t = Array.from(new Set(e.flatMap(function(e) {
+				return Object.keys(e);
+			}))), n = {};
+			return t.forEach(function(t) {
+				n[t] = e.map(function(e) {
+					return e[t] || "";
+				});
+			}), n.count = e.length, g(n);
+		};
+		function z() {
+			var s = this;
+			this.emit = function(e) {
+				for (var t, n = [], r = 1; r < arguments.length; r++) n[r - 1] = arguments[r];
+				if (s) {
+					if (null != (i = s.eventsList[e]) && i.length) for (var i = i.slice(), o = 0; o < i.length; o++) {
+						t = i[o];
+						try {
+							var a = t.callback.apply(s, n);
+							if (1 === t.type && s.remove(e, t.callback), !1 === a) break;
+						} catch (e) {
+							throw e;
+						}
+					}
+					return s;
+				}
+			}, this.eventsList = {};
+		}
+		(n = j = j || {})[n.number = -1] = "number", n.string = "";
+		function G(e, t) {
+			return "number" == typeof e || "string" == typeof e ? e : t ? j.string : j.number;
+		}
+		function V(e, t) {
+			return "string" == typeof e ? e.split("?")[t ? 1 : 0] || "" : e;
+		}
+		function J(e, t) {
+			return void 0 === t && (t = 2048), String(e).replace(_, "").slice(0, t);
+		}
+		function X(e) {
+			return "string" == typeof e && /^\//.test(e) ? "https:" === (null == location ? void 0 : location.protocol) : /^https/.test(e);
+		}
+		function $(e, t, n) {
+			var r, i, o;
+			try {
+				if ("function" == typeof (null == t ? void 0 : t.retCodeHandler)) return {
+					code: void 0 === (o = (i = t.retCodeHandler(e, null == n ? void 0 : n.url, null == n ? void 0 : n.ctx, null == n ? void 0 : n.payload) || {}).code) ? R : o,
+					isErr: i.isErr
+				};
+				if (!(e = "string" == typeof e ? JSON.parse(e) : e)) return {
+					code: R,
+					isErr: !1
+				};
+				"function" == typeof (null == (r = null == t ? void 0 : t.ret) ? void 0 : r.join) && (he = [].concat(t.ret.map(function(e) {
+					return e.toLowerCase();
+				})));
+				var a = Object.getOwnPropertyNames(e).filter(function(e) {
+					return -1 !== he.indexOf(e.toLowerCase());
+				});
+				return a.length ? {
+					code: "" + (o = "未知" !== (o = e[a[0]]) && "" !== o ? o : R),
+					isErr: 0 !== o && "0" !== o && o !== R
+				} : {
+					code: R,
+					isErr: !1
+				};
+			} catch (e) {
+				return {
+					code: R,
+					isErr: !1
+				};
+			}
+		}
+		function K(e, t, n) {
+			try {
+				return me("function" == typeof t ? t(e, null == n ? void 0 : n.url, null == n ? void 0 : n.ctx) || "" : e).slice(0, 10240);
+			} catch (e) {
+				return "";
+			}
+		}
+		function Q(e, t) {
+			var n, r = {
+				fetch: [],
+				static: [],
+				bridge: []
+			}, i = {};
+			return Array.isArray(e) ? e.forEach(function(e) {
+				var t;
+				null != (t = r[e.type]) && t.push(e);
+			}) : null != (n = r[e.type]) && n.push(e), i.payload = JSON.stringify(oe({ duration: r }, t)), i;
+		}
+		function Y(t, e) {
+			return "string" != typeof t || !t || e && -1 < t.indexOf(e) || ye.test(t) || F.some(function(e) {
+				return -1 < t.indexOf(e);
+			});
+		}
+		function Z(e, t, n, r) {
+			var i = e.rateLimitConfigs;
+			i ? r === m.LOG && Array.isArray(t) ? (e = t.filter(function(e) {
+				e = Ee(r, e.level);
+				return Se(i[e]);
+			})).length && n(e) : (e = Ee(r), Se(i[e]) && n(t)) : n(t);
+		}
+		function ee(n, r) {
+			var i, o = [], a = n.config;
+			return n.lifeCycle.on("destroy", function() {
+				o.length = 0;
+			}), function(e, t) {
+				Array.isArray(e) ? o = o.concat(e) : o.push(e), r && o.length >= r || n.sendNow && 0 < o.length ? (o = Re(o), 0 < (o = Array.isArray(o) ? o : []).length && t(o.splice(0, o.length)), i && clearTimeout(i)) : (i && clearTimeout(i), i = setTimeout(function() {
+					i = null, o = Re(o), 0 < (o = Array.isArray(o) ? o : []).length && t(o.splice(0, o.length));
+				}, a.delay));
+			};
+		}
+		function te(e, t) {
+			return Array.isArray(e) ? t(e.map(function(e) {
+				return t = oe(oe({}, e), { msg: "string" == typeof e.msg ? e.msg : [].concat(e.msg).map(ce).join(" ") }), U.forEach(function(e) {
+					t[e] || delete t[e];
+				}), t;
+				var t;
+			})) : t([oe(oe({}, e), { msg: "string" == typeof e.msg ? e.msg : ce(e.msg) })]);
+		}
+		function ne(l, c) {
+			return function(i, o) {
+				var a, s, e, t, n;
+				null != i && i.log && null != i && i.type ? (a = function(e, t, n) {
+					switch (t) {
+						case m.LOG: return B(Pe(e));
+						case m.SPEED:
+							var r = e, i = n;
+							return i = i && "undefined" !== i ? oe(oe({}, l.bean), { from: i }) : oe({}, l.bean), g(Q(r, i));
+						case m.EVENT: return g({ payload: g(Array.isArray(e) ? e : [e]) });
+						case m.CUSTOM: return g({ payload: g({ custom: Array.isArray(e) ? e : [e] }) });
+						default: return {};
+					}
+				}, 1 !== (e = Array.isArray(i.log) ? i.log : [i.log]).length ? (s = {}, e.forEach(function(e) {
+					var t = e.from || "undefined";
+					delete e.from, s[t] || (s[t] = []), s[t].push(e);
+				}), Object.keys(s).forEach(function(e) {
+					var t, n = s[e], r = null != (r = i.url) && r.includes("?") ? "&" : "?";
+					"undefined" === e ? (t = "" + i.url, o(oe(oe({}, i), {
+						url: t,
+						log: 1 === n.length ? n[0] : n,
+						data: a(n, c, "")
+					}))) : (t = i.url + r + "from=" + e, o(oe(oe({}, i), {
+						url: t,
+						log: 1 === n.length ? n[0] : n,
+						beanFilter: C(i.beanFilter || [], ["from"]),
+						data: a(n, c, e)
+					})));
+				})) : (t = (e = e[0]).from, delete e.from, n = null != (n = i.url) && n.includes("?") ? "&" : "?", t ? (n = i.url + n + "from=" + t, o(oe(oe({}, i), {
+					url: n,
+					log: e,
+					beanFilter: C(i.beanFilter || [], ["from"]),
+					data: a(e, c, t)
+				}))) : (n = "" + i.url, o(oe(oe({}, i), {
+					url: n,
+					log: e,
+					data: a(e, c, "")
+				}))))) : o(i);
+			};
+		}
+		function re(l, c) {
+			return function(e, t) {
+				var n, r, i, o = Array.isArray(e), a = o ? e : [e], s = (l.lifeCycle.emit("beforeRequest", e), l.config.beforeRequest);
+				(a = "function" == typeof s ? a.map(function(t) {
+					try {
+						var e = s({
+							logs: t,
+							logType: c
+						});
+						return (null == e ? void 0 : e.logType) === c && null != e && e.logs ? e.logs : !1 !== e && t;
+					} catch (e) {
+						return t;
+					}
+				}).filter(function(e) {
+					return !1 !== e;
+				}) : a).length && (n = a, e = U, !Array.isArray(n) || n.length <= 1 || (r = [], i = [], !(i = "string" == typeof e ? [e] : e)) || i.length <= 0 || (i.forEach(function(t) {
+					n.forEach(function(e) {
+						null != e && e[t] && r.push(t);
+					});
+				}), 0 < r.length && (n = n.map(function(e) {
+					var t = {};
+					return r.forEach(function(e) {
+						t[e] = "";
+					}), oe(oe({}, t), e);
+				}))), a = n, t(o ? a : a[0]));
+			};
+		}
+		function ie(i) {
+			return function(e, t) {
+				i.lifeCycle.emit("modifyRequest", e);
+				var n = i.config.modifyRequest;
+				if ("function" == typeof n) try {
+					var r = n(e);
+					"object" == typeof r && "url" in r && (e = r);
+				} catch (e) {
+					console.error(e);
+				}
+				t(e);
+			};
+		}
+		function ue(r) {
+			return function(e, t) {
+				null != (n = r.lifeCycle) && n.emit("afterRequest", e);
+				var n = (r.config || {}).afterRequest;
+				"function" == typeof n && !1 === n(e) || t(e);
+			};
+		}
+		var de = [
+			"application/xhtml+xml",
+			"application/xml",
+			"application/pdf",
+			"application/pkcs12",
+			"application/javascript",
+			"application/x-javascript",
+			"application/ecmascript",
+			"application/vnd.mspowerpoint",
+			"application/vnd.apple.mpegurl",
+			"application/ogg",
+			"text/css",
+			"text/javascript",
+			"image",
+			"audio",
+			"video",
+			"video/mp2t"
+		], fe = /\.(json|js|css|jpg|jpeg|png|svg|apng|webp|gif|bmp|mp4|mp3|ts|mpeg|wav|webm|ogg|flv|m3u8|ttf|woff2|otf|eot|woff|html|htm|shtml|shtm|)$/i, he = [
+			"ret",
+			"retcode",
+			"code",
+			"errcode"
+		], pe = function() {
+			var n = /* @__PURE__ */ new WeakSet();
+			return function(e, t) {
+				if (t instanceof Error) return "Error.message: " + t.message + " \n  Error.stack: " + t.stack;
+				if ("object" == typeof t && null !== t) {
+					if (n.has(t)) return "[Circular " + (e || "root") + "]";
+					n.add(t);
+				}
+				return t;
+			};
+		}, ce = function(e) {
+			if ("string" == typeof e) return e;
+			try {
+				return e instanceof Error ? (JSON.stringify(e, pe(), 2) || "undefined").replace(/"/gim, "") : JSON.stringify(e, pe(), 2) || "undefined";
+			} catch (e) {
+				return "error happen when aegis stringify: \n " + e.message + " \n " + e.stack;
+			}
+		}, g = function(e) {
+			if ("string" == typeof e) return e;
+			try {
+				return JSON.stringify(e, pe()) || "undefined";
+			} catch (e) {
+				return "error happen when aegis stringify: \n " + e.message + " \n " + e.stack;
+			}
+		}, me = function(n, r) {
+			void 0 === r && (r = 3);
+			var i, o, a, s = "";
+			return null === n ? "null" : (Array.isArray(n) ? (s += "[", i = n.length, n.forEach(function(e, t) {
+				s = (s += "object" == typeof e && null !== e && 1 < r ? me(e, r - 1) : ve(e)) + (t === i - 1 ? "" : ",");
+			}), s += "]") : n instanceof Object || "object" == typeof n ? (s = "{", o = Object.keys(n), a = o.length, o.forEach(function(e, t) {
+				"object" == typeof n[e] && null !== n[e] && 1 < r ? s += "\"" + e + "\":" + me(n[e], r - 1) : s += ge(e, n[e]), s += t === a - 1 || t < a - 1 && void 0 === n[o[t + 1]] ? "" : ",";
+			}), s += "}") : s += n, s);
+		}, ge = function(e, t) {
+			var n = typeof t, r = "";
+			return null === t ? r += "\"" + e + "\": null" : "string" == n || "object" == n ? r += "\"" + e + "\":\"" + t + "\"" : "function" == typeof t ? r += "\"" + e + "\":\"function " + t.name + "\"" : "symbol" == typeof t ? r += "\"" + e + "\":\"symbol\"" : "number" != typeof t && "boolean" != n || (r += "\"" + e + "\": " + t), r;
+		}, ve = function(e) {
+			var t = typeof e;
+			return "" + (null === e || "undefined" == t || "symbol" == t || "function" == t ? "null" : "string" == t || "object" == t ? "\"" + e + "\"" : e);
+		}, ye = /data:(image|text|application|font)\/.*;base64/, we = ((n = {})[m.LOG] = "log", n[m.MEMORY] = "log", n[m.SPEED] = "speed", n[m.PERFORMANCE] = "performance", n[m.VITALS] = "webvitals", n[m.PV] = "pv", n[m.EVENT] = "event", n[m.CUSTOM] = "custom", n[m.SET_DATA] = "miniProgramData", n[m.LOAD_PACKAGE] = "miniProgramData", n), be = ((n = {})[le.ERROR] = "jsError", n[le.PROMISE_ERROR] = "jsError", n[le.BLANK_SCREEN] = "whiteScreen", n[le.SCRIPT_ERROR] = "assetsException", n[le.IMAGE_ERROR] = "assetsException", n[le.CSS_ERROR] = "assetsException", n[le.MEDIA_ERROR] = "assetsException", n), Ee = function(e, t) {
+			return e === m.LOG && t && be[t] ? be[t] : we[e] || "";
+		}, Se = function(e) {
+			return null == e || !(e <= 0) && (100 <= e || 100 * Math.random() < e);
+		}, Re = function(e) {
+			return e.filter(function(n, r) {
+				return "static" !== n.type || !e.find(function(e, t) {
+					return n.url === e.url && 200 === n.status && r < t;
+				});
+			});
+		}, Te = function(e) {
+			e.level === le.INFO_ALL && (e.level = le.INFO);
+		}, v = {}, Oe = {}, xe = function(e) {
+			return v[e] || (v[e] = setTimeout(function() {
+				Oe[e] = {}, v[e] = null;
+			}, 6e4)), v[e];
+		}, Pe = function(e) {
+			return (Array.isArray(e) ? e : [e]).map(function(n) {
+				return Object.getOwnPropertyNames(n).reduce(function(e, t) {
+					return "ctx" !== t && (e[t] = n[t]), e;
+				}, {
+					level: le.INFO,
+					msg: ""
+				});
+			});
+		}, Le = function(r) {
+			return function(e) {
+				return r.sendPipeline([function(e, n) {
+					return n({
+						url: r.config.url || "",
+						data: B(Pe(e)),
+						method: "post",
+						contentType: "application/json",
+						type: m.LOG,
+						log: e,
+						requestConfig: { timeout: 5e3 },
+						success: function() {
+							var t = r.config.onReport;
+							"function" == typeof t && e.forEach(function(e) {
+								t(e);
+							}), "function" == typeof n && n([]);
+						}
+					});
+				}], m.LOG)(e);
+			};
+		}, Ce = {
+			generateTraceId: Ie(16),
+			generateSpanId: Ie(8)
+		}, ke = Array(32);
+		function Ie(t) {
+			return function() {
+				for (var e = 0; e < 2 * t; e++) ke[e] = Math.floor(16 * Math.random()) + 48, 58 <= ke[e] && (ke[e] += 39);
+				return String.fromCharCode.apply(null, ke.slice(0, 2 * t));
+			};
+		}
+		function Ae() {
+			return "10000000100040008000100000000000".replace(/[018]/g, function(e) {
+				return (e ^ (16 * Math.random() & 15) >> e / 4).toString(16);
+			});
+		}
+		function Me() {
+			return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function(e) {
+				var t = 16 * Math.random() | 0;
+				return ("x" === e ? t : 3 & t | 8).toString(16);
+			});
+		}
+		function Ne(e) {
+			for (var t, n, r, i = "", o = 0, a = (e = String(e)).length % 3; o < e.length;) {
+				if (255 < (t = e.charCodeAt(o++)) || 255 < (n = e.charCodeAt(o++)) || 255 < (r = e.charCodeAt(o++))) throw new TypeError("Failed to execute 'btoa': The string to be encoded contains characters outside of the Latin1 range.");
+				i += s.charAt((t = t << 16 | n << 8 | r) >> 18 & 63) + s.charAt(t >> 12 & 63) + s.charAt(t >> 6 & 63) + s.charAt(63 & t);
+			}
+			return a ? i.slice(0, a - 3) + "===".substring(a) : i;
+		}
+		function _e(e) {
+			if (e = String(e).replace(/[\t\n\f\r ]+/g, ""), !De.test(e)) throw new TypeError("Failed to execute 'atob': The string to be decoded is not correctly encoded.");
+			var t;
+			e += "==".slice(2 - (3 & e.length));
+			for (var n, r, i = "", o = 0; o < e.length;) t = s.indexOf(e.charAt(o++)) << 18 | s.indexOf(e.charAt(o++)) << 12 | (n = s.indexOf(e.charAt(o++))) << 6 | (r = s.indexOf(e.charAt(o++))), i += 64 === n ? String.fromCharCode(t >> 16 & 255) : 64 === r ? String.fromCharCode(t >> 16 & 255, t >> 8 & 255) : String.fromCharCode(t >> 16 & 255, t >> 8 & 255, 255 & t);
+			return i;
+		}
+		function Fe(e) {
+			var t, n = "";
+			return n = "object" == typeof e && (t = (e = ((e, t) => {
+				for (var n = 0; n < t.length; n++) {
+					var r = t[n], i = e[r] || "function" == typeof e.get && e.get(r);
+					if (i) return [r, i];
+				}
+				return ["", ""];
+			})(e, Object.keys(je)))[0]) ? je[t](e[1]) : n;
+		}
+		function He(n) {
+			if (n && n.reduce && n.length) return 1 === n.length ? function(e, t) {
+				n[0](e, t || We);
+			} : n.reduce(function(n, r) {
+				return function(e, t) {
+					return void 0 === t && (t = We), n(e, function(e) {
+						return null == r ? void 0 : r(e, t);
+					});
+				};
+			});
+			throw new TypeError("createPipeline need at least one function param");
+		}
+		function Ue(n, r) {
+			Object.getOwnPropertyNames(n).forEach(function(e) {
+				var t;
+				"constructor" === e || !(t = Object.getOwnPropertyDescriptor(n, e)) || t.get || t.set || "function" == typeof t.value && (r ? r[e] = "sendPipeline" === e ? function() {
+					return function() {};
+				} : function() {} : n[e] = function() {});
+			});
+		}
+		var s = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=", De = /^(?:[A-Za-z\d+\/]{4})*?(?:[A-Za-z\d+\/]{2}(?:==)?|[A-Za-z\d+\/]{3}=?)?$/, qe = (e.prototype.generate = function(e, t, n) {
+			if (void 0 === t && (t = {}), this.url = e, !this.isUrlIgnored() && this.isUrlInTraceUrls() && this.traceType) {
+				switch (this.traceType) {
+					case "traceparent":
+						this.traceId = this.createTraceparent();
+						break;
+					case "b3":
+						this.traceId = this.createB3();
+						break;
+					case "sw8":
+						this.traceId = this.createSw8(n);
+						break;
+					case "sentry-trace":
+						this.traceId = this.createSentryTrace();
+						break;
+					default:
+						console.warn("this trace key " + this.traceType + " is not supported"), this.traceId = "";
+						return;
+				}
+				return t[this.traceType] && (this.traceId = t[this.traceType]), {
+					name: this.traceType,
+					value: this.traceId
+				};
+			}
+		}, e.prototype.createTraceparent = function() {
+			var e = Ce.generateSpanId();
+			return "00-" + Ce.generateTraceId() + "-" + e + "-0" + this.traceFlag.toString(16);
+		}, e.prototype.createB3 = function() {
+			var e = Ce.generateSpanId();
+			return Ce.generateTraceId() + "-" + e + "-" + this.traceFlag;
+		}, e.prototype.createSw8 = function(e) {
+			var t = "function" == typeof btoa ? btoa : Ne, e = e || {}, n = e.host, n = void 0 === n ? "" : n, e = e.pathname, e = void 0 === e ? "" : e, r = Me(), i = Me();
+			return "1-" + String(t(i)) + "-" + String(t(r)) + "-1-" + String(t("aegis")) + "-" + String(t("1.41.17")) + "-" + String(t(encodeURI(e))) + "-" + String(t(n));
+		}, e.prototype.createSentryTrace = function() {
+			var e = Ae().substring(16);
+			return Ae() + "-" + e + "-" + this.traceFlag;
+		}, e.prototype.isUrlIgnored = function() {
+			if (Array.isArray(this.ignoreUrls) && 0 !== this.ignoreUrls.length) for (var e = 0, t = this.ignoreUrls; e < t.length; e++) {
+				var n = t[e];
+				if (this.urlMatches(this.url, n)) return !0;
+			}
+			return !1;
+		}, e.prototype.isUrlInTraceUrls = function() {
+			if (!this.urls) return !0;
+			if (Array.isArray(this.urls)) {
+				if (0 === this.urls.length) return !1;
+				for (var e = 0, t = this.urls; e < t.length; e++) {
+					var n = t[e];
+					if (this.urlMatches(this.url, n)) return !0;
+				}
+			}
+			return !1;
+		}, e.prototype.urlMatches = function(e, t) {
+			return "string" == typeof t ? e === t : !!e.match(t);
+		}, e), je = {
+			sw8: function(e) {
+				var t = "function" == typeof atob ? atob : _e, e = e.split("-")[1];
+				return e ? t(e) : "";
+			},
+			traceparent: function(e) {
+				return e.split("-")[1];
+			},
+			b3: function(e) {
+				return e.split("-")[0];
+			},
+			"sentry-trace": function(e) {
+				return e.split("-")[0];
+			}
+		}, We = function() {};
+		function e(e, t, n, r) {
+			void 0 === n && (n = null), this.traceType = e, this.ignoreUrls = t, this.urls = n, this.traceFlag = null == r ? 1 : Number(!!r);
+		}
+		function Be(e, t) {
+			return e ? t ? "gzip" : "identity" : null;
+		}
+		function ze() {
+			return void 0 !== window.performance && "function" == typeof performance.getEntriesByType && "function" == typeof performance.now;
+		}
+		function Ge(e) {
+			var t;
+			return -1 < (null == (t = null == (t = window.PerformanceObserver) ? void 0 : t.supportedEntryTypes) ? void 0 : t.indexOf(e));
+		}
+		function t(e) {
+			return -1 !== $e.indexOf(e);
+		}
+		y.use = function(e) {
+			-1 === y.installedPlugins.indexOf(e) && e.aegisPlugin && y.installedPlugins.push(e);
+		}, y.unuse = function(e) {
+			e = y.installedPlugins.indexOf(e);
+			-1 !== e && y.installedPlugins.splice(e, 1);
+		}, y.prototype.init = function(e) {
+			function t() {
+				i || (n && clearTimeout(n), n = setTimeout(function() {
+					i = !0, c();
+				}, a.config.uin ? 50 : 500));
+			}
+			var a, n, r, i, o, s, l, c, u, d;
+			this.setConfig(e), this.config = (d = this.config, e = e.hostUrl, d.url = (e = "string" != typeof (e = void 0 === e ? "https://rumt-zh.com" : e) ? "https://rumt-zh.com" : e) + "/collect", d.offlineUrl = e + "/offline", d.whiteListUrl = e + "/collect/whitelist", d.rateLimitUrl = e + "/rateConfig", d.pvUrl = e + "/collect/pv", d.eventUrl = e + "/collect/events", d.speedUrl = e + "/speed", d.customTimeUrl = e + "/speed/custom", d.performanceUrl = e + "/speed/performance", d.performanceUrlForHippy = e + "/speed/hippyPerformance", d.webVitalsUrl = e + "/speed/webvitals", d.setDataReportUrl = e + "/speed/miniProgramData", d.memoryUrl = e + "/memory", d), this.resetWhitelistGzipState(), a = this, i = !1, o = [
+				3,
+				30,
+				300
+			], s = 0, l = function() {
+				e = o[Math.min(s, o.length - 1)], s += 1;
+				var e;
+				a.rateLimitSampled || (a.rateLimitReady = !0, a.rateLimitPool && a.rateLimitPool.length && a.rateLimitPool.splice(0).forEach(function(e) {
+					e.resolve(e.logs);
+				})), u(e);
+			}, c = function() {
+				var e = a.config.rateLimitUrl, n = void 0 === e ? "" : e;
+				n && a.sendPipeline([function(e, t) {
+					t({
+						url: "" + n,
+						type: m.WHITE_LIST,
+						method: "get",
+						success: function(e) {
+							try {
+								var n, t = e.data || JSON.parse(e), r = t.retcode, i = t.configs, o = t.ttl;
+								0 === r && Array.isArray(i) ? (n = {}, i.forEach(function(e) {
+									var t = e.limit_type;
+									n[t] = e.sample_rate;
+								}), a.rateLimitConfigs = n, a.rateLimitReady = !0, a.rateLimitSampled = !0, a.rateLimitPool && a.rateLimitPool.length && a.rateLimitPool.splice(0).forEach(function(e) {
+									Z(a, e.logs, e.resolve, e.sendType);
+								}), 0 < o && u(o)) : l();
+							} catch (e) {
+								l();
+							}
+						},
+						fail: function() {
+							l();
+						}
+					});
+				}], m.WHITE_LIST)(null);
+			}, u = function(e) {
+				r && clearTimeout(r), r = setTimeout(function() {
+					i = !1, c();
+				}, 1e3 * e);
+			}, t(), a.lifeCycle.on("onConfigChange", function() {
+				i = !1, s = 0, t();
+			}), a.lifeCycle.on("destroy", function() {
+				n && clearTimeout(n), r && clearTimeout(r), a.rateLimitPool && (a.rateLimitPool.length = 0);
+			});
+			for (var f = 0; f < y.installedPlugins.length; f++) try {
+				y.installedPlugins[f].patch(this);
+			} catch (e) {
+				this.sendSDKError(e);
+			}
+			this.lifeCycle.emit("onInited");
+		}, y.prototype.destroy = function(e) {
+			void 0 === e && (e = !1);
+			var t, n, r = y.instances.indexOf(this);
+			-1 !== r && y.instances.splice(r, 1);
+			for (var i = y.installedPlugins.length - 1; 0 <= i; i--) try {
+				y.installedPlugins[i].unpatch(this);
+			} catch (e) {
+				this.sendSDKError(e);
+			}
+			if (this.lifeCycle.emit("destroy"), this.lifeCycle.clear(), e) t = this, n = Object.getOwnPropertyDescriptors(t), Object.keys(n).forEach(function(e) {
+				n[e].writable && (t[e] = null);
+			}), Object.setPrototypeOf(this, null);
+			else {
+				for (var o = this; o.constructor !== Object && Ue(o, this), o = Object.getPrototypeOf(o););
+				0 === y.instances.length && (r = Object.getPrototypeOf(this).constructor, Ue(r), Ue(y));
+			}
+		}, y.prototype.setConfig = function(e) {
+			Object.assign(this.config, e);
+			var e = this.config, t = e.id, n = e.uin, r = e.version, i = e.ext1, o = e.ext2, a = e.ext3, s = e.aid, l = e.env, c = void 0 === l ? "production" : l, l = e.pageUrl, e = this.bean.id !== t || this.bean.uin !== n || this.bean.aid !== s;
+			return this.bean.id = t || "", this.bean.uin = n || "", this.bean.version = r || "1.41.17", this.bean.aid = s || "", this.bean.env = (() => {
+				switch (c) {
+					case u.production:
+					case u.development:
+					case u.gray:
+					case u.pre:
+					case u.daily:
+					case u.local:
+					case u.test:
+					case u.others: return 1;
+					default: return;
+				}
+			})() ? c : u.others, l && this.extendBean("from", encodeURIComponent(l.slice(0, 2048))), i && this.extendBean("ext1", encodeURIComponent(i)), o && this.extendBean("ext2", encodeURIComponent(o)), a && this.extendBean("ext3", encodeURIComponent(a)), e && this.lifeCycle.emit("onConfigChange", this.config), this.config;
+		}, y.prototype.extendBean = function(e, t) {
+			this.bean[e] = t;
+		}, y.prototype.resetWhitelistGzipState = function() {
+			this.whitelistUseGzip = !0, this.whitelistUseGzipReady = !0;
+		}, y.prototype.updateWhitelistGzipState = function(e) {
+			this.whitelistUseGzip = null == e || "" === e || 1 === Number(e), this.whitelistUseGzipReady = !0;
+		}, y.prototype.disableWhitelistGzipState = function() {
+			this.whitelistUseGzip = !1, this.whitelistUseGzipReady = !0;
+		}, y.prototype.isGzipReportEnabled = function(e) {
+			return !!e && (!this.config.whiteListUrl || this.whitelistUseGzipReady && this.whitelistUseGzip);
+		}, y.prototype.send = function(e, i, o) {
+			var t = this;
+			return He([
+				ie(this),
+				ne(this, null == e ? void 0 : e.type),
+				function(n, r) {
+					t.request(n, function() {
+						for (var e = [], t = 0; t < arguments.length; t++) e[t] = arguments[t];
+						r({
+							isErr: !1,
+							result: e,
+							logType: n.type,
+							logs: n.log
+						}), i?.apply(void 0, e);
+					}, function() {
+						for (var e = [], t = 0; t < arguments.length; t++) e[t] = arguments[t];
+						r({
+							isErr: !0,
+							result: e,
+							logType: n.type,
+							logs: n.log
+						}), o?.apply(void 0, e);
+					});
+				},
+				ue(this)
+			])(e);
+		}, y.prototype.sendSDKError = function(e) {
+			var n = this;
+			this.sendPipeline([function(e, t) {
+				t({
+					url: n.config.url + "?id=1085&msg[0]=" + encodeURIComponent(ce(e)) + "&level[0]=2&from=" + n.config.id + "&count=1&version=" + n.config.id + "(1.41.17)",
+					addBean: !1,
+					method: "get",
+					type: m.SDK_ERROR,
+					log: e
+				});
+			}], m.SDK_ERROR)(e);
+		}, y.prototype.sendPipeline = function(e, t) {
+			var n, r, i, o = this;
+			return He(C([
+				function(e, t) {
+					if ("number" != typeof n.config.random && (console.warn("random must in [0, 1], default is 1."), n.config.random = 1), !n.isHidden || !n.isGetSample) if (n.isGetSample) n.isHidden || t(e);
+					else {
+						if (n.isGetSample = !0, Math.random() < n.config.random) return n.isHidden = !1, t(e);
+						n.isHidden = !0;
+					}
+				},
+				function(e, t) {
+					if (i !== m.SDK_ERROR && i !== m.WHITE_LIST) return r.rateLimitReady ? void Z(r, e, t, i) : (r.rateLimitPool || (r.rateLimitPool = []), void (r.rateLimitPool.length < 200 && r.rateLimitPool.push({
+						logs: e,
+						resolve: t,
+						sendType: i
+					})));
+					t(e);
+				},
+				re(r = n = this, i = t)
+			], e, [
+				ne(this, t),
+				ie(this),
+				function(e, t) {
+					var n;
+					e.url && o.rateLimitSampled && (n = -1 === e.url.indexOf("?") ? "?" : "&", e.url = e.url + n + "sampled=1"), t(e);
+				},
+				function(r, i) {
+					o.request(r, function() {
+						for (var e = [], t = 0; t < arguments.length; t++) e[t] = arguments[t];
+						var n = !1;
+						-1 < ("" + e[o.failRequestCount = 0]).indexOf("403 forbidden") && (n = !0, o.destroy()), i({
+							isErr: n,
+							result: e,
+							logType: null == r ? void 0 : r.type,
+							logs: null == r ? void 0 : r.log
+						}), null != (n = null == r ? void 0 : r.success) && n.call.apply(n, C([r], e));
+					}, function() {
+						for (var e, t = [], n = 0; n < arguments.length; n++) t[n] = arguments[n];
+						o.shouldDestroyOnTransportFail() && o.destroy(), -1 < ("" + t[0]).indexOf("403 forbidden") && o.destroy(), i({
+							isErr: !0,
+							result: t,
+							logType: null == r ? void 0 : r.type,
+							logs: null == r ? void 0 : r.log
+						}), null != (e = null == r ? void 0 : r.fail) && e.call.apply(e, C([r], t));
+					});
+				},
+				ue(this)
+			]));
+		}, y.prototype.validateRange = function(e) {
+			return 0 <= e && e <= 127 ? e : -1;
+		}, y.prototype.info = function() {
+			for (var e = [], t = 0; t < arguments.length; t++) e[t] = arguments[t];
+			var n = {
+				level: le.INFO,
+				msg: e,
+				originFrom: this.getOriginFrom()
+			};
+			1 === e.length && e[0].msg && Object.assign(n, oe({}, e[0]), {
+				level: le.INFO,
+				originFrom: this.getOriginFrom()
+			}), this.normalLogPipeline(n);
+		}, y.prototype.infoAll = function() {
+			for (var e = [], t = 0; t < arguments.length; t++) e[t] = arguments[t];
+			var n = {
+				level: le.INFO_ALL,
+				msg: e,
+				originFrom: this.getOriginFrom()
+			};
+			1 === e.length && e[0].msg && Object.assign(n, oe({}, e[0]), {
+				level: le.INFO_ALL,
+				originFrom: this.getOriginFrom()
+			}), this.normalLogPipeline(n);
+		}, y.prototype.report = function() {
+			for (var e = [], t = 0; t < arguments.length; t++) e[t] = arguments[t];
+			var n = {
+				level: le.REPORT,
+				msg: e,
+				originFrom: this.getOriginFrom()
+			};
+			1 === e.length && e[0].msg && Object.assign(n, oe({}, e[0]), { originFrom: this.getOriginFrom() }), this.normalLogPipeline(n);
+		}, y.prototype.error = function() {
+			for (var e = [], t = 0; t < arguments.length; t++) e[t] = arguments[t];
+			var n = {
+				level: le.ERROR,
+				msg: e,
+				originFrom: this.getOriginFrom()
+			};
+			1 === e.length && e[0].msg && Object.assign(n, oe({}, e[0]), {
+				level: le.ERROR,
+				originFrom: this.getOriginFrom()
+			}), this.normalLogPipeline(n);
+		}, y.prototype.reportEvent = function(e) {
+			e && ((e = "string" == typeof e ? {
+				name: e,
+				ext1: this.config.ext1 || "",
+				ext2: this.config.ext2 || "",
+				ext3: this.config.ext3 || "",
+				originFrom: this.getOriginFrom()
+			} : oe(oe({}, e), { originFrom: e.originFrom || this.getOriginFrom() })).name ? ("string" != typeof e.name && (console.warn("reportEvent params name must be string"), e.name = String(e.name)), this.eventPipeline(e)) : console.warn("reportEvent params error"));
+		}, y.prototype.reportT = function(e) {
+			var t = e.name, n = e.duration, r = e.ext1, r = void 0 === r ? "" : r, i = e.ext2, i = void 0 === i ? "" : i, o = e.ext3, o = void 0 === o ? "" : o, a = e.ext4, s = e.ext5, l = e.ext6, c = e.ext7, u = e.ext8, d = e.ext9, f = e.ext10, e = e.from;
+			if ("string" == typeof t && "number" == typeof n && "string" == typeof r && "string" == typeof i && "string" == typeof o) {
+				if (!(n < 0 || 2147483646 < n)) return this.submitCustomTime(t, n, r, i, o, void 0 === a ? "" : a, void 0 === s ? "" : s, void 0 === l ? "" : l, void 0 === c ? "" : c, void 0 === u ? "" : u, void 0 === d ? "" : d, void 0 === f ? "" : f, void 0 === e ? "" : e);
+				console.warn("reportTime: duration must between 0 and 2147483646");
+			} else console.warn("reportTime: params error");
+		}, y.prototype.reportTime = function(e, t) {
+			if ("object" == typeof e) return this.reportT(e);
+			"string" == typeof e ? "number" == typeof t ? t < 0 || 2147483646 < t ? console.warn("reportTime: duration must between 0 and 2147483646") : (this.submitCustomTime(e, t), this.normalLogPipeline({
+				level: le.SPEED_EVENT,
+				msg: "key:" + e + "\\n duration:" + t,
+				errorMsg: "",
+				originFrom: this.getOriginFrom()
+			})) : console.warn("reportTime: second param must be number") : console.warn("reportTime: first param must be a string");
+		}, y.prototype.time = function(e) {
+			"string" == typeof e ? this.timeMap[e] ? console.warn("Timer " + e + " already exists") : this.timeMap[e] = Date.now() : console.warn("time: first param must be a string");
+		}, y.prototype.timeEnd = function(e) {
+			var t;
+			"object" != typeof e || null === e ? "string" == typeof e ? void 0 !== (t = this.getTimeEventDuration(e)) ? (this.submitCustomTime(e, t), delete this.timeMap[e]) : console.warn("Timer " + e + " does not exist") : console.warn("timeEnd: first param must be a string") : void 0 !== (t = this.getTimeEventDuration(e.name)) ? (this.reportT(oe(oe({}, e), { duration: t })), delete this.timeMap[e.name]) : console.warn("Timer " + e.name + " does not exist");
+		}, y.prototype.ready = function(e, t, n) {
+			throw new Error("You need to override \"ready\" method");
+		}, y.prototype.request = function(e, t, n) {
+			throw new Error("You need to override \"request\" method");
+		}, y.prototype.speedLogPipeline = function(e) {
+			throw new Error("You need to override \"speedLogPipeline\" method");
+		}, y.prototype.getOriginFrom = function() {
+			throw new Error("You need to override \"getOriginFrom\" method");
+		}, Object.defineProperty(y.prototype, "__version__", {
+			get: function() {
+				return "1.41.17";
+			},
+			enumerable: !1,
+			configurable: !0
+		}), Object.defineProperty(y.prototype, "LogType", {
+			get: function() {
+				return le;
+			},
+			enumerable: !1,
+			configurable: !0
+		}), y.prototype.reportPv = function(e) {
+			e && console.warn("reportPv is deprecated, please use reportEvent");
+		}, y.prototype.shouldDestroyOnTransportFail = function() {
+			return 60 <= ++this.failRequestCount;
+		}, y.prototype.submitCustomTime = function(e, t, n, r, i, o, a, s, l, c, u, d, f) {
+			e = {
+				name: e,
+				duration: t,
+				ext1: String(n || this.config.ext1 || "").slice(0, 1024),
+				ext2: String(r || this.config.ext2 || "").slice(0, 1024),
+				ext3: String(i || this.config.ext3 || "").slice(0, 1024),
+				ext4: o || this.config.ext4,
+				ext5: a || this.config.ext5,
+				ext6: s || this.config.ext6,
+				ext7: l || this.config.ext7,
+				ext8: c || this.config.ext8,
+				ext9: u || this.config.ext9,
+				ext10: d || this.config.ext10,
+				from: f || void 0
+			};
+			this.customTimePipeline(e);
+		}, y.prototype.getTimeEventDuration = function(e) {
+			if (void 0 !== e && this.timeMap[e]) return Date.now() - this.timeMap[e];
+		}, y.version = "1.41.17", y.instances = [], y.logType = le, y.environment = u, y.installedPlugins = [];
+		var n = y, r = (i.prototype.patch = function(e) {
+			this.canUse(e) && this.exist(e) && (this.instances.push(e), this.triggerInit(e), this.triggerOnNewAegis(e));
+		}, i.prototype.unpatch = function(e) {
+			var t = this.instances.indexOf(e);
+			-1 !== t && (this.instances.splice(t, 1), 0 === this.instances.length) && this.uninstall(e);
+		}, i.prototype.countInstance = function() {
+			return this.instances.length;
+		}, i.prototype.uninstall = function(e) {
+			var t;
+			null != (t = null == (t = this.option) ? void 0 : t.destroy) && t.apply(this, [e]);
+		}, i.prototype.walk = function(n) {
+			var r = this;
+			this.instances.forEach(function(e) {
+				var t = r.canUse(e);
+				t && n(e, t);
+			});
+		}, i.prototype.canUse = function(e) {
+			e = this.getConfig(e);
+			return !(!e || "object" != typeof e) || !!e;
+		}, i.prototype.getConfig = function(e) {
+			return null == (e = e.config) ? void 0 : e[this.name];
+		}, i.prototype.exist = function(e) {
+			return -1 === this.instances.indexOf(e);
+		}, i.prototype.triggerInit = function(e) {
+			var t;
+			this.inited || (this.inited = !0, null == (t = null == (t = this.option) ? void 0 : t.init)) || t.call(this.option, this.getConfig(e));
+		}, i.prototype.triggerOnNewAegis = function(e) {
+			var t;
+			null != (t = null == (t = this.option) ? void 0 : t.onNewAegis) && t.call(this.option, e, this.getConfig(e));
+		}, i), Ve = new r({
+			name: "aid",
+			aid: "",
+			init: function(e) {
+				try {
+					var t = !0 !== e && e || window.localStorage.getItem("AEGIS_ID");
+					t || (t = Me(), window.localStorage.setItem("AEGIS_ID", t)), this.aid = t;
+				} catch (e) {}
+			},
+			onNewAegis: function(e) {
+				e.bean.aid = this.aid, e.config.aid = this.aid;
+			}
+		}), Je = new r({ name: "reportAssetSpeed" }), Xe = Je = new r({
+			name: "reportAssetSpeed",
+			collectCur: 0,
+			collectEntryType: "resource",
+			ASSETS_INITIATOR_TYPE: [
+				"img",
+				"css",
+				"script",
+				"link",
+				"audio",
+				"video"
+			],
+			getFromParam: function(e) {
+				return e.getCurrentPageUrl();
+			},
+			onNewAegis: function(e) {
+				var t = this;
+				ze() && (setTimeout(function() {
+					t.collectSuccessLog(e), t.collectFailLog(e);
+				}, 5e3), performance.onresourcetimingbufferfull = function() {
+					"function" == typeof performance.clearResourceTimings && (t.collectCur = 0, performance.clearResourceTimings());
+				});
+			},
+			processLog: function(e, t) {
+				var n = t.duration || 0, r = t.transferSize || 0, i = !1, o = e.config;
+				if (null != (s = null == o ? void 0 : o.api) && s.isSlowAsset && "function" == typeof (null == (s = null == o ? void 0 : o.api) ? void 0 : s.isSlowAsset)) try {
+					i = null == (a = null == o ? void 0 : o.api) ? void 0 : a.isSlowAsset(t);
+				} catch (e) {
+					console.warn("[Aegis] isSlowAsset function happen error:", e, ", this data will not be reported.");
+					return;
+				}
+				else i = null != (s = null == o ? void 0 : o.api) && s.assetSlowThreshold && "number" == typeof (null == (a = null == o ? void 0 : o.api) ? void 0 : a.assetSlowThreshold) ? n > (null == (s = null == o ? void 0 : o.api) ? void 0 : s.assetSlowThreshold) : 1e3 < n;
+				var a = [
+					"ASSET_REQUEST: " + t.url,
+					"status: " + t.status,
+					"duration: " + n + "ms",
+					"type: " + t.type,
+					"domainLookup: " + t.domainLookup + "ms",
+					"connectTime: " + t.connectTime + "ms",
+					"transferSize: " + (0 < r ? r + "bytes" : "unknown")
+				].filter(Boolean).join("\n\n"), o = e.isWhiteList && e.config.assetLog, s = e.config.slowAssetLog && i, t = {
+					level: i ? e.LogType.SLOW_ASSET_REQUEST : e.LogType.ASSERT_REQUEST,
+					msg: a,
+					ext1: n.toString() || "",
+					errorMsg: "",
+					originFrom: e.getOriginFrom()
+				};
+				(o || s) && e.normalLogPipeline(t);
+			},
+			publish: function(t, n) {
+				var r = this;
+				this.$walk(function(e) {
+					e === n && (e.speedLogPipeline(t), Array.isArray(t) ? t.forEach(r.processLog) : r.processLog(n, t));
+				});
+			},
+			publishMany: function(e, t) {
+				for (var n = t.config, r = this.getFromParam(t), i = 0, o = e.length; i < o; i++) {
+					var a = e[i];
+					-1 === this.ASSETS_INITIATOR_TYPE.indexOf(a.initiatorType) || Y(a.name, n.hostUrl) || this.publish(this.generateLog(a, n, r), t);
+				}
+			},
+			collectSuccessLog: function(n) {
+				var e, t, r = this;
+				"function" == typeof window.PerformanceObserver ? (this.publishMany(performance.getEntriesByType(this.collectEntryType), n), (e = new window.PerformanceObserver(function(e) {
+					r.publishMany(e.getEntries(), n);
+				})).observe({ entryTypes: [this.collectEntryType] }), n.lifeCycle.on("destroy", function() {
+					0 === Je.countInstance() && e.disconnect();
+				})) : (t = setInterval(function() {
+					var e = performance.getEntriesByType(r.collectEntryType), t = e.slice(r.collectCur);
+					r.collectCur = e.length, r.publishMany(t, n);
+				}, 3e3), n.lifeCycle.on("destroy", function() {
+					0 === Je.countInstance() && clearInterval(t);
+				}));
+			},
+			collectFailLog: function(o) {
+				function e(e) {
+					var t, n, r, i;
+					e && (e = e.target || e.srcElement, !(t = (null == e ? void 0 : e.src) || (null == e ? void 0 : e.href)) || "string" != typeof t || -1 < window.location.href.indexOf(t) || (e = "function" == typeof (null == (e = s.api) ? void 0 : e.resourceTypeHandler) ? null == (e = s.api) ? void 0 : e.resourceTypeHandler(t) : "", n = performance.getEntriesByType(a.collectEntryType).find(function(e) {
+						return e.name === t;
+					}), Y(t, s.hostUrl)) || (r = a.getFromParam(o), i = Number(null == (i = n) ? void 0 : i.responseStatus), i = Number.isFinite(i) && 0 < i ? i : 400, i = {
+						url: J(t),
+						status: i,
+						duration: Number(((null == n ? void 0 : n.duration) || 0).toFixed(2)),
+						method: "get",
+						type: e || "static",
+						isHttps: X(t),
+						urlQuery: V(t, !0),
+						nextHopProtocol: "",
+						domainLookup: 0,
+						connectTime: 0,
+						from: r
+					}, a.publish(i, o)));
+				}
+				var a = this, s = o.config;
+				window.document.addEventListener("error", e, !0), o.lifeCycle.on("destroy", function() {
+					0 === Je.countInstance() && window.document.removeEventListener("error", e, !0);
+				});
+			},
+			generateLog: function(e, t, n) {
+				var t = "function" == typeof (null == (r = t.api) ? void 0 : r.resourceTypeHandler) ? null == (r = t.api) ? void 0 : r.resourceTypeHandler(e.name) : "", r = e.transferSize, i = Number(e.responseStatus), i = Number.isFinite(i) && 0 < i ? i : 200;
+				return {
+					url: J(e.name),
+					method: "get",
+					duration: Number(e.duration.toFixed(2)),
+					status: i,
+					type: t || "static",
+					isHttps: X(e.name),
+					nextHopProtocol: e.nextHopProtocol || "",
+					urlQuery: V(e.name, !0),
+					domainLookup: G(e.domainLookupEnd - e.domainLookupStart),
+					connectTime: G(e.connectEnd - e.connectStart),
+					transferSize: 0 < r ? r : -1,
+					from: n
+				};
+			},
+			collectNotReportedLog: function(e) {
+				var t, n;
+				ze() && (t = (n = performance.getEntriesByType(this.collectEntryType)).length, "function" != typeof window.PerformanceObserver) && this.collectCur !== t && (n = n.slice(this.collectCur), this.collectCur = t, this.publishMany(n, e));
+			},
+			destroy: function() {
+				this.option.publish = function() {};
+			}
+		}), $e = window.navigator.userAgent.toLowerCase(), o = {};
+		function i(e) {
+			this.aegisPlugin = !0, this.name = "", this.instances = [], this.inited = !1, e.$walk = this.walk.bind(this), e.$getConfig = this.getConfig.bind(this), this.option = e, this.name = e.name;
+		}
+		function y(e) {
+			var n, r, i, a, t, s, l, o, c, u, d, f, h, p = this;
+			this.isGetSample = !1, this.isHidden = !1, this.config = {
+				version: 0,
+				delay: 1e3,
+				onError: !0,
+				repeat: 60,
+				random: 1,
+				aid: !0,
+				device: !0,
+				pagePerformance: !0,
+				webVitals: !0,
+				speedSample: !0,
+				onClose: !0,
+				reportLoadPackageSpeed: !0,
+				hostUrl: "https://rumt-zh.com",
+				env: "production",
+				url: "",
+				offlineUrl: "",
+				whiteListUrl: "",
+				rateLimitUrl: "",
+				pvUrl: "",
+				speedUrl: "",
+				customTimeUrl: "",
+				performanceUrl: "",
+				performanceUrlForHippy: "",
+				webVitalsUrl: "",
+				eventUrl: "",
+				setDataReportUrl: "",
+				memoryUrl: "",
+				reportImmediately: !0,
+				gzip: !0
+			}, this.isWhiteList = !1, this.whitelistUseGzip = !0, this.whitelistUseGzipReady = !1, this.lifeCycle = new W(), this.bean = {}, this.rateLimitConfigs = null, this.rateLimitReady = !1, this.rateLimitSampled = !1, this.rateLimitPool = [], this.normalLogPipeline = He([
+				ee(this, 5),
+				te,
+				function(e, t) {
+					var r = n.config;
+					t(e = e.map(function(e) {
+						var t, n = r.maxLength || 10240;
+						try {
+							if (!e.msg || e.msg.length <= n) return e;
+							e.msg = null == (t = e.msg) ? void 0 : t.substring(0, n);
+						} catch (t) {
+							e.msg = ce(e.msg).substring(0, r.maxLength);
+						}
+						return e;
+					}));
+				},
+				(h = (n = this).config, function(e, t) {
+					var n = "number" == typeof h.repeat ? h.repeat : 60;
+					if (n <= 0) return t(e);
+					var r = (null == h ? void 0 : h.id) + "_error", i = Oe[r] || {};
+					t(e.filter(function(e) {
+						if (e.level === le.ERROR || e.level === le.PROMISE_ERROR || e.level === le.AJAX_ERROR || e.level === le.SCRIPT_ERROR || e.level === le.IMAGE_ERROR || e.level === le.CSS_ERROR || e.level === le.MEDIA_ERROR || e.level === le.RET_ERROR || e.level === le.BRIDGE_ERROR || e.level === le.PAGE_NOT_FOUND_ERROR || e.level === le.WEBSOCKET_ERROR || e.level === le.LAZY_LOAD_ERROR) {
+							e = e.msg.slice(0, 200);
+							if (i[e] > n) return v[r] || xe(r), !1;
+							i[e] = 1 + ~~i[e], Oe[r] = i;
+						}
+						return !0;
+					}));
+				}),
+				(d = this.lifeCycle.emit, f = this.config, function(e, t) {
+					var n, r = f.logCreated;
+					return "function" == typeof r ? (n = e.filter(function(e) {
+						return !1 !== r(e);
+					}), d("beforeWrite", n), t(n)) : (d("beforeWrite", e), t(e));
+				}),
+				(u = this, setTimeout(function() {
+					var e = u.config, t = e.pvUrl, i = void 0 === t ? "" : t, t = e.spa, e = -1 < [
+						"web-sdk",
+						"mp-sdk",
+						"rn-sdk"
+					].indexOf("web-sdk");
+					i && (e && !t || !e) && u.sendPipeline([function(e, t) {
+						var n = u.getOriginFrom(), r = null != i && i.includes("?") ? "&" : "?";
+						t({
+							url: n ? i + r + "originFrom=" + encodeURIComponent(n) : i,
+							type: m.PV
+						});
+					}], m.PV)(null);
+				}, 100), function(e, t) {
+					t(e);
+				}),
+				(o = l = s = !1, c = [], (a = this).lifeCycle.on("onConfigChange", function() {
+					t && clearTimeout(t), t = setTimeout(function() {
+						var e, n;
+						!o && a.config && (o = !0, e = a.config.whiteListUrl, (n = void 0 === e ? "" : e) && a.sendPipeline([function(e, t) {
+							t({
+								url: n,
+								type: m.WHITE_LIST,
+								method: "get",
+								success: function(e) {
+									l = !0;
+									try {
+										var t = e.data || JSON.parse(e), n = t.retcode, r = t.result, i = void 0 === r ? {} : r, o = (0 === n ? (s = i.is_in_white_list, a.isWhiteList = s, a.updateWhitelistGzipState(i.use_gzip), 0 <= i.rate && i.rate <= 1 && (a.config.random = i.rate, a.isGetSample = !1)) : a.disableWhitelistGzipState(), a.isWhiteList && c.length ? Le(a)(c.splice(0), function() {}) : !a.isWhiteList && c.length && (c.length = 0), a.config.onWhitelist);
+										"function" == typeof o && o(s);
+									} catch (e) {}
+								},
+								fail: function() {
+									l = !0;
+								}
+							});
+						}], m.WHITE_LIST)(null), o = !1);
+					}, a.config.uin ? 50 : 500);
+				}), a.lifeCycle.on("destroy", function() {
+					c.length = 0;
+				}), function(e, t) {
+					var n;
+					s || null != (n = null == (n = a.config) ? void 0 : n.api) && n.reportRequest ? t(e.concat(c.splice(0)).map(function(e) {
+						return Te(e), e;
+					})) : (n = e.filter(function(e) {
+						return e.level !== le.INFO && e.level !== le.API_RESPONSE ? (Te(e), !0) : (l || (c.push(e), 200 <= c.length && (c.length = 200)), !1);
+					})).length && t(n);
+				}),
+				function(e, t) {
+					try {
+						var n = e.filter(function(e) {
+							return [
+								le.ERROR,
+								le.PROMISE_ERROR,
+								le.AJAX_ERROR,
+								le.SCRIPT_ERROR,
+								le.IMAGE_ERROR,
+								le.CSS_ERROR,
+								le.MEDIA_ERROR,
+								le.WEBSOCKET_ERROR,
+								le.BRIDGE_ERROR,
+								le.BLANK_SCREEN,
+								le.RET_ERROR,
+								le.PAGE_NOT_FOUND_ERROR,
+								le.LAZY_LOAD_ERROR
+							].includes(e.level);
+						}), r = (n.length && p.lifeCycle.emit("errorOccurred", n), e.forEach(function(t) {
+							[
+								"ext1",
+								"ext2",
+								"ext3"
+							].forEach(function(e) {
+								t[e] && "string" == typeof t[e] && (t[e] = t[e].slice(0, 1024));
+							}), [
+								"ext4",
+								"ext5",
+								"ext6",
+								"ext7",
+								"ext8",
+								"ext9",
+								"ext10"
+							].forEach(function(e) {
+								t[e] && "string" != typeof t[e] && (t[e] = String(t[e]));
+							});
+						}), JSON.parse(JSON.stringify(e))), i = (p.lifeCycle.emit("beforeReport", r), p.config.beforeReport);
+						(e = "function" == typeof i ? e.filter(function(e) {
+							return !1 !== i(e);
+						}) : e).length && t(e);
+					} catch (e) {}
+				},
+				Le(this)
+			]), this.eventPipeline = He([ee(this, 10), (i = this, function(e) {
+				i.sendPipeline([function(e, t) {
+					var n = e.map(function(e) {
+						return {
+							name: e.name,
+							originFrom: e.originFrom,
+							ext1: String(e.ext1 || i.config.ext1 || "").slice(0, 1024),
+							ext2: String(e.ext2 || i.config.ext2 || "").slice(0, 1024),
+							ext3: String(e.ext3 || i.config.ext3 || "").slice(0, 1024),
+							ext4: String(e.ext4 || i.config.ext4 || ""),
+							ext5: String(e.ext5 || i.config.ext5 || ""),
+							ext6: String(e.ext6 || i.config.ext6 || ""),
+							ext7: String(e.ext7 || i.config.ext7 || ""),
+							ext8: String(e.ext8 || i.config.ext8 || ""),
+							ext9: String(e.ext9 || i.config.ext9 || ""),
+							ext10: String(e.ext10 || i.config.ext10 || "")
+						};
+					});
+					t({
+						url: i.config.eventUrl,
+						method: "post",
+						contentType: "application/json",
+						data: g({ payload: g(n) }),
+						type: m.EVENT,
+						log: e
+					});
+				}], m.EVENT)(e);
+			})]), this.customTimePipeline = He([ee(this, 10), (r = this, function(e) {
+				return r.sendPipeline([function(e, t) {
+					t({
+						url: r.config.customTimeUrl,
+						method: "post",
+						contentType: "application/json",
+						data: g({ payload: g({ custom: e }) }),
+						type: m.CUSTOM,
+						log: e
+					});
+				}], m.CUSTOM)(e);
+			})]), this.timeMap = {}, this.failRequestCount = 0, y.instances.push(this);
+		}
+		o.macos = function() {
+			return t("mac");
+		}, o.ios = function() {
+			return o.iphone() || o.ipod() || o.ipad();
+		}, o.iphone = function() {
+			return !o.windows() && t("iphone");
+		}, o.ipod = function() {
+			return t("ipod");
+		}, o.ipad = function() {
+			var e = "MacIntel" === navigator.platform && 1 < navigator.maxTouchPoints;
+			return t("ipad") || e;
+		}, o.android = function() {
+			return !o.windows() && t("android");
+		}, o.androidPhone = function() {
+			return o.android() && t("mobile");
+		}, o.androidTablet = function() {
+			return o.android() && !t("mobile");
+		}, o.blackberry = function() {
+			return t("blackberry") || t("bb10");
+		}, o.blackberryPhone = function() {
+			return o.blackberry() && !t("tablet");
+		}, o.blackberryTablet = function() {
+			return o.blackberry() && t("tablet");
+		}, o.windows = function() {
+			return t("windows");
+		}, o.windowsPhone = function() {
+			return o.windows() && t("phone");
+		}, o.windowsTablet = function() {
+			return o.windows() && t("touch") && !o.windowsPhone();
+		}, o.fxos = function() {
+			return (t("(mobile") || t("(tablet")) && t(" rv:");
+		}, o.fxosPhone = function() {
+			return o.fxos() && t("mobile");
+		}, o.fxosTablet = function() {
+			return o.fxos() && t("tablet");
+		}, o.meego = function() {
+			return t("meego");
+		}, o.cordova = function() {
+			return window.cordova && "file:" === location.protocol;
+		}, o.nodeWebkit = function() {
+			return "object" == typeof window.process;
+		}, o.mobile = function() {
+			return o.androidPhone() || o.iphone() || o.ipod() || o.windowsPhone() || o.blackberryPhone() || o.fxosPhone() || o.meego();
+		}, o.tablet = function() {
+			return o.ipad() || o.androidTablet() || o.blackberryTablet() || o.windowsTablet() || o.fxosTablet();
+		}, o.desktop = function() {
+			return !o.tablet() && !o.mobile();
+		};
+		function Ke() {
+			return {
+				host: new URL(location.href).host,
+				pathname: location.pathname
+			};
+		}
+		function Qe(r, e, i) {
+			return null != e && e.length && "object" == typeof r ? e.reduce(function(e, t) {
+				var n = window.Headers && r instanceof Headers ? r.get(t) : r[t];
+				return n ? e + ("" === e ? "" : "\n\n") + i + " header " + t + ": " + n : e;
+			}, "") : "";
+		}
+		function Ye(e, t) {
+			return e && -1 === ["null", "undefined"].indexOf(e) ? t + ": " + e : "";
+		}
+		function Ze(e, t, n) {
+			void 0 === t && (t = "");
+			var r, i, e = "function" == typeof (null == (i = e.api) ? void 0 : i.resourceTypeHandler) ? null == (i = e.api) ? void 0 : i.resourceTypeHandler(n) : "";
+			return -1 === D.indexOf(e) && (r = void 0 === t ? "" : t, i = (void 0 === n ? "" : n).split("?")[0], e = fe.test(i) || de.some(function(e) {
+				return -1 !== String(r).indexOf(e);
+			}) ? "static" : "fetch"), e;
+		}
+		function et(e, t) {
+			return e ? le.AJAX_ERROR : t ? le.RET_ERROR : le.API_RESPONSE;
+		}
+		function tt(e, t, n) {
+			var r, i;
+			if (!e) return !1;
+			if (null != (r = null == t ? void 0 : t.api) && r.isSlowApi && "function" == typeof (null == (r = null == t ? void 0 : t.api) ? void 0 : r.isSlowApi)) try {
+				return null == (i = null == t ? void 0 : t.api) ? void 0 : i.isSlowApi(n || { duration: e });
+			} catch (e) {
+				return console.warn("[Aegis] isSlowApi function happen error:", e, ", this data will not be reported."), !1;
+			}
+			return null != (r = null == t ? void 0 : t.api) && r.apiSlowThreshold && "number" == typeof (null == (i = null == t ? void 0 : t.api) ? void 0 : i.apiSlowThreshold) ? e > (null == (n = null == t ? void 0 : t.api) ? void 0 : n.apiSlowThreshold) : 1e3 < e;
+		}
+		function nt(e, t) {
+			if (null != (e = e.api) && e.usePerformanceTiming && "string" == typeof t.url) {
+				e = null == (e = performance.getEntriesByName(t.url)) ? void 0 : e.pop();
+				if (e) return {
+					url: t.url,
+					isHttps: X(t.url),
+					method: t.method,
+					type: t.type,
+					status: t.status,
+					duration: Number(e.duration.toFixed(2)),
+					nextHopProtocol: e.nextHopProtocol || "",
+					domainLookup: G(e.domainLookupEnd - e.domainLookupStart),
+					connectTime: G(e.connectEnd - e.connectStart)
+				};
+			}
+			return {
+				url: t.url,
+				isHttps: X(t.url),
+				method: t.method,
+				type: t.type,
+				status: t.status,
+				duration: Number(t.duration.toFixed(2)),
+				nextHopProtocol: "",
+				domainLookup: j.number,
+				connectTime: j.number
+			};
+		}
+		var rt, it, ot, at, a, st, lt, ct = !(o.isIE = function() {
+			return "ActiveXObject" in window;
+		}), l = [], ut = /^\/[^/]/, dt = !1, p = [], ft = {
+			maxRetryCount: 10,
+			retryInterval: function(e) {
+				return 1e3 * (2 << e);
+			},
+			whenRetryEndStillFail: "discard",
+			maxStorageCount: 50
+		}, ht = (new r({ name: "reportApiSpeed" }), new r({
+			name: "reportApiSpeed",
+			override: !1,
+			onNewAegis: function(e) {
+				var t, n;
+				this.override || (this.override = !0, null != (n = e.config.api) && n.injectTraceHeader && (this.traceRequestHeader = new qe(n.injectTraceHeader, null != (t = null == n ? void 0 : n.injectTraceIgnoreUrls) ? t : [], null == n ? void 0 : n.injectTraceUrls, null == n ? void 0 : n.traceFlag)), this.overrideFetch(e.config, e), this.overrideXhr(e.config, e));
+			},
+			getFromParam: function(e) {
+				return e.getCurrentPageUrl();
+			},
+			overrideFetch: function(b, E) {
+				var S = this, e = b.api, e = {
+					name: this.name,
+					traceRequestHeader: null != e && e.injectTraceHeader ? this.traceRequestHeader : null,
+					getCurrentFrom: function() {
+						return S.getFromParam(E);
+					},
+					then: function(f, h, p, m, g, v, y) {
+						var e, w;
+						Y(p, b.hostUrl) || (e = f.headers ? f.headers.get("content-type") : "", "fetch" === (w = Ze(b, e || "", p)) ? f.clone().text().then(function(r) {
+							var e, i = f.status <= 0 || 400 <= f.status, t = (null == (t = b.api) ? void 0 : t.reqHeaders) || [], o = Qe(null == m ? void 0 : m.headers, t, "req"), t = (null == (t = b.api) ? void 0 : t.resHeaders) || [], a = Qe(f.headers, t, "res"), s = Fe(null == m ? void 0 : m.headers), t = $(r, b.api, {
+								url: p,
+								ctx: f,
+								payload: null == m ? void 0 : m.body
+							}), l = t.code, c = t.isErr, t = null == (t = b.api) ? void 0 : t.apiDetail, u = t ? K(null == m ? void 0 : m.body, null == (e = b.api) ? void 0 : e.reqParamHandler, { url: p }) : "", d = t ? K(r, null == (e = b.api) ? void 0 : e.resBodyHandler, {
+								url: p,
+								ctx: f
+							}) : "";
+							setTimeout(function() {
+								var e = nt(b, {
+									url: p,
+									duration: h,
+									type: w,
+									status: f.status || 0,
+									method: (null == m ? void 0 : m.method) || "get"
+								}), t = [
+									i ? "FETCH_ERROR: " + r : "",
+									"fetch req url: " + p,
+									"res status: " + (e.status || 0),
+									"res duration: " + e.duration + "ms",
+									"res startTime: " + g,
+									o,
+									a,
+									"req method: " + (e.method || "GET"),
+									"res retcode: " + l,
+									Ye(u, "req param"),
+									Ye(d, "res data")
+								].filter(function(e) {
+									return e;
+								}).join("\n\n"), t = (e.payload = null == m ? void 0 : m.body, e.ret = l, e.isErr = +c, e.from = v || S.getFromParam(E), {
+									msg: t,
+									code: l,
+									trace: s,
+									errorMsg: "",
+									from: v || S.getFromParam(E),
+									originFrom: y,
+									level: le.API_RESPONSE
+								}), n = b.slowApiLog && tt(null == e ? void 0 : e.duration, b, e);
+								t.level = n ? le.SLOW_NET_REQUEST : et(i, c), (n || t.level !== le.API_RESPONSE || E.isWhiteList || null != (n = null == (n = E.config) ? void 0 : n.api) && n.reportRequest) && S.publishNormalLog(t, E), S.publishSpeed(e, E);
+							}, 0);
+						}).catch(function(e) {
+							console.info("ignore something error when process resp " + e);
+						}) : setTimeout(function() {
+							var e = nt(b, {
+								url: p,
+								duration: h,
+								type: w,
+								status: f.status || 0,
+								method: (null == m ? void 0 : m.method) || "get"
+							});
+							e.type = "static", e.urlQuery = V(p, !0), e.from = v || S.getFromParam(E), S.publishSpeed(e, E);
+						}, 0));
+					},
+					catch: function(t, n, r, i, o, a, s) {
+						var l, e, c, u, d;
+						throw Y(r, b.hostUrl) || (l = Ze(b, "", r), e = (null == (e = b.api) ? void 0 : e.reqHeaders) || [], c = Qe(null == i ? void 0 : i.headers, e, "req"), u = Fe(null == i ? void 0 : i.headers), d = null != (e = b.api) && e.apiDetail ? K(null == i ? void 0 : i.body, null == (e = b.api) ? void 0 : e.reqParamHandler, { url: r }) : "", setTimeout(function() {
+							var e = nt(b, {
+								url: r,
+								duration: n,
+								type: l,
+								status: 0,
+								method: (null == i ? void 0 : i.method) || "get"
+							}), e = (e.from = a || S.getFromParam(E), S.publishSpeed(e, E), "AJAX_ERROR: " + t + "\n                          \nreq url: " + r + "\n                          \nres status: 0\n                          \nres duration: " + e.duration + "ms\n                          \nreq method: " + ((null == i ? void 0 : i.method) || "get") + "\n                          \nreq param: " + d + "\n                          \nres startTime: " + o + "\n                          \n" + c);
+							S.publishNormalLog({
+								msg: e,
+								level: le.AJAX_ERROR,
+								code: -400,
+								trace: u,
+								errorMsg: "",
+								from: a || S.getFromParam(E),
+								originFrom: s
+							}, E);
+						}, 0)), t;
+					}
+				}, f = (this.hackFetchOptions = e, this.hackFetchOptions), h = null == (e = b.api) ? void 0 : e.ignoreHackReg;
+				if (void 0 === h && (h = /\.flv(\?|$)/i), p.find(function(e) {
+					return e.name === f.name;
+				})) throw new Error("name '" + f.name + "' is already in hackFetch option list");
+				p.push(f), !dt && window.fetch && (dt = !0, at = window.fetch, window.fetch = function(e, i) {
+					void 0 === i && (i = {});
+					var o = "string" == typeof e ? e : null == e ? void 0 : e.url;
+					if (null != (a = null == h ? void 0 : h.test) && a.call(h, o)) return at(o, i);
+					ut.test(o) && (o = "" + location.origin + o);
+					var t, n, r, a = (f || {}).traceRequestHeader;
+					a && (t = void 0 === (t = (i || {}).headers) ? {} : t, n = (r = Ke()).host, n = (a = a.generate(o, t, {
+						host: n,
+						pathname: r.pathname
+					}) || {}).name, r = a.value) && n && (i.headers = Object.assign(t, ((a = {})[n] = r, a)));
+					for (var s = /* @__PURE__ */ new Map(), l = window.location.href, c = 0; c < p.length; c++) {
+						var u = p[c];
+						try {
+							"function" == typeof u.beforeFetch && u.beforeFetch(o, i), "function" == typeof u.getCurrentFrom && s.set(u.name, u.getCurrentFrom());
+						} catch (e) {}
+					}
+					var d = Date.now();
+					return at(e, i).then(function(e) {
+						for (var t = e.clone(), n = 0; n < p.length; n++) {
+							var r = p[n];
+							try {
+								"function" == typeof r.then && r.then(t, Date.now() - d, o, i, d, s.get(r.name), l);
+							} catch (e) {}
+						}
+						return t;
+					}).catch(function(e) {
+						for (var t = 0; t < p.length; t++) {
+							var n = p[t];
+							try {
+								"function" == typeof n.catch && n.catch(e, Date.now() - d, o, i, d, s.get(n.name), l);
+							} catch (e) {}
+						}
+						throw e;
+					});
+				});
+			},
+			overrideXhr: function(b, E) {
+				var i, S = this, e = {
+					name: this.name,
+					ignoreHackReg: null == (e = b.api) ? void 0 : e.ignoreHackReg,
+					traceRequestHeader: null != (e = b.api) && e.injectTraceHeader ? this.traceRequestHeader : null,
+					getCurrentFrom: function() {
+						return S.getFromParam(E);
+					},
+					send: function(f, h, p, m) {
+						var e, t, g = Date.now(), v = (((null == b ? void 0 : b.api) || {}).injectTraceHeader && (t = (e = Ke()).host, e = (t = S.traceRequestHeader.generate(f.aegisUrl, {}, {
+							host: t,
+							pathname: e.pathname
+						}) || {}).name, t = t.value, e) && t && f.setRequestHeader(e, t), f.addEventListener("loadend", function() {
+							var c, n, e, u, d = f.aegisUrl || "";
+							Y(d, b.hostUrl) || "abort" === f.failType || (c = "", (f.failType || !f.status || 400 <= f.status) && (c = f.failType || "failed"), n = Date.now() - g, e = f.getResponseHeader("content-type") || "", u = Ze(b, e, d), setTimeout(function() {
+								var r = nt(b, {
+									url: d,
+									duration: n,
+									type: u,
+									status: f.status,
+									method: f.aegisMethod || "get"
+								});
+								if (r.from = p || S.getFromParam(E), "fetch" === u) {
+									var e = (null == (e = b.api) ? void 0 : e.reqHeaders) || [], i = Qe(f.aegisXhrReqHeader, e, "req"), e = (null == (e = b.api) ? void 0 : e.resHeaders) || [], t = f.getAllResponseHeaders().split("\r\n").reduce(function(e, t) {
+										t = t.split(": ");
+										return t[0] && t[1] && (e[t[0]] = t[1]), e;
+									}, {}), o = Qe(t, e, "res"), a = Fe(f.aegisXhrReqHeader), e = null == (t = b.api) ? void 0 : t.apiDetail, s = e ? K(h, null == (t = b.api) ? void 0 : t.reqParamHandler, { url: d }) : "", l = e ? K(f.response, null == (t = b.api) ? void 0 : t.resBodyHandler, { url: d }) : "";
+									try {
+										((e, t, n, r) => {
+											var i, o, a;
+											try {
+												if ("function" == typeof (null == t ? void 0 : t.retCodeHandlerAsync)) return t.retCodeHandlerAsync(e, null == n ? void 0 : n.url, null == n ? void 0 : n.ctx, function(e) {
+													var t = e.code;
+													r?.({
+														code: void 0 === t ? R : t,
+														isErr: e.isErr
+													});
+												});
+												if ("function" == typeof (null == t ? void 0 : t.retCodeHandler)) return a = (o = t.retCodeHandler(e, null == n ? void 0 : n.url, null == n ? void 0 : n.ctx, null == n ? void 0 : n.payload) || {}).code, null != r && r({
+													code: void 0 === a ? R : a,
+													isErr: o.isErr
+												});
+												if (!(e = "string" == typeof e ? JSON.parse(e) : e)) return null != r && r({
+													code: R,
+													isErr: !1
+												});
+												"function" == typeof (null == (i = null == t ? void 0 : t.ret) ? void 0 : i.join) && (he = [].concat(t.ret.map(function(e) {
+													return e.toLowerCase();
+												})));
+												var s = Object.getOwnPropertyNames(e).filter(function(e) {
+													return -1 !== he.indexOf(e.toLowerCase());
+												});
+												if (s.length) return "未知" !== (a = e[s[0]]) && "" !== a || (a = R), null != r && r({
+													code: "" + a,
+													isErr: 0 !== a && "0" !== a && a !== R
+												});
+												r?.({
+													code: R,
+													isErr: !1
+												});
+											} catch (e) {
+												r?.({
+													code: R,
+													isErr: !1
+												});
+											}
+										})(f.response, b.api, {
+											url: d,
+											ctx: f,
+											payload: h
+										}, function(e) {
+											var t = e.code, e = e.isErr, n = [
+												c ? "AJAX_ERROR: request " + c : "",
+												"fetch req url: " + d,
+												"res status: " + (r.status || 0),
+												"res duration: " + r.duration + "ms",
+												"res startTime: " + g,
+												i,
+												o,
+												"req method: " + (r.method || "GET"),
+												"res retcode: " + t,
+												Ye(s, "req param"),
+												Ye(l, "res data")
+											].filter(function(e) {
+												return e;
+											}).join("\n\n");
+											r.ret = t, r.isErr = +e, r.payload = h, b.slowApiLog && tt(null == r ? void 0 : r.duration, b, r) ? S.publishNormalLog({
+												msg: n,
+												level: le.SLOW_NET_REQUEST,
+												code: t,
+												trace: a,
+												errorMsg: "",
+												from: p || S.getFromParam(E),
+												originFrom: m
+											}, E) : S.publishNormalLog({
+												msg: n,
+												level: et(!!c, e),
+												code: t,
+												trace: a,
+												errorMsg: "",
+												from: p || S.getFromParam(E),
+												originFrom: m
+											}, E), S.publishSpeed(r, E);
+										});
+									} catch (e) {
+										r.ret = R, S.publishSpeed(r, E);
+									}
+								} else r.type = "static", r.urlQuery = V(d, !0), S.publishSpeed(r, E);
+								f.removeEventListener("abort", v), f.removeEventListener("error", y), f.removeEventListener("timeout", w);
+							}, 0));
+						}), function() {
+							f.failType = "abort";
+						}), y = function() {
+							f.failType = "error";
+						}, w = function() {
+							f.failType = "timeout";
+						};
+						f.addEventListener("abort", v), f.addEventListener("error", y), f.addEventListener("timeout", w);
+					}
+				};
+				this.hackXHROptions = e, i = this.hackXHROptions, l.find(function(e) {
+					return e.name === i.name;
+				}) || (l.push(i), !ct && window.XMLHttpRequest && (rt = window.XMLHttpRequest.prototype.send, it = window.XMLHttpRequest.prototype.open, ot = window.XMLHttpRequest.prototype.setRequestHeader, ct = !0, window.XMLHttpRequest.prototype.open = function() {
+					this.aegisMethod = arguments[0];
+					var e, t = arguments[1];
+					if (ut.test(t) && (t = "" + location.origin + t), this.aegisUrl = t, null == (t = null == (e = i.ignoreHackReg) ? void 0 : e.test) || !t.call(e, this.aegisUrl)) if (this.aegisXhrStartTime = Date.now(), this.sendByAegis) o.isIE() || (this.timeout = 5e3);
+					else for (var n = 0; n < l.length; n++) {
+						var r = l[n];
+						try {
+							"function" == typeof r.open && r.open(this);
+						} catch (e) {}
+					}
+					return it.apply(this, arguments);
+				}, window.XMLHttpRequest.prototype.setRequestHeader = function() {
+					var e, t, n;
+					return null != (t = null == (n = i.ignoreHackReg) ? void 0 : n.test) && t.call(n, this.aegisUrl) ? ot.apply(this, arguments) : (t = arguments[0], n = arguments[1], this.aegisXhrReqHeader = null != (e = this.aegisXhrReqHeader) ? e : {}, null != i && i.traceRequestHeader && -1 < [
+						"traceparent",
+						"b3",
+						"sw8",
+						"sentry-trace"
+					].indexOf(t) && (this.aegisXhrReqHeader[t] || (arguments[1] = n), this.aegisXhrReqHeader[t]) ? void 0 : (this.aegisXhrReqHeader[t] = arguments[1], ot.apply(this, arguments)));
+				}, window.XMLHttpRequest.prototype.send = function() {
+					var e, t;
+					if (!(null != (t = null == (e = i.ignoreHackReg) ? void 0 : e.test) && t.call(e, this.aegisUrl) || this.sendByAegis)) for (var n = 0; n < l.length; n++) {
+						var r = l[n];
+						try {
+							"function" == typeof r.send && r.send(this, arguments[0], "function" == typeof r.getCurrentFrom ? r.getCurrentFrom() : void 0, window.location.href);
+						} catch (e) {}
+					}
+					return rt.apply(this, arguments);
+				}));
+			},
+			publishSpeed: function(n) {
+				var r = this;
+				this.$walk(function(e) {
+					var t = r.$getConfig(e);
+					"fetch" !== n.type || "function" != typeof (null == t ? void 0 : t.urlHandler) ? (n.url = V(n.url), e.speedLogPipeline(n)) : e.speedLogPipeline(oe(oe({}, n), { url: V(t.urlHandler(n.url, n.payload)) }));
+				});
+			},
+			publishNormalLog: function(t) {
+				this.$walk(function(e) {
+					e.normalLogPipeline(t);
+				});
+			},
+			destroy: function() {
+				var t, n, e;
+				this.option.publishSpeed = function() {}, this.option.publishNormalLog = function() {}, this.option.hackXHROptions && (t = this.option.hackXHROptions, -1 !== (e = l.findIndex(function(e) {
+					return e.name === t.name;
+				}))) && l.splice(e, 1), this.option.hackFetchOptions && (n = this.option.hackFetchOptions, -1 !== (e = p.findIndex(function(e) {
+					return e.name === n.name;
+				}))) && p.splice(e, 1), this.option.override = !1;
+			}
+		})), pt = {}, mt = new r({
+			name: "reportBridgeSpeed",
+			override: !1,
+			onNewAegis: function(e) {
+				this.override || (this.override = !0, this.overrideBridge(e));
+			},
+			getFromParam: function(e) {
+				return e.getCurrentPageUrl();
+			},
+			publishSpeed: function(t, n) {
+				this.$walk(function(e) {
+					e === n && e.speedLogPipeline(t);
+				});
+			},
+			overrideBridge: function(c) {
+				var u = this, d = c.config;
+				d.reportBridgeSpeed && d.h5Bridge && d.h5BridgeFunc.length && d.h5BridgeFunc.forEach(function(e) {
+					var l = d.h5Bridge[e];
+					pt[e] = l, d.h5Bridge[e] = function() {
+						for (var e = [], t = 0; t < arguments.length; t++) e[t] = arguments[t];
+						var r = e[0], i = e[1], n = e[2], o = e[3], a = Date.now(), s = u.getFromParam(c);
+						l(r, i, n, function(e) {
+							var t = $(e, d.api), n = t.code, t = t.isErr, n = {
+								url: r + "-" + i,
+								name: r + "-" + i,
+								duration: Date.now() - a,
+								type: "bridge",
+								ret: n,
+								isErr: +t,
+								from: s
+							};
+							u.publishSpeed(n, c), o(e);
+						});
+					};
+				});
+			},
+			unHackBridge: function(t) {
+				Object.keys(pt).forEach(function(e) {
+					pt[e] && (t.config.h5Bridge[e] = pt[e]);
+				}), pt = {};
+			},
+			destroy: function(e) {
+				this.option.publishSpeed = function() {}, this.option.unHackBridge(e), this.option.override = !1;
+			}
+		});
+		(b = a = a || {})[b.unknown = 100] = "unknown", b[b.wifi = 1] = "wifi", b[b.net2g = 2] = "net2g", b[b.net3g = 3] = "net3g", b[b.net4g = 4] = "net4g", b[b.net5g = 5] = "net5g", b[b.net6g = 6] = "net6g", (b = st = st || {})[b.android = 1] = "android", b[b.ios = 2] = "ios", b[b.windows = 3] = "windows", b[b.macos = 4] = "macos", b[b.linux = 5] = "linux", b[b.other = 100] = "other", (b = lt = lt || {})[b.unknown = 100] = "unknown", b[b.normal = 0] = "normal", b[b.weak = 1] = "weak", b[b.disconnected = 2] = "disconnected";
+		function gt() {
+			return window.location.href;
+		}
+		function vt(e) {
+			return (e = ((e) => {
+				var t = "", n = e.nodeType;
+				if (1 === n || 9 === n || 11 === n) {
+					if ("string" == typeof e.textContent) return e.textContent;
+					for (var r = e.firstChild; r; r = r.nextSibling) t += Gt(e);
+				} else if (3 === n || 4 === n) return e.nodeValue;
+				return t;
+			})(e)) ? e.replace(/^\s+|\s+$/g, "") : "";
+		}
+		function f(e, t) {
+			var n = Qt(), r = "navigate";
+			return 0 <= $t ? r = "back-forward-cache" : n && (document.prerendering || 0 < Yt() ? r = "prerender" : document.wasDiscarded ? r = "restore" : n.type && (r = n.type.replace(/_/g, "-"))), {
+				name: e,
+				value: void 0 === t ? -1 : t,
+				rating: "good",
+				delta: 0,
+				entries: [],
+				id: "v4-".concat(Date.now(), "-").concat(Math.floor(8999999999999 * Math.random()) + 0xe8d4a51000),
+				navigationType: r
+			};
+		}
+		function h(t, n, r, i) {
+			var o, a;
+			return function(e) {
+				0 <= n.value && (e || i) && ((a = n.value - (o || 0)) || void 0 === o) && (o = n.value, n.delta = a, n.rating = (e = n.value) > r[1] ? "poor" : e > r[0] ? "needs-improvement" : "good", t(n));
+			};
+		}
+		function yt(e) {
+			requestAnimationFrame(function() {
+				return requestAnimationFrame(function() {
+					return e();
+				});
+			});
+		}
+		function wt(e) {
+			document.addEventListener("visibilitychange", function() {
+				"hidden" === document.visibilityState && e();
+			});
+		}
+		function bt(e) {
+			var t = !1;
+			return function() {
+				t || (e(), t = !0);
+			};
+		}
+		function Et() {
+			return en < 0 && (en = tn(), rn(), Kt(function() {
+				setTimeout(function() {
+					en = tn(), rn();
+				}, 0);
+			})), { get firstHiddenTime() {
+				return en;
+			} };
+		}
+		function St(e) {
+			document.prerendering ? addEventListener("prerenderingchange", function() {
+				return e();
+			}, !0) : e();
+		}
+		function Rt(o, a) {
+			a = a || {}, St(function() {
+				var t, n = Et(), r = f("FCP"), i = Zt("paint", function(e) {
+					e.forEach(function(e) {
+						"first-contentful-paint" === e.name && (i.disconnect(), e.startTime < n.firstHiddenTime) && (r.value = Math.max(e.startTime - Yt(), 0), r.entries.push(e), t(!0));
+					});
+				});
+				i && (t = h(o, r, an, a.reportAllChanges), Kt(function(e) {
+					r = f("FCP"), t = h(o, r, an, a.reportAllChanges), yt(function() {
+						r.value = performance.now() - e.timeStamp, t(!0);
+					});
+				}));
+			});
+		}
+		function Tt() {
+			return Mt ? ln : performance.interactionCount || 0;
+		}
+		function Ot(t) {
+			var e, n;
+			pn.forEach(function(e) {
+				return e(t);
+			}), !t.interactionId && "first-input" !== t.entryType || (n = S[S.length - 1], ((e = fn.get(t.interactionId)) || S.length < 10 || t.duration > n.latency) && (e ? t.duration > e.latency ? (e.entries = [t], e.latency = t.duration) : t.duration === e.latency && t.startTime === e.entries[0].startTime && e.entries.push(t) : (n = {
+				id: t.interactionId,
+				latency: t.duration,
+				entries: [t]
+			}, fn.set(n.id, n), S.push(n)), S.sort(function(e, t) {
+				return t.latency - e.latency;
+			}), 10 < S.length) && S.splice(10).forEach(function(e) {
+				return fn.delete(e.id);
+			}));
+		}
+		function xt(e) {
+			var t = self.requestIdleCallback || self.setTimeout, n = -1;
+			return e = bt(e), "hidden" === document.visibilityState ? e() : (n = t(e), wt(e)), n;
+		}
+		function Pt(o, a) {
+			"PerformanceEventTiming" in self && "interactionId" in PerformanceEventTiming.prototype && (a = a || {}, St(function() {
+				var e;
+				"interactionCount" in performance || (Mt = Mt || Zt("event", dn, {
+					type: "event",
+					buffered: !0,
+					durationThreshold: 0
+				}));
+				function t(t) {
+					xt(function() {
+						t.forEach(Ot);
+						e = Math.min(S.length - 1, Math.floor((Tt() - hn) / 50));
+						var e = S[e];
+						e && e.latency !== n.value && (n.value = e.latency, n.entries = e.entries, i());
+					});
+				}
+				var n = f("INP"), r = Zt("event", t, { durationThreshold: null != (e = a.durationThreshold) ? e : 40 }), i = h(o, n, mn, a.reportAllChanges);
+				r && (r.observe({
+					type: "first-input",
+					buffered: !0
+				}), wt(function() {
+					t(r.takeRecords()), i(!0);
+				}), Kt(function() {
+					hn = Tt(), S.length = 0, fn.clear(), n = f("INP"), i = h(o, n, mn, a.reportAllChanges);
+				}));
+			}));
+		}
+		function Lt(e) {
+			var t, n, r, i, o, a;
+			e.cancelable && (t = (0xe8d4a51000 < e.timeStamp ? /* @__PURE__ */ new Date() : performance.now()) - e.timeStamp, "pointerdown" == e.type ? (n = t, r = e, i = function() {
+				bn(n, r), a();
+			}, o = function() {
+				a();
+			}, a = function() {
+				removeEventListener("pointerup", i, yn), removeEventListener("pointercancel", o, yn);
+			}, addEventListener("pointerup", i, yn), addEventListener("pointercancel", o, yn)) : bn(t, e));
+		}
+		function Ct(s, l) {
+			var e;
+			(null != (e = null == l ? void 0 : l.events) && e.length ? l.events : Tn).forEach(function(e) {
+				var t, n = e, r = s, i = null == l ? void 0 : l.once, o = null == (t = null == l ? void 0 : l.delay) ? void 0 : t[e], a = function(e) {
+					"visibilitychange" === n && "hidden" !== document.visibilityState || (o ? setTimeout(function() {
+						return r(e);
+					}, o) : r(e), i && removeEventListener(n, a, !0));
+				};
+				addEventListener(n, a, !0);
+			});
+		}
+		function kt(e) {
+			var t = e.name;
+			(e = e.value) <= 0 || "INP" === t && 6e4 < e || (T[t] = e);
+		}
+		function c(e, t, n, r) {
+			return void 0 === n && (n = 15e3), void 0 === r && (r = 0), (t = void 0 === t ? 0 : t) <= e && e <= n ? e : r;
+		}
+		function It(e, t) {
+			void 0 === t && (t = []);
+			try {
+				var n = localStorage.getItem(e);
+				if (null != n) {
+					var r = JSON.parse(n);
+					if (Array.isArray(t) && !Array.isArray(r)) try {
+						localStorage.removeItem(e);
+					} catch (e) {}
+					else {
+						if (Array.isArray(t) || "object" != typeof t || null === t || "object" == typeof r && null !== r && !Array.isArray(r)) return r;
+						try {
+							localStorage.removeItem(e);
+						} catch (e) {}
+					}
+				}
+				return t;
+			} catch (n) {
+				try {
+					localStorage.removeItem(e);
+				} catch (e) {}
+				return t;
+			}
+		}
+		function At(e, t) {
+			try {
+				localStorage.setItem(e, t);
+			} catch (e) {}
+		}
+		var Mt, w, Nt, _t, Ft, d, b = new r({
+			name: "device",
+			onNewAegis: function(e) {
+				e.extendBean("platform", this.getPlatform()), e.extendBean("netType", a.unknown), this.getDpi(e), this.refreshNetworkTypeToBean(e), this.refreshNetworkStatusToBean(e);
+			},
+			getDpi: function(e) {
+				e.extendBean("vp", Math.round(window.innerWidth) + " * " + Math.round(window.innerHeight)), window.screen && e.extendBean("sr", Math.round(window.screen.width) + " * " + Math.round(window.screen.height));
+			},
+			getPlatform: function() {
+				var t = {
+					android: /\bAndroid\s*([^;]+)/,
+					ios: /\b(iPad|iPhone|iPod)\b.*? OS ([\d_]+)/,
+					windows: /\b(Windows NT)/,
+					macos: /\b(Mac OS)/,
+					linux: /\b(Linux)/i
+				}, e = Object.keys(t).find(function(e) {
+					return t[e].test(navigator.userAgent);
+				});
+				return e ? st[e] : st.other;
+			},
+			refreshNetworkTypeToBean: function(t) {
+				var n = this, e = t.config;
+				e && ("function" == typeof e.getNetworkType ? e.getNetworkType : Ht)(function(e) {
+					a[e] || (e = a.unknown), t.extendBean("netType", e), n.NetworkRefreshTimer = setTimeout(function() {
+						n.refreshNetworkTypeToBean(t), clearTimeout(n.NetworkRefreshTimer);
+					}, 1e4);
+				});
+			},
+			refreshNetworkStatusToBean: function(t) {
+				var e, n = this, r = t.config;
+				r && null != (e = "function" == typeof r.getNetworkStatus ? r.getNetworkStatus : e) && e(function(e) {
+					void 0 === lt[e] && (e = lt.unknown), t.extendBean("netStatus", e), n.NetworkStatusRefreshTimer = setTimeout(function() {
+						n.refreshNetworkStatusToBean(t), clearTimeout(n.NetworkStatusRefreshTimer);
+					}, 1e4);
+				});
+			}
+		}), Ht = function(e) {
+			var t = "", n = navigator.userAgent.match(/NetType\/(\w+)/);
+			n ? t = n[1] : navigator.connection && (t = navigator.connection.effectiveType || navigator.connection.type), e((n = t = t || R, 0 <= (n = String(n).toLowerCase()).indexOf("4g") ? a.net4g : 0 <= n.indexOf("wifi") ? a.wifi : 0 <= n.indexOf("5g") ? a.net5g : 0 <= n.indexOf("6g") ? a.net6g : 0 <= n.indexOf("3g") ? a.net3g : 0 <= n.indexOf("2g") ? a.net2g : a.unknown));
+		}, Ut = window.WebSocket, E = [], Dt = { construct: function(e, t) {
+			var r = new e(t[0], t[1]);
+			return r.originSend = r.send, r.addEventListener("error", function(e) {
+				var e = (null == e ? void 0 : e.currentTarget) || {}, t = e.url, n = e.readyState;
+				E?.forEach(function(e) {
+					e = e.onErr;
+					e?.({
+						msg: "无法获知具体错误信息，需在浏览器控制台查看！",
+						readyState: n,
+						connectUrl: t
+					});
+				});
+			}), Object.defineProperty(r, "send", { get: function() {
+				return function(e) {
+					null != (t = r.originSend) && t.call(r, e);
+					var t = r.readyState;
+					if (t !== WebSocket.OPEN) {
+						var n = {
+							readyState: t,
+							connectUrl: r.url
+						};
+						switch (t) {
+							case WebSocket.CLOSED:
+								E.forEach(function(e) {
+									e = e.sendErr;
+									e?.(oe({ msg: "消息发送失败，连接已关闭！" }, n));
+								});
+								break;
+							case WebSocket.CONNECTING:
+								E.forEach(function(e) {
+									(0, e.sendErr)(oe({ msg: "消息发送失败，正在连接中！" }, n));
+								});
+								break;
+							case WebSocket.CLOSING: E.forEach(function(e) {
+								(0, e.sendErr)(oe({ msg: "消息发送失败，连接正在关闭！" }, n));
+							});
+						}
+					}
+				};
+			} }), r;
+		} }, qt = new r({ name: "onError" }), jt = qt = new r({
+			name: "onError",
+			onNewAegis: function(e) {
+				this.startListen(e);
+			},
+			getFromParam: function(e) {
+				return e.getCurrentPageUrl();
+			},
+			startListen: function(a) {
+				function e(e) {
+					var t, n = e && ce(e.reason);
+					n && s.publishErrorLog({
+						msg: "PROMISE_ERROR: " + n,
+						errorMsg: null == (t = null == (e = (null == (t = e.reason) ? void 0 : t.message) || (null == (t = e.reason) ? void 0 : t.errMsg) || n) ? void 0 : e.slice) ? void 0 : t.call(e, 0, 150),
+						level: le.PROMISE_ERROR,
+						from: s.getFromParam(a),
+						originFrom: a.getOriginFrom()
+					}, a);
+				}
+				function t(e) {
+					var t;
+					if (e = (null == e ? void 0 : e.target) || (null == e ? void 0 : e.srcElement)) {
+						var n = e.src || e.href || "", r = e.tagName, r = (void 0 === r ? "script" : r).toLowerCase(), i = ["audio", "video"].includes(r);
+						if (!i || null != e && e.error) {
+							if (!(Y(t = n, a.config.hostUrl) || -1 < window.location.href.indexOf(t))) {
+								var o = {
+									msg: r + " load fail: " + n + " " + (i ? "\n\nerror code: " + (null == (t = null == e ? void 0 : e.error) ? void 0 : t.code) + ("" !== (null == (i = null == e ? void 0 : e.error) ? void 0 : i.message) ? "\nerror msg: " + (null == (t = null == e ? void 0 : e.error) ? void 0 : t.message) : "") : ""),
+									level: le.INFO,
+									from: s.getFromParam(a),
+									originFrom: a.getOriginFrom()
+								};
+								if (/\.js$/.test(n)) o.level = le.SCRIPT_ERROR;
+								else if (/\.css$/.test(n)) o.level = le.CSS_ERROR;
+								else switch (r) {
+									case "script":
+										o.level = le.SCRIPT_ERROR;
+										break;
+									case "link":
+										o.level = le.CSS_ERROR;
+										break;
+									case "img":
+										o.level = le.IMAGE_ERROR;
+										break;
+									case "audio":
+									case "video":
+										o.level = le.MEDIA_ERROR;
+										break;
+									default: return;
+								}
+								s.publishErrorLog(o, a);
+							}
+						} else console.log("may be media load success because error is undefine");
+					}
+				}
+				var n, r, i, o, s = this, l = window.onerror;
+				window.onerror = function() {
+					for (var e = [], t = 0; t < arguments.length; t++) e[t] = arguments[t];
+					var n, r = ce(e[0]);
+					"string" != typeof (n = r) || !n || H.some(function(e) {
+						return -1 < n.indexOf(e);
+					}) || F.some(function(e) {
+						return -1 < n.indexOf(e);
+					}) || s.publishErrorLog({
+						msg: (r || "") + " @ (" + (ce(e[1]) || "") + ":" + (e[2] || 0) + ":" + (e[3] || 0) + ")\n          \n" + ce(e[4] || ""),
+						level: le.ERROR,
+						from: s.getFromParam(a),
+						originFrom: a.getOriginFrom()
+					}, a), l?.call.apply(l, C([window], e));
+				}, window.addEventListener("unhandledrejection", e);
+				window.document.addEventListener("error", t, !0), a.lifeCycle.on("destroy", function() {
+					0 === qt.countInstance() && (window.document.removeEventListener("unhandledrejection", e), window.document.removeEventListener("error", t, !0));
+				}), a.config.websocketHack && (n = {
+					key: a.config.id + "-" + this.name,
+					onErr: function(e) {
+						var t;
+						null != (t = s.publishWsErrorLog) && t.call(s, e, a);
+					},
+					sendErr: function(e) {
+						var t;
+						null != (t = s.publishWsErrorLog) && t.call(s, e, a);
+					}
+				}, this.hackWebsocketConfig = n, n = this.hackWebsocketConfig, window.Proxy) && window.WebSocket && (r = window.WebSocket, window && !r.isHack && (i = new Proxy(WebSocket, Dt), r.isHack = !0, window.WebSocket = i), o = n, E.find(function(e) {
+					return e.key === o.key;
+				}) || o && E.push(o));
+			},
+			publishErrorLog: function(t, n) {
+				this.$walk(function(e) {
+					e === n && e.normalLogPipeline(t);
+				});
+			},
+			publishWsErrorLog: function(e, t) {
+				var n = e.connectUrl;
+				this.publishErrorLog({
+					msg: "WEBSOCKET_ERROR: \n              connect: " + n + "\n              readyState: " + e.readyState + "\n              msg: " + e.msg,
+					level: le.WEBSOCKET_ERROR,
+					from: this.getFromParam(t),
+					originFrom: t.getOriginFrom()
+				}, t);
+			},
+			destroy: function() {
+				var t, e;
+				this.option.publishErrorLog = function() {}, this.option.hackWebsocketConfig && (t = this.option.hackWebsocketConfig, window.WebSocket = Ut, -1 !== (e = E.findIndex(function(e) {
+					return e.key === t.key;
+				}))) && E.splice(e, 1);
+			}
+		}), Wt = (new r({ name: "clickElementLog" }), function(e) {
+			if ("" !== e.id && e.id) return "id(\"" + e.id + "\")";
+			if (e === document.body) return e.tagName;
+			if (e instanceof Document) return "document";
+			var t = 0;
+			if (e.parentNode) for (var n = e.parentNode.childNodes, r = 0; r < n.length; r += 1) {
+				var i = n[r];
+				if (i === e) return Wt(e.parentNode) + "/" + e.tagName + "[" + (t + 1) + "]";
+				1 === i.nodeType && i.tagName === e.tagName && (t += 1);
+			}
+			return 0;
+		}), Bt = function(e) {
+			return e instanceof Array ? new Map(e.map(function(e) {
+				return [e, !0];
+			})) : /* @__PURE__ */ new Map();
+		}, zt = function(e, t) {
+			return "string" == typeof e ? e.split(t) : [];
+		}, Gt = function(e) {
+			if (3 === e.nodeType || 4 === e.nodeType) return e.nodeValue || "";
+			if (1 !== e.nodeType) return "";
+			if ("string" == typeof e.textContent) return e.textContent;
+			for (var t = "", n = e.firstChild; n; n = n.nextSibling) t += Gt(n);
+			return t;
+		}, Vt = new r({
+			name: "clickElementLog",
+			listeners: [],
+			onNewAegis: function(e) {
+				this.startListen(e);
+			},
+			startListen: function(a) {
+				for (var e = function(o) {
+					t.listeners.push(((e, t, n, r) => {
+						function i(e) {
+							var t = document.documentElement;
+							t && n.call(t, e, e.target);
+						}
+						return void 0 === r && (r = !0), e.addEventListener(t, i, r), { destroy: function() {
+							e.removeEventListener(t, i, r);
+						} };
+					})(document, o, function(e, t) {
+						var n, r, i;
+						t && !((e, t) => {
+							n = Bt((null == (n = (e = e).ignoreElements) ? void 0 : n.ignoreClasses) || []) || /* @__PURE__ */ new Map();
+							for (var n, r = (e = {
+								ignoreIds: Bt((null == (e = e.ignoreElements) ? void 0 : e.ignoreIds) || []) || /* @__PURE__ */ new Map(),
+								ignoreClasses: n
+							}).ignoreClasses, i = e.ignoreIds, o = !(0 === i.size && 0 === r.size), a = t, s = (zt(t.getAttribute("id") || "", " "), zt(t.getAttribute("class") || "", ""), 0), l = !1; a && o && a.getAttribute;) {
+								if (l) return !0;
+								if (10 <= s) break;
+								for (var c = zt(a.getAttribute("id") || "", " "), u = zt(a.getAttribute("class") || "", ""), d = 0, f = c; d < f.length; d++) {
+									var h = f[d];
+									if (i.has(h)) {
+										l = !0;
+										break;
+									}
+								}
+								for (var p = 0, m = u; p < m.length; p++) {
+									var g = m[p];
+									if (r.has(g)) {
+										l = !0;
+										break;
+									}
+								}
+								s += 1, a = a.parentNode || a.parentElement;
+							}
+							return !1;
+						})(a.config, t) && (n = Wt(t), r = vt(t), i = t.getBoundingClientRect && t.getBoundingClientRect(), t = {
+							op: o,
+							view_type: (null == t ? void 0 : t.nodeName) || "",
+							view_text: r.slice(0, 127),
+							view_tag: n,
+							page: gt(),
+							page_id: gt(),
+							view_pos: {
+								p0: (parseInt(String(i.left), 10) || -1) + "," + (parseInt(String(i.top), 10) || -1),
+								p1: (parseInt(String(i.left + window.scrollX), 10) || -1) + "," + (parseInt(String(i.top + window.scrollY), 10) || -1)
+							}
+						}, a.normalLogPipeline({
+							msg: t,
+							level: le.CLICK_EVENT,
+							errorMsg: "",
+							originFrom: a.getOriginFrom()
+						}));
+					}, !0));
+				}, t = this, n = 0, r = Object.entries({
+					click: 1,
+					longpress: 2
+				}); n < r.length; n++) e(r[n][0]);
+			},
+			destroy: function() {
+				this.listeners.forEach(function(e) {
+					return e.destroy();
+				}), this.listeners = [];
+			}
+		}), Jt = (new r({ name: "consoleLog" }), {
+			log: console.log,
+			error: console.error,
+			warn: console.warn,
+			info: console.info,
+			debug: console.debug,
+			trace: console.trace
+		}), Xt = new r({
+			name: "consoleLog",
+			onNewAegis: function(e) {
+				this.startListen(e);
+			},
+			startListen: function(e) {
+				var o = e;
+				[
+					"log",
+					"error",
+					"warn",
+					"info",
+					"debug",
+					"trace"
+				].forEach(function(r) {
+					var i = Jt[r];
+					console[r] = function() {
+						for (var e, t = [], n = 0; n < arguments.length; n++) t[n] = arguments[n];
+						try {
+							i.apply(console, t), !o.isWhiteList && [
+								"log",
+								"info",
+								"debug",
+								"trace"
+							].includes(r) || (e = t.map(function(e) {
+								if ("object" == typeof e && null !== e) try {
+									return JSON.stringify(e);
+								} catch (e) {}
+								return String(e);
+							}).join(" "), o.normalLogPipeline({
+								msg: "method: console." + r + "\nmessage: " + e,
+								level: le.CONSOLE_LOG,
+								errorMsg: "",
+								originFrom: o.getOriginFrom()
+							}));
+						} catch (e) {
+							Jt.error("Console hook error:", e);
+						}
+					};
+				});
+			},
+			destroy: function() {
+				Object.keys(Jt).forEach(function(e) {
+					console[e] = Jt[e];
+				});
+			}
+		}), $t = -1, Kt = function(t) {
+			addEventListener("pageshow", function(e) {
+				e.persisted && ($t = e.timeStamp, t(e));
+			}, !0);
+		}, Qt = function() {
+			var e = self.performance && performance.getEntriesByType && performance.getEntriesByType("navigation")[0];
+			if (e && 0 < e.responseStart && e.responseStart < performance.now()) return e;
+		}, Yt = function() {
+			var e = Qt();
+			return e && e.activationStart || 0;
+		}, Zt = function(e, t, n) {
+			try {
+				var r;
+				if (PerformanceObserver.supportedEntryTypes.includes(e)) return (r = new PerformanceObserver(function(e) {
+					Promise.resolve().then(function() {
+						t(e.getEntries());
+					});
+				})).observe(Object.assign({
+					type: e,
+					buffered: !0
+				}, n || {})), r;
+			} catch (e) {}
+		}, en = -1, tn = function() {
+			return "hidden" !== document.visibilityState || document.prerendering ? 1 / 0 : 0;
+		}, nn = function(e) {
+			"hidden" === document.visibilityState && -1 < en && (en = "visibilitychange" === e.type ? e.timeStamp : 0, on());
+		}, rn = function() {
+			addEventListener("visibilitychange", nn, !0), addEventListener("prerenderingchange", nn, !0);
+		}, on = function() {
+			removeEventListener("visibilitychange", nn, !0), removeEventListener("prerenderingchange", nn, !0);
+		}, an = [1800, 3e3], sn = [.1, .25], ln = 0, cn = 1 / 0, un = 0, dn = function(e) {
+			e.forEach(function(e) {
+				e.interactionId && (cn = Math.min(cn, e.interactionId), un = Math.max(un, e.interactionId), ln = un ? (un - cn) / 7 + 1 : 0);
+			});
+		}, S = [], fn = /* @__PURE__ */ new Map(), hn = 0, pn = [], mn = [200, 500], gn = [2500, 4e3], vn = {}, yn = {
+			passive: !0,
+			capture: !0
+		}, wn = /* @__PURE__ */ new Date(), bn = function(e, t) {
+			w || (w = t, Nt = e, _t = /* @__PURE__ */ new Date(), Sn(removeEventListener), En());
+		}, En = function() {
+			var t;
+			0 <= Nt && Nt < _t - wn && (t = {
+				entryType: "first-input",
+				name: w.type,
+				target: w.target,
+				cancelable: w.cancelable,
+				startTime: w.timeStamp,
+				processingStart: w.timeStamp + Nt
+			}, Ft.forEach(function(e) {
+				e(t);
+			}), Ft = []);
+		}, Sn = function(t) {
+			[
+				"mousedown",
+				"keydown",
+				"touchstart",
+				"pointerdown"
+			].forEach(function(e) {
+				return t(e, Lt, yn);
+			});
+		}, Rn = [100, 300], Tn = [
+			"visibilitychange",
+			"pagehide",
+			"beforeunload"
+		], On = (O.prototype.start = function() {
+			var t = this, n = new PerformanceObserver(function(e) {
+				e = e.getEntriesByName("first-contentful-paint");
+				0 < e.length && (t.fcp = e[0].startTime, t.slientWindowStartTime = t.fcp, n.disconnect(), setTimeout(function() {
+					t.checkTTI();
+				}, Math.max(t.slienceTimeInterval - (performance.now() - t.fcp) + 20, 1)));
+			});
+			n.observe({ entryTypes: ["paint"] }), this.longtaskObserver = new PerformanceObserver(function(e) {
+				e = e.getEntries();
+				t.longTaskEntries = t.longTaskEntries.concat(e);
+			}), this.longtaskObserver.observe({ entryTypes: ["longtask"] }), this.resourceObserver = new PerformanceObserver(function(e) {
+				e = e.getEntries();
+				t.resourceEntries = t.resourceEntries.concat(e);
+			}), this.resourceObserver.observe({ entryTypes: ["resource"] });
+		}, O.prototype.checkTTI = function() {
+			var e = this;
+			this.hasSlientWindow() ? (this.calculateTTI(), this.longtaskObserver.disconnect(), this.resourceObserver.disconnect()) : setTimeout(function() {
+				e.checkTTI();
+			}, this.checkInterval);
+		}, O.prototype.hasSlientWindow = function() {
+			var e, t = performance.now();
+			return !(t - this.slientWindowStartTime < 5e3 || ((e = this.getLastLongTaskEndTime()) > this.slientWindowStartTime ? (this.slientWindowStartTime = e, this.resourceEntries = []) : this.getRequestCount(this.slientWindowStartTime, t) <= 2 ? (this.lastLongtaskEndTime = e, 0) : (t = this.resourceEntries.sort(function(e, t) {
+				return e.startTime - t.startTime;
+			}), this.slientWindowStartTime = t[this.resourceEntries.length - 2].startTime, 1)));
+		}, O.prototype.getLastLongTaskEndTime = function() {
+			var t;
+			return 0 === this.longTaskEntries.length ? -1 : (t = 0, this.longTaskEntries.forEach(function(e) {
+				e.startTime + e.duration > t && (t = e.startTime + e.duration);
+			}), t);
+		}, O.prototype.getRequestCount = function(t, n) {
+			var r = 0;
+			return this.resourceEntries.forEach(function(e) {
+				e.startTime >= t && e.startTime + e.duration <= n && (r += 1);
+			}), r;
+		}, O.prototype.calculateTTI = function() {
+			var e = -1 === this.lastLongtaskEndTime ? this.slientWindowStartTime : this.lastLongtaskEndTime, t = performance.timing.domContentLoadedEventEnd - performance.timing.navigationStart, e = Math.max(t, e);
+			this.onTTICallback(e);
+		}, O), T = (new r({ name: "webVitals" }), {
+			FCP: -1,
+			LCP: -1,
+			FID: -1,
+			CLS: -1,
+			INP: -1,
+			TTI: -1,
+			from: void 0
+		}), xn = /* @__PURE__ */ new Map(), Pn = new r({
+			name: "webVitals",
+			onNewAegis: function(e) {
+				var t, n, a, s, l, c, u, d, r = this;
+				if (ze() && "function" == typeof window.PerformanceObserver && "function" == typeof performance.getEntriesByName) try {
+					xn.set(e, {
+						isWebVitalsReported: !1,
+						hasFirstEntry: !1,
+						custom: null
+					}), Rt(kt), u = kt, d = {}, St(function() {
+						function e(e) {
+							(e = d.reportAllChanges ? e : e.slice(-1)).forEach(function(e) {
+								e.startTime < r.firstHiddenTime && (i.value = Math.max(e.startTime - Yt(), 0), i.entries = [e], t());
+							});
+						}
+						var t, n, r = Et(), i = f("LCP"), o = Zt("largest-contentful-paint", e);
+						o && (t = h(u, i, gn, d.reportAllChanges), n = bt(function() {
+							vn[i.id] || (e(o.takeRecords()), o.disconnect(), vn[i.id] = !0, t(!0));
+						}), ["keydown", "click"].forEach(function(e) {
+							addEventListener(e, function() {
+								return xt(n);
+							}, {
+								once: !0,
+								capture: !0
+							});
+						}), wt(n), Kt(function(e) {
+							i = f("LCP"), t = h(u, i, gn, d.reportAllChanges), yt(function() {
+								i.value = performance.now() - e.timeStamp, vn[i.id] = !0, t(!0);
+							});
+						}));
+					}), l = kt, c = {}, Rt(bt(function() {
+						function e(e) {
+							e.forEach(function(e) {
+								var t, n;
+								e.hadRecentInput || (t = i[0], n = i[i.length - 1], r && e.startTime - n.startTime < 1e3 && e.startTime - t.startTime < 5e3 ? (r += e.value, i.push(e)) : (r = e.value, i = [e]));
+							}), r > n.value && (n.value = r, n.entries = i, t());
+						}
+						var t, n = f("CLS", 0), r = 0, i = [], o = Zt("layout-shift", e);
+						o && (t = h(l, n, sn, c.reportAllChanges), wt(function() {
+							e(o.takeRecords()), t(!0);
+						}), Kt(function() {
+							n = f("CLS", r = 0), t = h(l, n, sn, c.reportAllChanges), yt(function() {
+								return t();
+							});
+						}), setTimeout(t, 0));
+					})), Pt(kt), a = kt, s = {}, St(function() {
+						function t(e) {
+							e.startTime < n.firstHiddenTime && (r.value = e.processingStart - e.startTime, r.entries.push(e), o(!0));
+						}
+						function e(e) {
+							e.forEach(t);
+						}
+						var n = Et(), r = f("FID"), i = Zt("first-input", e), o = h(a, r, Rn, s.reportAllChanges);
+						i && (wt(bt(function() {
+							e(i.takeRecords()), i.disconnect();
+						})), Kt(function() {
+							r = f("FID"), o = h(a, r, Rn, s.reportAllChanges), Ft = [], Nt = -1, w = null, Sn(addEventListener), Ft.push(t), En();
+						}));
+					}), n = function(e) {
+						kt({
+							name: "TTI",
+							value: e
+						});
+					}, ze() && new On(n).start(), Ct(function() {
+						r.tryReport(e, null, "onHidden");
+					}, {
+						once: !0,
+						delay: { visibilitychange: 10 }
+					}), T.from = null == (t = e) ? void 0 : t.getCurrentPageUrl();
+				} catch (e) {}
+			},
+			tryReport: function(t, n, r) {
+				var i = this;
+				void 0 === r && (r = "manual"), this.$walk(function(e) {
+					e === t && ("object" == typeof (e = i.$getConfig(t)) && !0 === e.manualReport || "onHidden" !== r ? (e = xn.get(t)) && !e.hasFirstEntry ? (e.hasFirstEntry = !0, "manual" === r && n && (e.custom = n)) : i.doReport(t, (null == e ? void 0 : e.custom) || n) : i.doReport(t, null));
+				});
+			},
+			doReport: function(n, r) {
+				var e = xn.get(n);
+				if (e) {
+					if (null != e && e.isWebVitalsReported) return;
+					e.isWebVitalsReported = !0;
+				}
+				this.$walk(function(o) {
+					var e, t;
+					o === n && (t = oe({}, T), r && Object.keys(r).forEach(function(e) {
+						null != r[e] && (t[e] = r[e]);
+					}), null != (e = o.sendPipeline)) && e.call(o, [function(e, t) {
+						var n, r = [];
+						for (n in e) "from" !== n && r.push(n + "=" + e[n]);
+						var i = -1 === (null == (i = null == (i = o.config) ? void 0 : i.performanceUrl) ? void 0 : i.indexOf("?")) ? "?" : "&";
+						t({
+							url: o.config.webVitalsUrl + i + r.join("&"),
+							type: m.VITALS,
+							log: e,
+							sendBeacon: !0
+						});
+					}], m.VITALS)(t);
+				});
+			},
+			publish: function(e, t) {
+				this.tryReport(e, t, "manual");
+			},
+			destroy: function() {
+				this.option.publish = function() {};
+			}
+		}), Ln = (new r({ name: "pagePerformance" }), 3), Cn = /* @__PURE__ */ new Map(), kn = new r({
+			name: "pagePerformance",
+			performanceMap: {},
+			onNewAegis: function(t) {
+				var e;
+				ze() && (Cn.set(t, { isPagePerformanceReported: !1 }), d ? this.publish(d, t) : this.startCalcPerformance(t), e = this.publishWhenObHidden.bind(this, t), Ct(e, { once: !0 }), t.lifeCycle.on("destroy", function() {
+					var e = Cn.get(t);
+					e && (e.isPagePerformanceReported = !1);
+				}));
+			},
+			publishWhenObHidden: function(e) {
+				var t, n = Cn.get(e);
+				if (null == n || !n.isPagePerformanceReported) {
+					n = 0;
+					if (null != (t = e.firstScreenInfo) && t.timing) n = e.firstScreenInfo.timing;
+					else if (Ge("paint")) try {
+						var r, i = performance.getEntriesByName("first-contentful-paint");
+						i && 0 < i.length && (r = i[0]) && 0 < r.startTime && (n = r.startTime);
+					} catch (e) {}
+					(d = this.buildPerformanceLog(e, n, this.getPageUrl(e), window.location.href)) && this.publish(d, e, !0);
+				}
+			},
+			buildPerformanceLog: function(e, t, n, r) {
+				var i = performance.timing;
+				if (i) return n = {
+					from: n,
+					originFrom: r,
+					dnsLookup: c(i.domainLookupEnd - i.domainLookupStart),
+					tcp: c(i.connectEnd - i.connectStart),
+					ssl: c(0 === i.secureConnectionStart ? 0 : i.requestStart - i.secureConnectionStart),
+					ttfb: c(i.responseStart - i.requestStart),
+					contentDownload: c(i.responseEnd - i.responseStart),
+					domParse: c(i.domInteractive - i.domLoading, 0, 15e3, 1070),
+					resourceDownload: c(i.loadEventStart - i.domInteractive, 0, 15e3, 1070),
+					firstScreenTiming: c(Math.floor(t), 0, 15e3, 15e3)
+				}, (r = e.config).extraPerformanceData && "{}" !== JSON.stringify(r.extraPerformanceData) && (t = (i = r.extraPerformanceData).engineInit, e = i.bundleLoad, n = oe(oe({}, n), {
+					engineInit: c(t, 0, 1e4),
+					bundleLoad: c(e, 0, 1e4)
+				})), n;
+			},
+			publish: function(a, s, l) {
+				var c = this;
+				void 0 === l && (l = !1), this.$walk(function(o) {
+					var e, i;
+					o === s && ((e = Cn.get(o)) && (e.isPagePerformanceReported = !0), i = a.originFrom || window.location.href, a.originFrom && delete a.originFrom, o.sendPipeline([function(e, t) {
+						var n, r, i = [];
+						for (n in e) "from" !== n && i.push(n + "=" + e[n]);
+						if (c.$getConfig(o)) return r = -1 === (null == (r = o.config.performanceUrl) ? void 0 : r.indexOf("?")) ? "?" : "&", t({
+							url: o.config.performanceUrl + r + i.join("&"),
+							type: m.PERFORMANCE,
+							log: e,
+							sendBeacon: l
+						});
+					}], m.PERFORMANCE)(oe({}, a)), setTimeout(function() {
+						var e = [
+							"duration: " + (a.dnsLookup + a.tcp + a.ssl + a.ttfb + a.contentDownload + a.domParse + a.resourceDownload) + "ms",
+							"firstScreenTiming: " + a.firstScreenTiming + "ms",
+							"dnsLookup: " + a.dnsLookup + "ms",
+							"tcp: " + a.tcp + "ms",
+							"ssl: " + a.ssl + "ms",
+							"ttfb: " + a.ttfb + "ms",
+							"contentDownload: " + a.contentDownload + "ms",
+							"domParse: " + a.domParse + "ms",
+							"resourceDownload: " + a.resourceDownload + "ms",
+							"lcp: " + T.LCP + "ms",
+							"fid: " + T.FID + "ms",
+							"cls: " + T.CLS + "ms",
+							"fcp: " + T.FCP + "ms",
+							a.engineInit ? "engineInit: " + a.engineInit + "ms" : "",
+							a.bundleLoad ? "bundleLoad: " + a.bundleLoad + "ms" : ""
+						].filter(function(e) {
+							return e;
+						}).join("\n\n"), t = c.$getConfig(o), n = !1;
+						if ("function" == typeof (null == t ? void 0 : t.isSlowPage)) try {
+							n = null == t ? void 0 : t.isSlowPage(a, T);
+						} catch (e) {
+							console.warn("[Aegis] isSlowPage function happen error:", e, ", this data will not be reported.");
+							return;
+						}
+						else null != t && t.slowPageThreshold && "number" == typeof t.slowPageThreshold ? a.firstScreenTiming > (null == t ? void 0 : t.slowPageThreshold) && (n = !0) : n = 1e3 < a.firstScreenTiming;
+						var t = s.config.pageLoadLog, r = s.config.slowPageLoadLog && n, e = {
+							msg: e,
+							ext1: (null == (e = a.firstScreenTiming) ? void 0 : e.toString()) || "",
+							level: n ? le.SLOW_PAGE_LOAD : le.PAGE_LOAD,
+							errorMsg: "",
+							originFrom: i
+						};
+						(t || r) && o.normalLogPipeline(e);
+					}, 3e3));
+				});
+			},
+			getPageUrl: function(e) {
+				var t = this.$getConfig(e);
+				if (null != t && t.urlHandler && "function" == typeof (null == t ? void 0 : t.urlHandler)) {
+					t = null == t ? void 0 : t.urlHandler();
+					if (t) return encodeURIComponent(t);
+				}
+				return e.getCurrentPageUrl();
+			},
+			startCalcPerformance: function(t) {
+				var n = this;
+				try {
+					var r = this.getPageUrl(t), i = t.getOriginFrom();
+					this.getFirstScreenTiming(t, function(e) {
+						d = n.buildPerformanceLog(t, e, r, i);
+						e = Cn.get(t);
+						!d || null != e && e.isPagePerformanceReported || n.publish(d, t);
+					});
+				} catch (t) {}
+			},
+			getFirstScreenTiming: function(l, c) {
+				var u = this;
+				l.lifeCycle.on("destroy", function() {
+					v && clearTimeout(v);
+				});
+				var d, f = this, n = [
+					"script",
+					"style",
+					"link",
+					"br"
+				], h = [], p = {}, m = (Ge("paint") && (d = new PerformanceObserver(function(e) {
+					e.getEntries().forEach(function(e) {
+						var t;
+						"paint" === e.entryType && "first-contentful-paint" === e.name && 0 < (t = document.querySelectorAll("[AEGIS-FIRST-SCREEN-TIMING]")).length && l.config.id && !u.performanceMap[l.config.id] && (u.setFirstScreenInfo(l, e.startTime, t[0], t), c?.(e.startTime), m.disconnect(), d.disconnect(), v) && clearTimeout(v);
+					});
+				})).observe({ entryTypes: ["paint"] }), new MutationObserver(function(e) {
+					var t = {
+						roots: [],
+						ignores: [],
+						rootsDomNum: [],
+						time: performance.now()
+					};
+					e.forEach(function(e) {
+						e && e.addedNodes && Array.prototype.slice.call(e.addedNodes).forEach(function(e) {
+							f.isEleInArray(e, t.ignores) ? t.ignores.push(e) : 1 === e.nodeType && e.hasAttribute("AEGIS-FIRST-SCREEN-TIMING") ? (Object.prototype.hasOwnProperty.apply(p, [t.time]) || (p[t.time] = []), p[t.time].push(e)) : 1 === e.nodeType && (f.hasAncestorOrSelfWithAttribute(e, "AEGIS-IGNORE-FIRST-SCREEN-TIMING") ? t.ignores.push(e) : -1 !== n.indexOf(e.nodeName.toLocaleLowerCase()) || f.isEleInArray(e, t.roots) || (t.roots.push(e), t.rootsDomNum.push(f.walkAndCount(e) || 0)));
+						});
+					}), t.roots.length && h.push(t);
+				})), g = (m.observe(document, {
+					childList: !0,
+					subtree: !0
+				}), function(n) {
+					(n = void 0 === n ? 0 : n) || (r = 0, e = Object.keys(p), i = null, e.length ? (n = Math.max.apply(null, e), i = null == (e = p[n]) ? void 0 : e[0]) : h.forEach(function(e) {
+						for (var t = 0; t < e.roots.length; t++) e.rootsDomNum[t] > r && f.isInFirstScreen(e.roots[t]) && (r = e.rootsDomNum[t], n = e.time, i = e.roots[t]);
+					}), i && u.setFirstScreenInfo(l, n, i, p), h.length = 0, Object.keys(p).forEach(function(e) {
+						p[e] = p[e].map(function(e) {
+							var t = { tagName: e.tagName }, n = e.attributes;
+							if (!n) return e;
+							for (var r = 0; r < n.length; r++) {
+								var i = n[r];
+								i.name && (t[i.name] = e.getAttribute(i.name));
+							}
+							return t;
+						});
+					}));
+					var r, i, e = performance.timing, t = e.domInteractive - e.domLoading, o = n;
+					v = null;
+					for (var a = 0, s = [
+						t,
+						e.loadEventStart - e.domInteractive,
+						o
+					]; a < s.length; a++) if (s[a] <= 0 && 0 < Ln) {
+						v = setTimeout(function() {
+							return g(o);
+						}, 3e3);
+						break;
+					}
+					v ? --Ln : (m.disconnect(), d?.disconnect(), c?.(n));
+				}), v = setTimeout(function() {
+					return g();
+				}, 3e3);
+			},
+			setFirstScreenInfo: function(e, t, n, r) {
+				var i;
+				e.config.id && this.performanceMap[e.config.id] || (e.config.id && (this.performanceMap[e.config.id] = !0), ("object" != typeof (null == (i = e.config) ? void 0 : i.pagePerformance) || null != (i = e.config.pagePerformance) && i.firstScreenInfo) && (e.firstScreenInfo = {
+					element: n,
+					timing: t,
+					markDoms: r
+				}));
+			},
+			isEleInArray: function(e, t) {
+				return !(!e || e === document.documentElement) && (-1 !== t.indexOf(e) || this.isEleInArray(e.parentElement, t));
+			},
+			isInFirstScreen: function(e) {
+				var t;
+				return !(!e || "function" != typeof e.getBoundingClientRect) && (e = e.getBoundingClientRect(), t = window.innerHeight, 0 <= e.left) && e.left < window.innerWidth && 0 <= e.top && e.top < t && 0 < e.width && 0 < e.height;
+			},
+			walkAndCount: function(e) {
+				var t = 0;
+				if (e && 1 === e.nodeType) {
+					t += 1;
+					var n = e.children;
+					if (null != n && n.length) for (var r = 0; r < n.length; r++) 1 === n[r].nodeType && n[r].hasAttribute("AEGIS-IGNORE-FIRST-SCREEN-TIMING") || (t += this.walkAndCount(n[r]));
+				}
+				return t;
+			},
+			hasAncestorOrSelfWithAttribute: function(e, t) {
+				for (var n = e; n && n !== document.body;) {
+					if (n.hasAttribute(t)) return !0;
+					n = n.parentElement;
+				}
+				return !1;
+			}
+		}), In = (new r({ name: "spa" }), [
+			"replaceState",
+			"pushState",
+			"popstate",
+			"hashchange"
+		]), An = new r({
+			name: "spa",
+			originFireUrl: "",
+			onNewAegis: function(t) {
+				var n = this;
+				history.pushState = this.wr("pushState") || history.pushState, history.replaceState = this.wr("replaceState") || history.replaceState, this.sendPv = this.sendPv.bind(this), t.config.spa && this.sendPv(t), In.forEach(function(e) {
+					return window.addEventListener(e, function() {
+						return n.sendPv.call(n, t);
+					});
+				});
+			},
+			wr: function(n) {
+				var r = history[n], e = "__" + n + "__hasWrittenByTamSpa";
+				return "function" == typeof r && !history[e] && (Object.defineProperty(history, e, {
+					value: !0,
+					enumerable: !1
+				}), function() {
+					var e = r.apply(this, arguments), t = null;
+					return "function" == typeof Event ? t = new Event(n) : (t = document.createEvent("HTMLEvents")).initEvent(n, !1, !0), window.dispatchEvent(t), e;
+				});
+			},
+			sendPv: function(i) {
+				var n = this;
+				setTimeout(function() {
+					var t = location.pathname + location.hash + i.config.id;
+					n.$walk(function(e) {
+						var r;
+						e === i && (r = e.config.pvUrl) && t && t !== n.originFireUrl && (e.sendPipeline([function(e, t) {
+							var n = null != r && r.includes("?") ? "&" : "?";
+							t({
+								url: r + n + "originFrom=" + encodeURIComponent(i.getOriginFrom()),
+								type: m.PV
+							});
+						}], m.PV)(null), n.originFireUrl = t);
+					});
+				}, 0);
+			},
+			destroy: function() {
+				this.option.sendPv = function() {};
+			}
+		});
+		function O(e) {
+			this.slienceTimeInterval = 5e3, this.checkInterval = 100, this.fcp = 0, this.longTaskEntries = [], this.resourceEntries = [], this.slientWindowStartTime = performance.now(), this.onTTICallback = e;
+		}
+		function Mn(l) {
+			return ae(this, void 0, void 0, function() {
+				var t, n, r, i, o, a, s;
+				return se(this, function(e) {
+					switch (e.label) {
+						case 0: t = new Blob([l]).stream().pipeThrough(new CompressionStream("gzip")), t = t.getReader(), n = [], e.label = 1;
+						case 1: return [4, t.read()];
+						case 2:
+							if (r = e.sent(), i = r.done, r = r.value, i) return [3, 4];
+							n.push(r), e.label = 3;
+						case 3: return [3, 1];
+						case 4:
+							if (1 === n.length) return [2, n[0]];
+							for (i = n.reduce(function(e, t) {
+								return e + t.length;
+							}, 0), o = new Uint8Array(i), s = a = 0; s < n.length; s += 1) o.set(n[s], a), a += n[s].length;
+							return [2, o];
+					}
+				});
+			});
+		}
+		var x = null, Nn = !1, _n = 0, P = /* @__PURE__ */ new Map();
+		var Fn = "__MONITOR_SESSION_V1__";
+		function Hn(e) {
+			try {
+				sessionStorage.setItem("__MONITOR_SESSION_V1__", JSON.stringify(e));
+			} catch (e) {}
+		}
+		function Un(e, t) {
+			var n;
+			return "undefined" == typeof window ? {
+				sessionId: t(),
+				createdAt: Date.now(),
+				lastActivity: Date.now(),
+				source: e,
+				version: 1
+			} : null != (n = window[Fn]) && n.sessionId ? (n.lastActivity = Date.now(), Hn(n), n) : (n = (() => {
+				try {
+					var e, t, n = sessionStorage.getItem("__MONITOR_SESSION_V1__");
+					return n ? "string" != typeof (e = JSON.parse(n)).sessionId || "number" != typeof e.createdAt || "number" != typeof e.lastActivity || 36e5 < (t = Date.now()) - e.createdAt || 9e5 < t - e.lastActivity ? null : (e.lastActivity = t, e) : null;
+				} catch (n) {
+					return null;
+				}
+			})()) ? (Hn(window[Fn] = n), n) : (n = {
+				sessionId: t(),
+				createdAt: Date.now(),
+				lastActivity: Date.now(),
+				source: e,
+				version: 1
+			}, Hn(window[Fn] = n), n);
+		}
+		N(qn = L, n = Dn = n), qn.prototype = null === n ? Object.create(n) : (jn.prototype = n.prototype, new jn()), L.resolveGzipConfig = function(e) {
+			var t, n = {
+				enable: !0,
+				threshold: 1024,
+				debug: !1,
+				useWorker: !0,
+				workerThreshold: 4096
+			};
+			return !1 === e ? oe(oe({}, n), { enable: !1 }) : !0 === e || null == e ? n : {
+				enable: !1 !== e.enable,
+				threshold: null != (t = e.threshold) ? t : n.threshold,
+				debug: null != (t = e.debug) ? t : n.debug,
+				useWorker: null != (t = e.useWorker) ? t : n.useWorker,
+				workerThreshold: null != (t = e.workerThreshold) ? t : n.workerThreshold
+			};
+		}, L.prototype.addExtBean = function(e, t) {
+			t && this.extendBean(e, encodeURIComponent("string" == typeof t && [
+				"ext1",
+				"ext2",
+				"ext3"
+			].includes(e) ? t.slice(0, 1024) : t));
+		}, L.prototype.getBean = function(t) {
+			var n = this;
+			return void 0 === t && (t = []), "" + Object.getOwnPropertyNames(this.bean).filter(function(e) {
+				return -1 === t.indexOf(e);
+			}).map(function(e) {
+				return "from" === e ? "from=" + n.getCurrentPageUrl() : e + "=" + n.bean[e];
+			}).join("&");
+		}, L.prototype.getCurrentPageUrl = function() {
+			var e = this.config.pageUrl || location.href, e = (e = "function" == typeof this.config.urlHandler ? this.config.urlHandler() || location.href : e).slice(0, 2048);
+			return encodeURIComponent(e);
+		}, L.prototype.getOriginFrom = function() {
+			try {
+				return ("undefined" != typeof window && window.location ? window.location.href : "").slice(0, 2048);
+			} catch (e) {
+				return "";
+			}
+		}, L.prototype.reportPageView = function(e) {
+			var r, i, o = this.config.pvUrl;
+			o && (r = this.getOriginFrom(), i = "string" == typeof e && e ? e.slice(0, 2048) : "", this.sendPipeline([function(e, t) {
+				var n = r ? q(o, { originFrom: r }) : o;
+				t({
+					url: i ? q(n, { from: i }) : n,
+					type: m.PV,
+					beanFilter: i ? ["from"] : void 0
+				});
+			}], m.PV)(null));
+		}, L.prototype.ready = function() {
+			function o() {
+				var e, n, r, i;
+				t.reportRequestQueue.length && (e = t.reportRequestQueue.splice(0, 1)[0], n = e.options, r = e.success, i = e.fail, t.$request(n, function() {
+					for (var e = [], t = 0; t < arguments.length; t++) e[t] = arguments[t];
+					try {
+						return null == r ? void 0 : r.apply(n, e);
+					} finally {
+						o();
+					}
+				}, function() {
+					for (var e = [], t = 0; t < arguments.length; t++) e[t] = arguments[t];
+					try {
+						return null == i ? void 0 : i.apply(n, e);
+					} finally {
+						o();
+					}
+				}));
+			}
+			var t = this;
+			o(), this.isReportReady = !0;
+		}, L.prototype.request = function(u, r, d) {
+			var f, h, p = this;
+			this.config.reportImmediately || this.isReportReady ? this.$request(u, f = function(e) {
+				var t, n = It("aegis-web-retry-report-requests");
+				null != n && n.length && u.extraRetryOptions && (0 <= (t = n.findIndex(function(e) {
+					return e.extraRetryOptions.requestId === u.extraRetryOptions.requestId;
+				})) && (n.splice(t, 1), At("aegis-web-retry-report-requests", JSON.stringify(n))), delete window[u.extraRetryOptions.success], delete window[u.extraRetryOptions.fail]), r?.(e);
+			}, h = function(n) {
+				if (!p.config.reportRetry || u.type === m.WHITE_LIST || u.type === m.SDK_ERROR) return null == d ? void 0 : d(n);
+				var e = "boolean" == typeof p.config.reportRetry ? ft : oe(oe({}, ft), p.config.reportRetry), t = e.maxRetryCount, r = void 0 === t ? ft.maxRetryCount : t, t = e.retryInterval, t = void 0 === t ? ft.retryInterval : t, i = e.whenRetryEndStillFail, o = void 0 === i ? ft.whenRetryEndStillFail : i, i = e.maxStorageCount, a = Math.min(100, Math.max(20, void 0 === i ? ft.maxStorageCount : i)), s = (u.extraRetryOptions || (u.extraRetryOptions = {
+					requestId: "",
+					retriedCount: 0,
+					success: "",
+					fail: ""
+				}), u.extraRetryOptions), l = (s.requestId = s.requestId || u.url + "-" + Date.now() + "-" + Math.random(), s.requestId), c = (s.retriedCount = s.retriedCount || 0, s.success = s.success || l + "_successCallback", s.fail = s.fail || l + "_failCallback", It("aegis-web-retry-report-requests"));
+				if (c.find(function(e) {
+					return e.extraRetryOptions.requestId === l;
+				})) {
+					e = c.findIndex(function(e) {
+						return e.extraRetryOptions.requestId === l;
+					});
+					c[e] = u;
+				} else for (c.push(u); c.length > a;) c.shift();
+				At("aegis-web-retry-report-requests", JSON.stringify(c)), setTimeout(function() {
+					var e, t;
+					s.retriedCount < r ? (u.extraRetryOptions.retriedCount += 1, p.$request(u, f, h)) : (-1 !== (t = (e = It("aegis-web-retry-report-requests")).findIndex(function(e) {
+						return (null == (e = e.extraRetryOptions) ? void 0 : e.requestId) === l;
+					})) && "discard" === o && (e.splice(t, 1), At("aegis-web-retry-report-requests", JSON.stringify(e))), d?.(n), delete window[s.success], delete window[s.fail]);
+				}, "function" == typeof t ? t(u.extraRetryOptions.retriedCount) : t), window[s.success] || (window[s.success] = f), window[s.fail] || (window[s.fail] = h);
+			}) : this.reportRequestQueue.push({
+				options: u,
+				success: r,
+				fail: d
+			});
+		}, L.prototype.$request = function(s, e, t) {
+			var n, r;
+			if (s && "string" == typeof s.url && "" !== s.url && this.bean.id) return n = s.url, !1 !== s.addBean && (n = ((e, t) => {
+				var n, r, i, o = e, a = s.beanFilter || [];
+				for (n in t) -1 === a.indexOf(n) && ((i = (r = new RegExp("([?&])" + n + "(=([^&]*))?(?=&|$)")).exec(o)) ? i[2] && "" !== i[3] && "undefined" !== i[3] || (o = o.replace(r, "$1" + n + "=" + t[n])) : (i = -1 < o.indexOf("?") ? "&" : "?", o += i + n + "=" + t[n]));
+				return o;
+			})(n, oe(oe({}, this.bean), { from: this.getCurrentPageUrl() }))), s.url = n, n = s.method || "get", r = this.config.onBeforeRequest, (s = r ? r(s, this) : s) ? s.url ? void ((null != s && s.sendBeacon || this.sendNow) && "function" == typeof (null == navigator ? void 0 : navigator.sendBeacon) ? navigator.sendBeacon(s.url, s.data) : ("string" == typeof s.data && (s.data = s.data.replace(/eval/gi, "evaI")), (r = this.isGzipReportEnabled(this.resolvedGzipConfig.enable)) && L.compressionSupported && "get" !== n.toLowerCase() && "string" == typeof s.data && s.data.length >= this.resolvedGzipConfig.threshold ? this.sendWithGzip(s, n, r, e, t) : this.sendXhr(s, n, s.data, Be(r, !1), e, t))) : console.warn("Please handle the parameters reasonably, options.url is necessary") : console.warn("Sending request blocked");
+		}, L.prototype.sendWithGzip = function(l, c, u, d, f) {
+			return ae(this, void 0, void 0, function() {
+				var r, i, o, s;
+				return se(this, function(e) {
+					switch (e.label) {
+						case 0:
+							if (e.trys.push([
+								0,
+								9,
+								,
+								10
+							]), r = new TextEncoder(), r = r.encode(l.data), o = this.resolvedGzipConfig, i = o.useWorker, o = o.workerThreshold, s = void 0, !(i && r.byteLength >= o)) return [3, 6];
+							e.label = 1;
+						case 1: return e.trys.push([
+							1,
+							3,
+							,
+							5
+						]), [4, (a = r, new Promise(function(t, n) {
+							var r, i, e, o = (() => {
+								if (Nn) return null;
+								if (x) return x;
+								try {
+									var e = new Blob(["\nself.onmessage=async function(e){\n  try{\n    var d=e.data,id=d.id,raw=d.data;\n    var s=new Blob([raw]).stream().pipeThrough(new CompressionStream(\"gzip\"));\n    var r=s.getReader(),chunks=[];\n    for(;;){var res=r.read();var p=await res;if(p.done)break;chunks.push(p.value);}\n    var len=0;for(var i=0;i<chunks.length;i++)len+=chunks[i].length;\n    var out=new Uint8Array(len),off=0;\n    for(var i=0;i<chunks.length;i++){out.set(chunks[i],off);off+=chunks[i].length;}\n    self.postMessage({id:id,compressed:out},[out.buffer]);\n  }catch(err){\n    self.postMessage({id:id,error:err.message||\"compress error\"});\n  }\n};"], { type: "application/javascript" }), t = URL.createObjectURL(e);
+									return x = new Worker(t), URL.revokeObjectURL(t), x.onmessage = function(e) {
+										var e = e.data, t = e.id, n = e.compressed, e = e.error, r = P.get(t);
+										r && (P.delete(t), e ? r.reject(new Error(e)) : r.resolve(n));
+									}, x.onerror = function() {
+										Nn = !0, P.forEach(function(e) {
+											return e.reject(/* @__PURE__ */ new Error("gzip worker error"));
+										}), P.clear(), x && (x.terminate(), x = null), P.forEach(function(e) {
+											return e.reject(/* @__PURE__ */ new Error("worker terminated"));
+										}), P.clear();
+									}, x;
+								} catch (e) {
+									return Nn = !0, null;
+								}
+							})();
+							o ? (r = _n += 1, i = setTimeout(function() {
+								var e = P.get(r);
+								e && (P.delete(r), e.reject(/* @__PURE__ */ new Error("gzip worker timeout")));
+							}, 5e3), P.set(r, {
+								resolve: function(e) {
+									clearTimeout(i), t(e);
+								},
+								reject: function(e) {
+									clearTimeout(i), n(e);
+								}
+							}), e = a.buffer.slice(a.byteOffset, a.byteOffset + a.byteLength), o.postMessage({
+								id: r,
+								data: new Uint8Array(e)
+							}, [e])) : n(/* @__PURE__ */ new Error("worker unavailable"));
+						}))];
+						case 2: return s = e.sent(), [3, 5];
+						case 3: return e.sent(), [4, Mn(r)];
+						case 4: return s = e.sent(), [3, 5];
+						case 5: return [3, 8];
+						case 6: return [4, Mn(r)];
+						case 7: s = e.sent(), e.label = 8;
+						case 8: return this.resolvedGzipConfig.debug && console.info("[Aegis gzip] before=" + (t = r.byteLength) + "B after=" + (n = s.byteLength) + "B saved=" + (t - n) + "B ratio=" + (0 < t ? (n / t * 100).toFixed(1) : "0.0") + "%"), this.sendXhr(l, c, s, Be(u, !0), d, f), [3, 10];
+						case 9: return e.sent(), this.sendXhr(l, c, l.data, Be(u, !1), d, f), [3, 10];
+						case 10: return [2];
+					}
+					var t, n, a;
+				});
+			});
+		}, L.prototype.sendXhr = function(e, t, n, r, i, o) {
+			var a = new XMLHttpRequest();
+			a.sendByAegis = !0, a.addEventListener("readystatechange", function() {
+				4 === a.readyState && (400 <= a.status || 0 === a.status ? o?.(a.response) : i?.(a.response));
+			}), "get" === t.toLocaleLowerCase() ? (a.open("get", q(e.url, e.data)), a.send()) : (a.open("post", e.url), e.contentType && a.setRequestHeader("Content-Type", e.contentType), r && a.setRequestHeader("Content-Encoding", r), a.send(n));
+		}, L.prototype.publishPluginsLogs = function() {
+			L.installedPlugins.find(function(e) {
+				return "reportAssetSpeed" === e.name;
+			})?.option.collectNotReportedLog(this);
+		}, L.prototype.uploadLogs = function(e, t) {
+			var n;
+			void 0 === e && (e = {}), void 0 === t && (t = {}), null != (n = this.lifeCycle) && n.emit("uploadLogs", e, t);
+		}, L.prototype.reportWebVitals = function(e) {
+			try {
+				var t = L.installedPlugins.find(function(e) {
+					return "webVitals" === e.name;
+				});
+				t && this.config.webVitals && this.config.webVitals.manualReport && t.option.publish(this, e);
+			} catch (e) {}
+		}, L.sessionID = Un("aegis", Ae).sessionId, L.compressionSupported = null;
+		var Dn, qn, n = L;
+		function L(e) {
+			var t, n, r, a, i, o, s = Dn.call(this, e) || this;
+			s.sendNow = !1, s.isReportReady = !1, s.reportRequestQueue = [], s.speedLogPipeline = He([
+				ee(s),
+				(a = s.config, function(e, t) {
+					var n, r, i, o = "number" == typeof a.repeat ? a.repeat : 60;
+					!a.speedSample || o <= 0 ? t(e) : (n = (null == a ? void 0 : a.id) || "0", r = Oe[n] || {}, Array.isArray(e) ? (i = e.filter(function(e) {
+						var t = !r[e.url] || r[e.url] < o;
+						return t ? (r[e.url] = 1 + ~~r[e.url], Oe[n] = r) : v[n] || xe(n), t;
+					})).length && t(i) : !r[e.url] || r[e.url] < o ? (r[e.url] = 1 + ~~r[e.url], Oe[n] = r, t(e)) : v[n] || xe(n));
+				}),
+				(r = s, function(t, n) {
+					Ht(function(e) {
+						r.extendBean("netType", e), n(t);
+					});
+				}),
+				function(e, t) {
+					null != (n = s.lifeCycle) && n.emit("beforeReportSpeed", e);
+					var n, r = s.config.beforeReportSpeed;
+					if ((e = "function" == typeof r ? e.filter(function(e) {
+						return !1 !== r(e);
+					}) : e).length) return t(e);
+				},
+				function(e, t) {
+					t(e.map(function(e) {
+						return void 0 !== e.payload && delete e.payload, e;
+					}));
+				},
+				function(e) {
+					return s.sendPipeline([function(e, t) {
+						t({
+							type: m.SPEED,
+							url: "" + s.config.speedUrl,
+							method: "post",
+							contentType: "application/json",
+							data: Q(e, oe(oe({}, s.bean), { from: s.getCurrentPageUrl() })),
+							log: e
+						});
+					}], m.SPEED)(e);
+				}
+			]), e.asyncPlugin = !0;
+			try {
+				"undefined" != typeof document && (e.uin = e.uin || (null != (t = document.cookie.match(/\buin=\D+(\d*)/)) ? t : [])[1] || (null != (n = document.cookie.match(/\bilive_uin=\D*(\d+)/)) ? n : [])[1] || ""), s.init(e), s.resolvedGzipConfig = L.resolveGzipConfig(s.config.gzip), null === L.compressionSupported && (L.compressionSupported = (() => {
+					try {
+						return "function" == typeof CompressionStream;
+					} catch (e) {
+						return !1;
+					}
+				})()), s.extendBean("sessionId", L.sessionID), s.extendBean("from", s.getCurrentPageUrl()), "undefined" != typeof document && s.extendBean("referer", encodeURIComponent(document.referrer || ""));
+				i = function(e, t) {
+					"aegis" !== t && e && e !== L.sessionID && (L.sessionID = e, s.extendBean("sessionId", e));
+				};
+				var l = "undefined" == typeof window ? function() {} : (window.addEventListener("monitor-session-update", o = function(e) {
+					i(e.detail.sessionId, e.detail.source);
+				}), function() {
+					return window.removeEventListener("monitor-session-update", o);
+				}), c = (s.lifeCycle.on("destroy", l), function() {
+					function i() {
+						var r;
+						e.length && (r = e.splice(0, 1)[0], At("aegis-web-retry-report-requests", JSON.stringify(e)), s.$request(r, function() {
+							for (var e, t = [], n = 0; n < arguments.length; n++) t[n] = arguments[n];
+							try {
+								return null == (e = window[r.extraRetryOptions.success]) ? void 0 : e.apply(r, t);
+							} finally {
+								i();
+							}
+						}, function() {
+							for (var e, t = [], n = 0; n < arguments.length; n++) t[n] = arguments[n];
+							try {
+								return null == (e = window[r.extraRetryOptions.fail]) ? void 0 : e.apply(r, t);
+							} finally {
+								i();
+							}
+						}));
+					}
+					var e = It("aegis-web-retry-report-requests");
+					i();
+				});
+				"requestIdleCallback" in window ? window.requestIdleCallback(function() {
+					return ae(s, void 0, void 0, function() {
+						return se(this, function(e) {
+							return c(), [2];
+						});
+					});
+				}) : setTimeout(c, 5e3);
+				for (var u = 1; u <= 10; u++) s.addExtBean("ext" + u, e["ext" + u]);
+			} catch (e) {
+				console.warn(e), console.log("%cThe above error occurred in the process of initializing Aegis, which will affect your normal use of Aegis.\nIt is recommended that you contact us for feedback and thank you for your support.", "color: red"), s.sendSDKError(e);
+			}
+			return s;
+		}
+		function jn() {
+			this.constructor = qn;
+		}
+		new r({ name: "ie" }), new r({ name: "onClose" });
+		var Wn = new r({
+			name: "onClose",
+			onNewAegis: function(e) {
+				var t = this, n = !1;
+				Ct(function() {
+					n || (n = !0, t.publishNotReportedLog(e));
+				}, { events: ["pagehide", "beforeunload"] });
+			},
+			publishNotReportedLog: function(t) {
+				var n = this;
+				this.$walk(function(e) {
+					e === t && (e.sendNow = !0, e.publishPluginsLogs(), n.publishThrottlePipeLogs(e));
+				});
+			},
+			publishThrottlePipeLogs: function(e) {
+				e?.speedLogPipeline([]), e?.eventPipeline([]), e?.customTimePipeline([]), e?.normalLogPipeline([]);
+			}
+		});
+		new r({ name: "aid" });
+		var Bn, zn = {
+			containers: [
+				"body",
+				"html",
+				"#app",
+				"#root"
+			],
+			ignoreContainers: [],
+			containerMatchers: {
+				tagName: ["body", "html"],
+				id: ["app", "root"],
+				className: []
+			},
+			ignoreMatchers: {
+				tagName: [],
+				id: [],
+				className: []
+			},
+			detectStartPosition: {
+				x: 0,
+				y: 0
+			},
+			emptyElementsPercent: 70,
+			sameElementsPercent: 70,
+			debounceDuration: 2e3,
+			everySideSampleNumber: 9,
+			disableSameElementsCheck: !0,
+			ignoreElesWhenDomChange: [],
+			reDetectInterval: 2e3,
+			samePointDepth: 5,
+			customBlankScreenDector: null,
+			enableScreenshot: !1,
+			needScreenShotMeta: !1,
+			screenshotQuality: .1,
+			screenshotFormat: "image/webp",
+			onBlankScreenCapture: null,
+			clientScreenshotTimeout: 1e4
+		}, Gn = [
+			"canvas",
+			"img",
+			"svg",
+			"iframe"
+		], Vn = ((sr = Bn = Bn || {})[sr.UNKNOWN = 0] = "UNKNOWN", sr[sr.ERROR = 1] = "ERROR", sr[sr.DOM_CHANGE = 2] = "DOM_CHANGE", /* @__PURE__ */ new Set([
+			"SCRIPT",
+			"STYLE",
+			"NOSCRIPT",
+			"TEMPLATE",
+			"HEAD",
+			"META",
+			"LINK",
+			"BR",
+			"WBR"
+		])), Jn = (k.prototype.capture = function() {
+			return ae(this, void 0, void 0, function() {
+				var t, n, r, i, o, a, s, l, c, u, d, f, h, p, m, g, v, y, w;
+				return se(this, function(e) {
+					switch (e.label) {
+						case 0: return e.trys.push([
+							0,
+							7,
+							,
+							8
+						]), t = performance.now(), this.tasks = [], this.nodeCounter = 0, this.resourcePool.clear(), this.maxDepthReached = 0, this.depthLimitHitCount = 0, u = window.innerWidth, g = window.innerHeight, this.vw = u, this.vh = g, l = window.devicePixelRatio || 1, r = u * this.options.scale, c = g * this.options.scale, i = Math.min(1, this.options.maxWidth / r, this.options.maxHeight / c), n = r * i, r = c * i, c = l * this.options.scale, this.canvas.width = u * c, this.canvas.height = g * c, this.ctx.scale(c, c), i = n / (u * c), this.totalScale = c * i, this.ctx.beginPath(), this.ctx.rect(0, 0, u, g), this.ctx.clip(), this.collectTasks(document.body, 0, [], 0), this.tasks.sort(function(e, t) {
+							return e.zIndex !== t.zIndex ? e.zIndex - t.zIndex : e.domOrder - t.domOrder;
+						}), o = [], this.resourcePool.forEach(function(e) {
+							e instanceof Promise && o.push(e);
+						}), 0 < o.length ? [4, Promise.all(o)] : [3, 2];
+						case 1: e.sent(), e.label = 2;
+						case 2: a = "", s = 0, e.label = 3;
+						case 3: return s < this.tasks.length ? (l = this.tasks[s], (c = 0 < l.clipRects.length ? l.clipRects.map(function(e) {
+							return e.left + "," + e.top;
+						}).join("|") : "") !== a && (a && this.ctx.restore(), c && (this.ctx.save(), this.applyClipRects(l.clipRects)), a = c), [4, l.render()]) : [3, 6];
+						case 4: e.sent(), e.label = 5;
+						case 5: return s++, [3, 3];
+						case 6:
+							if (a && this.ctx.restore(), u = this.canvas, i < .99) {
+								if (d = this.canvas, f = this.canvas.width, h = this.canvas.height, 3 * n < f) for (; 2 * n < f && (f = Math.floor(f / 2), h = Math.floor(h / 2), (p = document.createElement("canvas")).width = f, p.height = h, m = p.getContext("2d"));) m.imageSmoothingEnabled = !0, m.imageSmoothingQuality = "medium", m.drawImage(d, 0, 0, f, h), d = p;
+								(g = document.createElement("canvas")).width = n, g.height = r, (v = g.getContext("2d")) && (v.imageSmoothingEnabled = !0, v.imageSmoothingQuality = "medium", v.drawImage(d, 0, 0, n, r), u = g);
+							}
+							return v = "jpg" === this.options.format ? "jpeg" : this.options.format, y = u.toDataURL("image/" + v, this.options.quality), this.options.debug && (w = 0 < this.depthLimitHitCount ? " ⚠️ 深度限制触发" + this.depthLimitHitCount + "次" : "", console.log("%c🚀 截图完成 (" + Math.round(performance.now() - t) + "ms) 尺寸:" + u.width + "x" + u.height + " 节点:" + this.nodeCounter + " 任务:" + this.tasks.length + " 最大深度:" + this.maxDepthReached + "/100" + w, "color: #673AB7; font-weight: bold;")), this.cleanup(), [2, y];
+						case 7: return w = e.sent(), this.cleanup(), this.options.debug && console.error("Screenshot capture failed:", w), [2, ""];
+						case 8: return [2];
+					}
+				});
+			});
+		}, k.prototype.isElementVisible = function(e, t) {
+			return 0 < t.length ? (t = t[t.length - 1], !(e.right < t.left || e.left > t.right) && (!(e.bottom < t.top || e.top > t.bottom) || Math.abs(e.width - t.width) < 50)) : !(e.bottom < 0 || e.top > this.vh || e.right < 0 || e.left > this.vw);
+		}, k.prototype.applyClipRects = function(e) {
+			for (var t = 0, n = e; t < n.length; t++) {
+				var r = n[t];
+				this.ctx.beginPath(), this.ctx.rect(r.left, r.top, r.width, r.height), this.ctx.clip();
+			}
+		}, k.prototype.collectTasks = function(n, e, t, r) {
+			var i = this;
+			if (void 0 === e && (e = 0), void 0 === t && (t = []), (r = void 0 === r ? 0 : r) > this.maxDepthReached && (this.maxDepthReached = r), 100 < r) this.depthLimitHitCount++;
+			else {
+				this.nodeCounter++;
+				var o = this.nodeCounter;
+				if (3 !== n.nodeType) {
+					if (n instanceof Element) {
+						var a = n.tagName;
+						if (!Vn.has(a)) {
+							var s = getComputedStyle(n);
+							if ("none" !== s.display && "hidden" !== s.visibility && 0 !== parseFloat(s.opacity)) {
+								var l = n.getBoundingClientRect(), c = s.position, u = "fixed" === c || "sticky" === c, d = e, f = s.zIndex, h = ("auto" !== f && (f = parseInt(f, 10), isNaN(f) || (d = f)), u && d < 2e4 && (d += 2e4), 2e4 <= e && d < 2e4 && (d += 2e4), d = d < e ? e : d), f = 2e4 <= e, p = "fixed" === c ? [] : t, d = 0 <= l.bottom && l.top <= this.vh && 0 <= l.right && l.left <= this.vw;
+								if (this.options.viewportOnly) {
+									if (0 === l.width && 0 === l.height && !u && !f) return;
+									if (!(d || u || f || n.parentElement === document.body || this.isElementVisible(l, p))) return;
+								}
+								var m, g, c = s.overflow || s.overflowX || s.overflowY, c = "hidden" === c || "scroll" === c || "auto" === c || "clip" === c, v = (this.checkAndPreload(s), (d || u || f) && (0 < l.width || 0 < l.height) && (m = parseFloat(s.opacity), this.addTask(h, o, p, function() {
+									return i.drawBox(s, l, u, m);
+								})), ["::before", "::after"].forEach(function(e) {
+									var t = getComputedStyle(n, e);
+									"none" === t.content && "none" === t.backgroundImage && "none" === t.webkitMaskImage || (i.checkAndPreload(t), i.addTask(h, o, p, function() {
+										return i.drawPseudoElement(t, l);
+									}));
+								}), n instanceof HTMLImageElement ? (this.preloadImage(n.src), this.addTask(h, o, p, function() {
+									return i.drawImageFromUrl(n.src, l);
+								})) : n instanceof SVGElement ? (g = this.preloadSVG(n), this.addTask(h, o, p, function() {
+									return i.drawImageFromUrl(g, l);
+								})) : n instanceof HTMLCanvasElement && n !== this.canvas ? this.addTask(h, o, p, function() {
+									return i.drawCanvas(n, l);
+								}) : (n instanceof HTMLInputElement || n instanceof HTMLTextAreaElement) && this.addTask(h, o, p, function() {
+									return i.drawInputText(n, s, l);
+								}), c ? C(p, [{
+									left: l.left,
+									top: l.top,
+									right: l.right,
+									bottom: l.bottom,
+									width: l.width,
+									height: l.height
+								}]) : p), y = r + 1;
+								if (n.shadowRoot) for (var w = 0, b = Array.from(n.shadowRoot.childNodes); w < b.length; w++) L = b[w], this.collectTasks(L, h, v, y);
+								else if ("SLOT" === a) for (var E = 0, S = n.assignedNodes(); E < S.length; E++) {
+									var R = S[E];
+									this.collectTasks(R, h, v, y);
+								}
+								else for (var T = 0, O = Array.from(n.childNodes); T < O.length; T++) L = O[T], this.collectTasks(L, h, v, y);
+							}
+						}
+					} else if (n.childNodes) for (var x = 0, P = Array.from(n.childNodes); x < P.length; x++) {
+						var L = P[x];
+						this.collectTasks(L, e, t, r + 1);
+					}
+				} else null != (d = n.textContent) && d.trim() && this.addTask(e, o, t, function() {
+					return i.drawTextNode(n);
+				});
+			}
+		}, k.prototype.addTask = function(e, t, n, r) {
+			this.tasks.push({
+				zIndex: e,
+				domOrder: t,
+				clipRects: n,
+				render: r
+			});
+		}, k.prototype.drawBox = function(e, t, n, r) {
+			void 0 === n && (n = !1), void 0 === r && (r = 1);
+			var i, o = e.backgroundColor, a = e.borderColor, s = e.borderWidth, l = e.borderRadius, c = e.backgroundImage, u = e.boxShadow, d = e.webkitMaskImage || e.maskImage, f = "transparent" !== o && "rgba(0, 0, 0, 0)" !== o, h = 0 < parseFloat(s), p = c && "none" !== c, m = d && "none" !== d, g = u && "none" !== u && !u.includes("inset");
+			(f || h || p || m || g || n) && (this.ctx.save(), r < 1 && (this.ctx.globalAlpha *= r), g && (i = u.match(/(-?\d+px)\s+(-?\d+px)\s+(\d+px)\s*(\d+px)?\s*(rgba?\(.*?\)|#\w+|\w+)/) || u.match(/(rgba?\(.*?\)|#\w+|\w+)\s+(-?\d+px)\s+(-?\d+px)\s+(\d+px)\s*(\d+px)?/)) && (r = isNaN(parseFloat(i[1])), this.ctx.shadowOffsetX = parseFloat(r ? i[2] : i[1]), this.ctx.shadowOffsetY = parseFloat(r ? i[3] : i[2]), this.ctx.shadowBlur = parseFloat(r ? i[4] : i[3]), this.ctx.shadowColor = r ? i[1] : i[5] || "transparent"), g = Math.min(parseFloat(l) || 0, Math.min(t.width, t.height) / 2), this.ctx.beginPath(), 0 < g ? this.roundRectPath(t.left, t.top, t.width, t.height, g) : this.ctx.rect(t.left, t.top, t.width, t.height), u = p && c.includes("gradient"), f ? (this.ctx.fillStyle = o, this.ctx.fill()) : (n || u) && (t.bottom > .85 * this.vh && t.height < .5 * this.vh || u) && (this.ctx.fillStyle = "#ffffff", this.ctx.fill()), m && this.drawMaskImage(d, e, t), p && !u && (i = c.match(/url\(["']?(.*?)["']?\)/)) && (r = this.resourcePool.get(i[1])) && r instanceof HTMLImageElement && this.ctx.drawImage(r, t.left, t.top, t.width, t.height), h && (this.ctx.shadowColor = "transparent", this.ctx.strokeStyle = a, l = parseFloat(s), g = 1 / this.totalScale, this.ctx.lineWidth = Math.max(l, g), this.ctx.stroke()), this.ctx.restore());
+		}, k.prototype.drawMaskImage = function(e, t, n) {
+			var r, i, o, e = e.match(/url\(["']?(.*?)["']?\)/);
+			e && (e = this.resourcePool.get(e[1])) && e instanceof HTMLImageElement && ((r = document.createElement("canvas")).width = n.width, r.height = n.height, i = r.getContext("2d")) && (o = "transparent" !== t.backgroundColor && "rgba(0, 0, 0, 0)" !== t.backgroundColor, i.fillStyle = o ? t.backgroundColor : t.color || "#000", i.fillRect(0, 0, n.width, n.height), i.globalCompositeOperation = "destination-in", i.drawImage(e, 0, 0, n.width, n.height), this.ctx.drawImage(r, n.left, n.top));
+		}, k.prototype.drawPseudoElement = function(e, t) {
+			var n = e.content, r = e.backgroundImage, i = e.opacity, o = e.fontSize, a = e.color, s = e.webkitMaskImage || e.maskImage, i = (this.ctx.save(), this.ctx.globalAlpha *= parseFloat(i), s && "none" !== s ? this.drawMaskImage(s, e, t) : r && "none" !== r && (i = r.match(/url\(["']?(.*?)["']?\)/)) && (s = this.resourcePool.get(i[1])) && s instanceof HTMLImageElement && (r = parseFloat(o) || 16, this.ctx.drawImage(s, t.left + (t.width - r) / 2, t.top + (t.height - r) / 2, r, r)), (n || "").replace(/^["']|["']$/g, ""));
+			i && ![
+				"none",
+				"normal",
+				"on",
+				"off",
+				"",
+				" "
+			].includes(i.toLowerCase()) && (this.ctx.font = e.fontStyle + " " + e.fontWeight + " " + e.fontSize + " " + e.fontFamily, this.ctx.fillStyle = a, this.ctx.textAlign = "center", this.ctx.textBaseline = "middle", this.ctx.fillText(i, t.left + t.width / 2, t.top + t.height / 2)), this.ctx.restore();
+		}, k.prototype.drawInputText = function(e, t, n) {
+			if (e instanceof HTMLInputElement) {
+				var r = null == (r = e.type) ? void 0 : r.toLowerCase();
+				if ("checkbox" === r || "radio" === r || "file" === r || "submit" === r || "button" === r || "reset" === r || "image" === r || "hidden" === r || "color" === r || "range" === r) return;
+			}
+			var r = e.value, i = r || e.placeholder;
+			i && (this.ctx.save(), this.ctx.globalAlpha *= parseFloat(t.opacity), this.ctx.font = t.fontStyle + " " + t.fontWeight + " " + t.fontSize + " " + t.fontFamily, this.ctx.fillStyle = r ? t.color : "rgba(153, 153, 153, 0.7)", this.ctx.textBaseline = "middle", this.ctx.textAlign = "center" === t.textAlign ? "center" : "left", r = "center" === this.ctx.textAlign ? n.left + n.width / 2 : n.left + 10, t = n.top + (e instanceof HTMLTextAreaElement ? 18 : n.height / 2), this.ctx.fillText(i, r, t), this.ctx.restore());
+		}, k.prototype.drawTextNode = function(e) {
+			var t = e.parentElement;
+			if (t) {
+				var n = e.textContent;
+				if (n && n.trim() && !(t instanceof HTMLInputElement || t instanceof HTMLTextAreaElement)) try {
+					var r = document.createRange(), i = (r.selectNodeContents(e), r.getClientRects());
+					if (0 !== i.length) {
+						var o = getComputedStyle(t);
+						if (this.ctx.save(), this.ctx.globalAlpha *= parseFloat(o.opacity), this.ctx.font = o.fontStyle + " " + o.fontWeight + " " + o.fontSize + " " + o.fontFamily, this.ctx.fillStyle = o.color, this.ctx.textBaseline = "top", this.ctx.textAlign = "left", 1 === i.length) this.ctx.fillText(n.trim(), i[0].left, i[0].top);
+						else for (var a = n.replace(/\n\s*/g, " "), s = 0, l = 0; l < i.length; l++) {
+							var c = i[l];
+							if (!(c.width < 1)) {
+								for (var u = s, d = a.length, f = ""; u <= d;) {
+									var h = u + d >> 1, p = a.substring(s, h);
+									this.ctx.measureText(p).width <= c.width + 2 ? (f = p, u = 1 + h) : d = h - 1;
+								}
+								if (f && (this.ctx.fillText(f, c.left, c.top), s += f.length), s >= a.length) break;
+							}
+						}
+						this.ctx.restore();
+					}
+				} catch (e) {}
+			}
+		}, k.prototype.drawCanvas = function(e, t) {
+			try {
+				this.ctx.drawImage(e, t.left, t.top, t.width, t.height);
+			} catch (e) {}
+		}, k.prototype.preloadImage = function(i) {
+			var e, o = this;
+			return !i || this.resourcePool.has(i) ? (e = this.resourcePool.get(i)) instanceof Promise ? e : Promise.resolve(e || null) : (e = new Promise(function(t) {
+				function e(e) {
+					r || (r = !0, o.resourcePool.set(i, e), t(e));
+				}
+				var n = new Image(), r = !1;
+				o.options.useCORS && !i.startsWith("data:") && (n.crossOrigin = "anonymous"), n.onload = function() {
+					return e(n);
+				}, n.onerror = function() {
+					return e(null);
+				}, n.src = i, setTimeout(function() {
+					return e(null);
+				}, 2e3);
+			}), this.resourcePool.set(i, e), e);
+		}, k.prototype.preloadSVG = function(e) {
+			try {
+				var t = new XMLSerializer().serializeToString(e), n = URL.createObjectURL(new Blob([t], { type: "image/svg+xml;charset=utf-8" }));
+				return this.blobUrls.add(n), this.preloadImage(n), n;
+			} catch (e) {
+				return "";
+			}
+		}, k.prototype.cleanup = function() {
+			this.blobUrls.forEach(function(e) {
+				try {
+					URL.revokeObjectURL(e);
+				} catch (e) {}
+			}), this.blobUrls.clear(), this.resourcePool.clear(), this.tasks = [];
+		}, k.prototype.drawImageFromUrl = function(e, t) {
+			e && (e = this.resourcePool.get(e)) && e instanceof HTMLImageElement && this.ctx.drawImage(e, t.left, t.top, t.width, t.height);
+		}, k.prototype.checkAndPreload = function(e) {
+			var t = e.backgroundImage;
+			t && "none" !== t && (n = t.match(/url\(["']?(.*?)["']?\)/)) && this.preloadImage(n[1]);
+			var n, t = e.webkitMaskImage || e.maskImage;
+			t && "none" !== t && (n = t.match(/url\(["']?(.*?)["']?\)/)) && this.preloadImage(n[1]);
+		}, k.prototype.roundRectPath = function(e, t, n, r, i) {
+			this.ctx.beginPath(), this.ctx.moveTo(e + i, t), this.ctx.lineTo(e + n - i, t), this.ctx.quadraticCurveTo(e + n, t, e + n, t + i), this.ctx.lineTo(e + n, t + r - i), this.ctx.quadraticCurveTo(e + n, t + r, e + n - i, t + r), this.ctx.lineTo(e + i, t + r), this.ctx.quadraticCurveTo(e, t + r, e, t + r - i), this.ctx.lineTo(e, t + i), this.ctx.quadraticCurveTo(e, t, e + i, t), this.ctx.closePath();
+		}, k), Xn = {
+			THRESHOLDS: {
+				TINY: 1e5,
+				SMALL: 3e5,
+				MEDIUM: 8e5,
+				LARGE: 15e5,
+				LLARGE: 25e5
+			},
+			LEVELS: [
+				{
+					maxArea: 1e5,
+					scale: 1,
+					defaultQuality: .7
+				},
+				{
+					maxArea: 3e5,
+					scale: 1,
+					defaultQuality: .6
+				},
+				{
+					maxArea: 8e5,
+					scale: .7,
+					defaultQuality: .6
+				},
+				{
+					maxArea: 15e5,
+					scale: .5,
+					defaultQuality: .65
+				},
+				{
+					maxArea: 25e5,
+					scale: .45,
+					defaultQuality: .65
+				},
+				{
+					maxArea: 1 / 0,
+					scale: .45,
+					defaultQuality: .65
+				}
+			]
+		};
+		function k(e) {
+			void 0 === e && (e = {}), this.tasks = [], this.nodeCounter = 0, this.resourcePool = /* @__PURE__ */ new Map(), this.blobUrls = /* @__PURE__ */ new Set(), this.vw = 0, this.vh = 0, this.totalScale = 1, this.maxDepthReached = 0, this.depthLimitHitCount = 0, this.options = {
+				useCORS: null == (t = e.useCORS) || t,
+				scale: null != (t = e.scale) ? t : 1,
+				quality: null != (t = e.quality) ? t : .8,
+				format: null != (t = e.format) ? t : "webp",
+				viewportOnly: null == (t = e.viewportOnly) || t,
+				maxWidth: null != (t = e.maxWidth) ? t : 1920,
+				maxHeight: null != (t = e.maxHeight) ? t : 1080,
+				debug: null != (t = e.debug) && t
+			}, this.canvas = document.createElement("canvas");
+			var t, e = this.canvas.getContext("2d", { alpha: !0 });
+			if (!e) throw new Error("Failed to get 2D canvas context");
+			this.ctx = e;
+		}
+		function $n(t) {
+			return Xn.LEVELS.find(function(e) {
+				return t <= e.maxArea;
+			});
+		}
+		function Kn(e) {
+			return {
+				tagName: C(e.tagName || []),
+				id: C(e.id || []),
+				className: C(e.className || [])
+			};
+		}
+		function Qn(e) {
+			return Array.isArray(e) ? e.filter(function(e) {
+				return "string" == typeof e;
+			}).map(function(e) {
+				return e.trim();
+			}).filter(Boolean) : [];
+		}
+		function Yn(e, t, n, r, i) {
+			var o, a, s = (e = e.map(function(e) {
+				return nr(e);
+			})).map(function(e) {
+				return e.selector;
+			});
+			return (e = e[0]) ? (a = o = !1, a = or(r) ? (o = rr(e, r), rr(e, i)) : (o = ir(e, t), ir(e, n)), {
+				isWhitePoint: o && !a,
+				selectorPointers: s
+			}) : {
+				isWhitePoint: !1,
+				selectorPointers: s
+			};
+		}
+		function Zn(e) {
+			try {
+				var t, n, r, i, o, a, s = e.config.blankScreen;
+				return !0 === s ? oe({}, zn) : (n = "containerMatchers" in (t = s) || "ignoreMatchers" in t, r = "containers" in t || "ignoreContainers" in t, i = ar(oe({}, zn), t), n ? (or(i.containerMatchers) || (i.containerMatchers = Kn(zn.containerMatchers)), "object" == typeof i.ignoreMatchers && null !== i.ignoreMatchers || (i.ignoreMatchers = Kn(zn.ignoreMatchers)), i.containers = [], i.ignoreContainers = []) : r && (o = Qn(i.containers), a = Qn(i.ignoreContainers), i.containers = o.length ? o : C(zn.containers), i.ignoreContainers = a, i.containerMatchers = {
+					tagName: [],
+					id: [],
+					className: []
+				}, i.ignoreMatchers = {
+					tagName: [],
+					id: [],
+					className: []
+				}), i);
+			} catch (e) {
+				return oe({}, zn);
+			}
+		}
+		function er(n, r) {
+			function i(e) {
+				var t = e[0];
+				return t && null !== t.shadowRoot && (t = (null == (t = null == t ? void 0 : t.shadowRoot) ? void 0 : t.elementsFromPoint(n, r)) || []).length > e.length ? i(t || []) : e;
+			}
+			return i(document.elementsFromPoint(n, r));
+		}
+		function tr(i, o, a, s) {
+			return void 0 === o && (o = "image/webp"), void 0 === a && (a = 1920), void 0 === s && (s = 1080), ae(void 0, void 0, void 0, function() {
+				var n, r;
+				return se(this, function(e) {
+					switch (e.label) {
+						case 0: return e.trys.push([
+							0,
+							2,
+							,
+							3
+						]), n = Math.min(window.innerWidth, a), r = Math.min(window.innerHeight, s), n = $n(n * r), r = n.scale, n = n.defaultQuality, [4, new Jn(t = void 0 === (t = {
+							scale: r,
+							quality: null != i ? i : n,
+							format: {
+								"image/webp": "webp",
+								"image/jpeg": "jpeg",
+								"image/png": "png"
+							}[o] || "webp",
+							maxWidth: a,
+							maxHeight: s,
+							useCORS: !0,
+							viewportOnly: !0,
+							debug: !1
+						}) ? {} : t).capture()];
+						case 1: return [2, e.sent()];
+						case 2: return [2, (r = e.sent()) instanceof Error ? r : new Error(String(r))];
+						case 3: return [2];
+					}
+					var t;
+				});
+			});
+		}
+		var nr = function(e) {
+			var t = e.nodeName.toLowerCase(), n = e.id || "", e = "string" == typeof (e = e).className ? e.className : e.getAttribute("class") || "", r = t;
+			return n && (r += "#" + n), e && (r += e.split(" ").filter(function(e) {
+				return !!e;
+			}).map(function(e) {
+				return "." + e;
+			}).join("")), {
+				tagName: t,
+				id: n,
+				className: e,
+				selector: r
+			};
+		}, rr = function(t, e) {
+			var n;
+			if (null != (n = null == e ? void 0 : e.tagName) && n.length) {
+				var r = t.tagName.toLowerCase();
+				if (e.tagName.some(function(e) {
+					return r === e.toLowerCase().trim();
+				})) return !0;
+			}
+			if (null != (n = null == e ? void 0 : e.id) && n.length && t.id && e.id.some(function(e) {
+				return t.id === e.trim();
+			})) return !0;
+			if (null != (n = null == e ? void 0 : e.className) && n.length && t.className) {
+				var i = t.className.split(" ").map(function(e) {
+					return e.trim();
+				}).filter(Boolean);
+				if (e.className.some(function(e) {
+					e = e.trim();
+					return !!e && i.includes(e);
+				})) return !0;
+			}
+			return !1;
+		}, ir = function(t, e) {
+			return !(null == e || !e.length) && e.some(function(e) {
+				return t.selector.includes(e);
+			});
+		}, or = function(e) {
+			var t;
+			return !(!e || !(null != (t = e.tagName) && t.length || null != (t = e.id) && t.length || null != (t = e.className) && t.length));
+		}, ar = function(e) {
+			for (var t = [], n = 1; n < arguments.length; n++) t[n - 1] = arguments[n];
+			if (!t.length) return e;
+			var r = t.shift();
+			if (r) for (var i in r) {
+				var o = r[i];
+				Array.isArray(o) ? e[i] = C(o) : "object" == typeof o && null !== o && Object.prototype.hasOwnProperty.call(e, i) && "object" == typeof e[i] && null !== e[i] && !Array.isArray(e[i]) ? ar(e[i], o) : e[i] = o;
+			}
+			return ar.apply(void 0, C([e], t));
+		}, sr = new r({
+			name: "blankScreen",
+			captureScreenshotWithStrategy: function() {
+				return ae(this, void 0, void 0, function() {
+					var i, o, a, s, l, c;
+					return se(this, function(e) {
+						switch (e.label) {
+							case 0: return e.trys.push([
+								0,
+								3,
+								,
+								4
+							]), i = window.innerWidth, i = i * window.innerHeight, o = Date.now(), [4, tr()];
+							case 1: return c = e.sent(), l = Date.now() - o, "object" == typeof c && null !== c ? [2, {
+								error: "capture_failed",
+								details: {
+									firstCaptureTime: l,
+									errorMessage: null == c ? void 0 : c.message
+								}
+							}] : c ? !(s = (null == (a = c) ? void 0 : a.length) / 1024) || s <= 0 || !isFinite(s) ? [2, {
+								error: "invalid_size",
+								details: {
+									reason: "screenshot_size_invalid",
+									size: s
+								}
+							}] : 90 < s ? [2, {
+								error: "complex_page",
+								details: {
+									firstSize: Math.round(s),
+									threshold: 90
+								}
+							}] : s <= 30 ? [2, a] : (l = 26 / s) < .5 ? [2, {
+								error: "over_compression",
+								details: {
+									firstSize: Math.round(s),
+									requiredRatio: Math.round(100 * l),
+									minRatio: Math.round(50)
+								}
+							}] : (n = l, r = $n(t = i).defaultQuality, t = t <= Xn.THRESHOLDS.SMALL ? .25 : .3, c = Math.max(t, r * n), [4, tr(c)]) : [2, {
+								error: "capture_failed",
+								details: { reason: "empty_result" }
+							}];
+							case 2: return "object" == typeof (l = e.sent()) && null !== l ? [2, {
+								error: "retry_capture_failed",
+								details: {
+									firstSize: Math.round(s),
+									errorMessage: null == l ? void 0 : l.message
+								}
+							}] : (a = l) ? a && (null == a ? void 0 : a.length) <= 30720 ? [2, a] : [2, {
+								error: "retry_failed",
+								details: {
+									firstSize: Math.round(s),
+									finalSize: a ? Math.round((null == a ? void 0 : a.length) / 1024) : 0,
+									maxSize: 30
+								}
+							}] : [2, {
+								error: "retry_capture_failed",
+								details: { reason: "empty_result" }
+							}];
+							case 3: return [2, {
+								error: "exception",
+								details: {
+									message: (c = e.sent()) instanceof Error ? c.message : String(c),
+									stack: c instanceof Error ? c.stack : void 0
+								}
+							}];
+							case 4: return [2];
+						}
+						var t, n, r;
+					});
+				});
+			},
+			isDestroyed: !1,
+			isAwaitingClientScreenshot: !1,
+			pendingTimeouts: [],
+			notifyClientScreenshot: function(e, t, n, r) {
+				var i = this;
+				if (!this.isDestroyed) {
+					var o = !(this.isAwaitingClientScreenshot = !0), a = t.timestamp + "_" + Math.random().toString(36).slice(2, 10), t = oe(oe({}, t), { requestId: a }), s = setTimeout(function() {
+						i.pendingTimeouts = i.pendingTimeouts.filter(function(e) {
+							return e !== s;
+						}), i.isDestroyed ? i.isAwaitingClientScreenshot = !1 : o || (o = !0, i.isAwaitingClientScreenshot = !1, r(null, {
+							success: !1,
+							source: "client",
+							reason: "timeout",
+							timeout: n,
+							requestId: a
+						}));
+					}, n);
+					this.pendingTimeouts.push(s);
+					try {
+						e(t, function(e) {
+							i.isDestroyed ? (i.isAwaitingClientScreenshot = !1, clearTimeout(s)) : o || (o = !0, i.isAwaitingClientScreenshot = !1, clearTimeout(s), i.pendingTimeouts = i.pendingTimeouts.filter(function(e) {
+								return e !== s;
+							}), e && "string" == typeof e ? r(e, {
+								success: !0,
+								source: "client",
+								requestId: a
+							}) : r(null, {
+								success: !1,
+								source: "client",
+								reason: "client_returned_null",
+								requestId: a
+							}));
+						});
+					} catch (e) {
+						o || this.isDestroyed || (o = !0, this.isAwaitingClientScreenshot = !1, clearTimeout(s), this.pendingTimeouts = this.pendingTimeouts.filter(function(e) {
+							return e !== s;
+						}), r(null, {
+							success: !1,
+							source: "client",
+							reason: "callback_error",
+							error: e instanceof Error ? e.message : String(e),
+							requestId: a
+						}));
+					}
+				}
+			},
+			onNewAegis: function(H) {
+				var U, D, e, q, t, j, W, B, z, G, n, V, J, X, $, re, K, ie, Q, Y, Z, r, ee, te, i, o, ne, a, g, s, v, l, c, u, y, d, f, h, p, m = this;
+				document.elementFromPoint && (this.pendingTimeouts.forEach(function(e) {
+					clearTimeout(e);
+				}), this.pendingTimeouts = [], this.isDestroyed = !1, this.isAwaitingClientScreenshot = !1, e = Zn(H), q = e.everySideSampleNumber, t = e.sameElementsPercent, j = e.containers, W = e.ignoreContainers, B = e.containerMatchers, z = e.ignoreMatchers, G = e.detectStartPosition, n = e.ignoreElesWhenDomChange, V = e.reDetectInterval, J = e.disableSameElementsCheck, X = e.samePointDepth, $ = e.enableScreenshot, re = e.needScreenShotMeta, K = e.onBlankScreenCapture, ie = e.clientScreenshotTimeout, Q = 4 * q - 3, Y = Math.floor(Q * e.emptyElementsPercent / 100), Z = Math.floor(Q * t / 100), r = Bn.UNKNOWN, te = null, i = ee = !1, o = function() {
+					return ae(m, void 0, void 0, function() {
+						var i, o, a, s, l, c, u, d, f, h, p, m, g, v, y, w, b, E, S, R, T, O, x, P, L, C, k, I, A, M, N, _, F = this;
+						return se(this, function(e) {
+							switch (e.label) {
+								case 0:
+									if (i = window.innerHeight, o = window.innerWidth, a = G.x, s = G.y, o <= a || i <= s) return [2];
+									for (l = a + (o - a) / 2, c = s + (i - s) / 2, u = [], d = q + 1, h = f = 0, p = 1; p < d; p++) v = s + (i - s) * p / d, w = er(m = a + (o - a) * p / d, c), g = er(l, v), y = er(m, v), m = er(m, i - v), v = Yn(w, j, W, B, z), v.isWhitePoint && (f += 1), u.push(v.selectorPointers), p !== d / 2 && (w = Yn(g, j, W, B, z), v = w.isWhitePoint, g = w.selectorPointers, v && (f += 1), w = Yn(y, j, W, B, z), v = w.isWhitePoint, y = w.selectorPointers, v && (f += 1), w = Yn(m, j, W, B, z), w.isWhitePoint && (f += 1), u.push(g, y, w.selectorPointers));
+									return k = Y <= f, I = !1, b = {
+										samePointerMap: {},
+										maximumSamePointer: {}
+									}, J || (S = u.map(function(e) {
+										return e.slice(0, X);
+									}), t = S.map(function(e) {
+										return e.join(" < ");
+									}).reduce(function(e, t) {
+										return e[t] = e[t] ? e[t] + 1 : 1, e;
+									}, {}), n = Object.keys(t).map(function(e) {
+										return [e, t[e]];
+									}).sort(function(e, t) {
+										return t[1] - e[1];
+									})[0], r = n[0], S = {
+										samePointerMap: t,
+										maximumSamePointerClass: r,
+										maximumSamePointerCounter: n[1]
+									}, b = {
+										samePointerMap: S.samePointerMap,
+										maximumSamePointer: ((_ = {})[E = S.maximumSamePointerClass] = S = S.maximumSamePointerCounter, _)
+									}, h = S, _ = Gn.some(function(e) {
+										return E.startsWith(e);
+									}), I = Z <= S && !_), k || I ? [3, 1] : (ee = !1, te = null, [3, 8]);
+								case 1: return ee ? (S = (null == te ? void 0 : te.whitePointCount) >= Y, _ = (null == te ? void 0 : te.samePointCount) >= Z, R = S && _ ? "both" : S ? "whitePoint" : "sameElement", T = U ? "error" : "domChange", O = window.innerWidth, x = window.innerHeight, P = Math.round((null == te ? void 0 : te.samePointCount) / Q * 100), L = {
+									whitePointCount: null == te ? void 0 : te.whitePointCount,
+									samePointCount: null == te ? void 0 : te.samePointCount,
+									maximumSamePointer: null == te ? void 0 : te.maximumSamePointer,
+									linkMsg: null == te ? void 0 : te.linkMsg
+								}, C = function(e, t) {
+									t = {
+										msg: "decect blankscreen triggerReason: " + R + " triggerType: " + T + "\n\nwhitePointCount: " + L.whitePointCount + " whitePointerThreshold: " + Y + (J ? "" : "\n\nsameElementsCount: " + L.samePointCount + " samePointerThreshold: " + Z + " sameElementPercent: " + P + "%") + "\n\nviewport: " + O + "x" + x + " totalSamplePoints: " + Q + (J ? "" : "\n\nmaxSameElement: " + ce(L.maximumSamePointer)) + (re && $ && t ? "\n\nscreenShotMeta: " + JSON.stringify(t) : "") + (L.linkMsg ? "\n\nlinkError: " + L.linkMsg : ""),
+										level: le.BLANK_SCREEN,
+										errorMsg: e || null,
+										originFrom: H.getOriginFrom()
+									};
+									H.normalLogPipeline(t);
+								}, $ ? K ? (k = $n(O * x), I = {
+									triggerReason: R,
+									triggerType: T,
+									whitePointCount: L.whitePointCount || 0,
+									samePointCount: L.samePointCount || 0,
+									viewportWidth: O,
+									viewportHeight: x,
+									url: window.location.href,
+									timestamp: Date.now(),
+									recommendedScale: k.scale,
+									recommendedQuality: k.defaultQuality,
+									maxSizeKB: 30
+								}, this.notifyClientScreenshot(K, I, ie, function(e, t) {
+									if (e && "string" == typeof e) {
+										var n = e.length / 1024;
+										if (30 < n) return void C(null, oe(oe({}, t), {
+											success: !1,
+											reason: "size_exceeded",
+											size: Math.round(n),
+											maxSize: 30
+										}));
+									}
+									C(e, t);
+								}), [3, 4]) : [3, 2] : [3, 5]) : [3, 7];
+								case 2: return [4, this.captureScreenshotWithStrategy()];
+								case 3: A = e.sent(), N = M = null, N = "string" == typeof A ? (M = A, {
+									success: !0,
+									source: "sdk"
+								}) : (M = null, {
+									success: !1,
+									source: "sdk",
+									error: A.error,
+									details: A.details
+								}), C(M, N), e.label = 4;
+								case 4: return [3, 6];
+								case 5: C(null, null), e.label = 6;
+								case 6: return ee = !1, te = null, [3, 8];
+								case 7: te = oe(oe({
+									msg: "blank_screen",
+									level: le.BLANK_SCREEN,
+									whitePointCount: f,
+									samePointCount: h
+								}, b), U ? {
+									linkLogType: null == U ? void 0 : U.type,
+									linkLogLevel: null == U ? void 0 : U.level,
+									linkErrorMsg: null == U ? void 0 : U.errorMsg,
+									linkMsg: null == U ? void 0 : U.msg
+								} : {}), ee = !0, D = setTimeout(function() {
+									return ae(F, void 0, void 0, function() {
+										return se(this, function(e) {
+											switch (e.label) {
+												case 0: return [4, ne()];
+												case 1: return e.sent(), [2];
+											}
+										});
+									});
+								}, V), e.label = 8;
+								case 8: return [2];
+							}
+							var t, n, r;
+						});
+					});
+				}, ne = function() {
+					return ae(m, void 0, void 0, function() {
+						var n = this;
+						return se(this, function(e) {
+							switch (e.label) {
+								case 0: return "requestIdleCallback" in window ? (window.requestIdleCallback(function(t) {
+									return ae(n, void 0, void 0, function() {
+										return se(this, function(e) {
+											switch (e.label) {
+												case 0: return 0 < t.timeRemaining() ? [4, o()] : [3, 2];
+												case 1: e.sent(), e.label = 2;
+												case 2: return [2];
+											}
+										});
+									});
+								}), [3, 3]) : [3, 1];
+								case 1: return [4, o()];
+								case 2: e.sent(), e.label = 3;
+								case 3: return [2];
+							}
+						});
+					});
+				}, a = function() {
+					var e;
+					ee || m.isAwaitingClientScreenshot || r === Bn.ERROR && !U || (r = U ? Bn.ERROR : Bn.DOM_CHANGE, clearTimeout(D), e = Zn(H).debounceDuration, D = setTimeout(function() {
+						return ae(m, void 0, void 0, function() {
+							return se(this, function(e) {
+								switch (e.label) {
+									case 0: return clearTimeout(D), [4, ne()];
+									case 1: return e.sent(), [2];
+								}
+							});
+						});
+					}, e));
+				}, H.lifeCycle.on("errorOccurred", g = function(e) {
+					e = e.filter(function(e) {
+						return e.level !== le.BLANK_SCREEN;
+					});
+					0 < e.length && (U = e[e.length - 1], a());
+				}), s = null, window.MutationObserver && (d = f = null, v = window.cancelAnimationFrame || function(e) {
+					clearTimeout(e);
+				}, l = window.requestAnimationFrame || function(e) {
+					return setTimeout(e, 1e3 / 60);
+				}, c = function() {
+					(s = new MutationObserver(function(e) {
+						var t = nr(e[0].target), t = n.includes(t.selector);
+						1 === e.length && t || a();
+					})).observe(document.body, {
+						childList: !0,
+						subtree: !0
+					});
+				}, u = function() {
+					f && (clearTimeout(f), f = null), d && (v(d), d = null);
+				}, document.body ? c() : (d = l(y = function() {
+					document.body ? (u(), c()) : d = l(y);
+				}), f = setTimeout(function() {
+					u();
+				}, 1e4))), h = function() {
+					i && (i = !0, ee) && (clearTimeout(D), o());
+				}, p = function() {
+					"visible" === document.visibilityState && (i = !1), "hidden" === document.visibilityState && h();
+				}, window.addEventListener("pagehide", h), window.addEventListener("beforeunload", h), window.addEventListener("visibilitychange", p), this.destroyBlanckScreenDetect = function() {
+					window.removeEventListener("pagehide", h), window.removeEventListener("beforeunload", h), window.removeEventListener("visibilitychange", p), H.lifeCycle.remove("errorOccurred", g), s?.disconnect();
+				});
+			},
+			destroy: function() {
+				this.isDestroyed = !0, this.isAwaitingClientScreenshot = !1, this.pendingTimeouts.forEach(function(e) {
+					clearTimeout(e);
+				}), this.pendingTimeouts = [], this.destroyBlanckScreenDetect();
+			}
+		}), lr = (new r({ name: "lagMonitor" }), new r({
+			name: "lagMonitor",
+			observer: null,
+			lagRecords: [],
+			onNewAegis: function(e) {
+				var t, n = this.$getConfig(e);
+				n && n.enabled && "undefined" != typeof PerformanceObserver && PerformanceObserver.supportedEntryTypes && PerformanceObserver.supportedEntryTypes.includes("long-animation-frame") && (t = n.sampleRate || 1, Math.random() < t) && this.initLagMonitor(e, n);
+			},
+			initLagMonitor: function(n, e) {
+				var r = this, i = e.threshold || 2e3, o = e.noResponseThreshold || 5e3;
+				try {
+					this.observer = new PerformanceObserver(function(e) {
+						e.getEntries().forEach(function(e) {
+							var t;
+							e.duration > i && (t = e.scripts && 0 < e.scripts.length ? e.scripts[0] : null, e = {
+								name: e.name,
+								timestamp: Date.now(),
+								entryType: e.entryType,
+								startTime: e.startTime,
+								duration: e.duration,
+								invoker: null == t ? void 0 : t.invoker,
+								sourceURL: null == t ? void 0 : t.sourceURL
+							}, r.lagRecords.push(e), 100 < r.lagRecords.length && r.lagRecords.shift(), r.publishLagLog(e, n, o <= e.duration));
+						});
+					}), this.observer.observe({
+						type: "long-animation-frame",
+						buffered: !1
+					}), "undefined" != typeof window && (window.__longTasks = this.lagRecords);
+				} catch (n) {
+					if ("undefined" != typeof console && console.warn && console.warn("Lag monitor initialization failed:", n), this.observer) {
+						try {
+							this.observer.disconnect();
+						} catch (n) {}
+						this.observer = null;
+					}
+				}
+			},
+			publishLagLog: function(n, r, i) {
+				void 0 === i && (i = !1);
+				try {
+					this.$walk(function(e) {
+						if (e === r) {
+							var t = {
+								msg: JSON.stringify({
+									type: i ? "NORESPONSE_DETECTED" : "LAG_DETECTED",
+									duration: Math.round(100 * n.duration) / 100,
+									startTime: Math.round(100 * n.startTime) / 100,
+									entryType: n.entryType,
+									sourceURL: n.sourceURL || "unknown",
+									invoker: n.invoker || "unknown",
+									timestamp: n.timestamp
+								}),
+								level: i ? le.NORESPONSE_LOG : le.LAG_MONITOR,
+								time: n.timestamp,
+								originFrom: e.getOriginFrom()
+							};
+							try {
+								e.normalLogPipeline(t);
+							} catch (e) {
+								"undefined" != typeof console && console.warn && console.warn("Lag log pipeline failed:", e);
+							}
+						}
+					});
+				} catch (n) {
+					"undefined" != typeof console && console.warn && console.warn("Lag log publish failed:", n);
+				}
+			},
+			getLagRecords: function() {
+				return C(this.lagRecords);
+			},
+			clearLagRecords: function() {
+				this.lagRecords.length = 0, "undefined" != typeof window && (window.__longTasks = []);
+			},
+			destroy: function() {
+				if (this.observer) {
+					try {
+						this.observer.disconnect();
+					} catch (e) {
+						"undefined" != typeof console && console.warn && console.warn("Observer disconnect failed:", e);
+					}
+					this.observer = null;
+				}
+				this.clearLagRecords();
+			}
+		}));
+		function cr() {
+			try {
+				return "undefined" != typeof window && window.performance && window.performance.memory && "number" == typeof window.performance.memory.usedJSHeapSize;
+			} catch (e) {}
+		}
+		function ur() {
+			try {
+				var e, t, n;
+				return cr() ? (t = (e = window.performance.memory).usedJSHeapSize || 0, n = e.jsHeapSizeLimit || 0, {
+					usedJSHeapSize: t,
+					totalJSHeapSize: e.totalJSHeapSize || 0,
+					jsHeapSizeLimit: n,
+					usageRatio: 0 < n ? Math.round(t / n * 1e4) / 100 : 0,
+					timestamp: Date.now()
+				}) : null;
+			} catch (e) {
+				return null;
+			}
+		}
+		function dr(e) {
+			return Math.round(e / 1048576 * 100) / 100;
+		}
+		new r({ name: "memoryMonitor" });
+		r = new r({
+			name: "memoryMonitor",
+			memoryReportTimer: null,
+			oomCheckTimer: null,
+			lastOOMTime: 0,
+			memoryRecords: [],
+			onNewAegis: function(e) {
+				var t, n, r = this.$getConfig(e);
+				r && r.enabled && cr() && (t = r.sampleRate || 1, Math.random() < t) && (!(t = r.monitorPages) || 0 === t.length || (n = "undefined" != typeof window ? window.location.href : "", t.some(function(e) {
+					return "string" == typeof e ? n.includes(e) : e instanceof RegExp && e.test(n);
+				}))) && this.initMemoryMonitor(e, r);
+			},
+			initMemoryMonitor: function(e, t) {
+				var n, r = this, i = !1 !== t.enableMemoryReport, o = !1 !== t.enableOOMReport, a = t.memoryReportInterval || 6e4, s = t.oomCheckInterval || 1e4, l = t.oomThreshold || (() => {
+					try {
+						var e, t;
+						return cr() ? 0 < (e = window.performance.memory.jsHeapSizeLimit || 0) ? (t = dr(e), Math.round(.9 * t)) : 100 : 100;
+					} catch (e) {
+						return 100;
+					}
+				})();
+				try {
+					i && (this.memoryReportTimer = setInterval(function() {
+						r.reportCurrentMemory(e, "MEMORY_REPORT");
+					}, a)), o && (this.oomCheckTimer = setInterval(function() {
+						r.checkOOMCondition(e, l);
+					}, s)), "undefined" != typeof window && (window.addEventListener("beforeunload", n = function() {
+						r.cleanup();
+					}), window.addEventListener("pagehide", n));
+				} catch (e) {
+					"undefined" != typeof console && console.warn && console.warn("Memory monitor initialization failed:", e), this.cleanup();
+				}
+			},
+			reportCurrentMemory: function(e, t) {
+				try {
+					var n, r = ur();
+					r && (n = {
+						type: t,
+						memoryInfo: r,
+						url: "undefined" != typeof window ? window.location.href : "",
+						userAgent: "undefined" != typeof navigator ? navigator.userAgent : "",
+						timestamp: Date.now()
+					}, this.memoryRecords.push(n), 50 < this.memoryRecords.length && this.memoryRecords.shift(), this.publishMemoryLog(n, e));
+				} catch (e) {
+					"undefined" != typeof console && console.warn && console.warn("Memory report failed:", e);
+				}
+			},
+			checkOOMCondition: function(e, t) {
+				try {
+					var n, r, i = ur();
+					i && (n = dr(i.usedJSHeapSize), r = Date.now(), t < n) && 3e5 < r - this.lastOOMTime && (this.lastOOMTime = r, this.reportCurrentMemory(e, "MEMORY_OOM"));
+				} catch (e) {
+					"undefined" != typeof console && console.warn && console.warn("OOM check failed:", e);
+				}
+			},
+			publishMemoryLog: function(e, t) {
+				try {
+					"MEMORY_REPORT" === e.type ? this.publishMemoryReport(e, t) : "MEMORY_OOM" === e.type && this.publishOOMLog(e, t);
+				} catch (e) {
+					"undefined" != typeof console && console.warn && console.warn("Memory log publish failed:", e);
+				}
+			},
+			publishMemoryReport: function(e, t) {
+				try {
+					var n = {
+						memoryUsed: e.memoryInfo.usedJSHeapSize,
+						memoryAllocated: e.memoryInfo.totalJSHeapSize,
+						memoryUsage: e.memoryInfo.usageRatio
+					};
+					this.$walk(function(i) {
+						var e;
+						if (i === t) try {
+							null != (e = i.sendPipeline) && e.call(i, [function(n, e) {
+								var t = i.config.memoryUrl || i.config.hostUrl + "/memory", r = new URLSearchParams();
+								Object.keys(n).forEach(function(e) {
+									var t = n[e];
+									null != t && "" !== t && r.append(e, String(t));
+								}), e({
+									url: t + "?" + r.toString(),
+									method: "post",
+									type: m.MEMORY,
+									log: n,
+									success: function() {
+										"undefined" != typeof console && console.debug && console.debug("Memory report success:", n.memory_used, "bytes");
+									},
+									fail: function(e) {
+										"undefined" != typeof console && console.warn && console.warn("Memory report failed:", e);
+									}
+								});
+							}], m.MEMORY)(n);
+						} catch (i) {
+							"undefined" != typeof console && console.warn && console.warn("Memory pipeline failed:", i);
+						}
+					});
+				} catch (e) {
+					"undefined" != typeof console && console.warn && console.warn("Memory report publish failed:", e);
+				}
+			},
+			publishOOMLog: function(e, n) {
+				try {
+					var t = e.memoryInfo, r = "Memory OOM detected: Used " + dr(t.usedJSHeapSize) + "MB / Total " + dr(t.totalJSHeapSize) + "MB / Limit " + dr(t.jsHeapSizeLimit) + "MB (" + t.usageRatio + "%)", i = {
+						msg: r,
+						level: le.MEMORY_OOM,
+						time: e.timestamp,
+						originFrom: n.getOriginFrom()
+					};
+					this.$walk(function(e) {
+						var t;
+						if (e === n) try {
+							null != (t = e.normalLogPipeline) && t.call(e, i), "undefined" != typeof console && console.warn && console.warn("OOM detected and reported:", r);
+						} catch (e) {
+							"undefined" != typeof console && console.warn && console.warn("OOM pipeline failed:", e);
+						}
+					});
+				} catch (e) {
+					"undefined" != typeof console && console.warn && console.warn("OOM log publish failed:", e);
+				}
+			},
+			getMemoryRecords: function() {
+				return C(this.memoryRecords);
+			},
+			getCurrentMemoryStatus: ur,
+			clearMemoryRecords: function() {
+				this.memoryRecords.length = 0;
+			},
+			cleanup: function() {
+				this.memoryReportTimer && (clearInterval(this.memoryReportTimer), this.memoryReportTimer = null), this.oomCheckTimer && (clearInterval(this.oomCheckTimer), this.oomCheckTimer = null);
+			},
+			destroy: function() {
+				this.cleanup(), this.clearMemoryRecords(), this.lastOOMTime = 0;
+			}
+		});
+		return n.use(jt), n.use(ht), n.use(Xe), n.use(kn), n.use(Pn), n.use(Ve), n.use(b), n.use(An), n.use(Wn), n.use(Vt), n.use(Xt), n.use(lr), n.use(r), n.use(mt), n.use(sr), n;
+	});
+}));
 
 // src/client/constants.ts
+var import_aegis_min = /* @__PURE__ */ __toESM(require_aegis_min(), 1);
 /**
 * Plugin identity, storage keys, limits and platform helpers.
 *
@@ -58,6 +4238,10 @@ const WORKSPACE_STORAGE_KEY = "dsh.aside-note.workspaces";
 const DRAFT_STORAGE_KEY = "dsh.aside-note.drafts";
 /** Notes already forwarded to the composer, per session; marks the forward button. */
 const FORWARDED_STORAGE_KEY = "dsh.aside-note.forwarded";
+/** Anonymous RUM visitor id; fills the SDK's `uin` so UV survives reloads. */
+const ANONYMOUS_UIN_KEY = "dsh.aside-note.uin";
+/** Whether this browser has opened the panel before; reported once as `first`. */
+const PANEL_OPENED_KEY = "dsh.aside-note.panel-opened";
 /** Shown in the in-panel settings; keep in sync with package.json. */
 const PLUGIN_VERSION = "1.1.1";
 const PLUGIN_AUTHOR = "阿三石";
@@ -97,6 +4281,81 @@ const CLEAR_CONFIRM_MS = 5e3;
 const PANEL_WIDTH_KEY = "dsh.aside-note.panel-width";
 /** Persisted height of the experimental right-side panel; 0 means content-sized. */
 const PANEL_HEIGHT_KEY = "dsh.aside-note.panel-height";
+
+// src/client/rum.ts
+/**
+* Anonymous product analytics for the panel, reported to Tencent Cloud RUM.
+*
+* The appId is a browser-side project id, not a secret: it names the RUM
+* project in every report. It is compiled in rather than read from a build-time
+* env file, because `client/client.js` is a committed artifact and a local env
+* file made CI rebuild a different byte stream than the one under review.
+*
+* The panel lives inside the shell's window, so the SDK's automatic collectors
+* would measure the shell rather than the panel: page performance, web vitals,
+* global JS errors, API and asset speed are all off. Only `reportEvent` calls
+* from the UI modules are sent, and they carry the scope kind and a count —
+* never note text, session ids or prompt content.
+*/
+/** RUM application id, shown in the console; safe to ship in a browser bundle. */
+const APP_ID = "EPoknFrdnK4Z16YRlz";
+/** The SDK only accepts this shape for `uin`. */
+const UIN_PATTERN = /^[@=.0-9a-zA-Z_-]{1,60}$/;
+function randomUin() {
+	if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") return crypto.randomUUID();
+	return `anon-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
+}
+/**
+* One anonymous visitor id per browser, kept in localStorage so the RUM
+* console can count UV and stitch a session across reloads. It carries no
+* account, device or content information, and clearing site data rotates it.
+*/
+function anonymousUin() {
+	try {
+		const ls = window.localStorage;
+		const saved = ls.getItem(ANONYMOUS_UIN_KEY);
+		if (saved && UIN_PATTERN.test(saved)) return saved;
+		const created = randomUin();
+		ls.setItem(ANONYMOUS_UIN_KEY, created);
+		return created;
+	} catch {
+		return randomUin();
+	}
+}
+/**
+* Tests boot the bundle in jsdom, where an initialized SDK would report to the
+* real project. The realm identifies itself in the user agent, which is the
+* only signal available before any layout exists.
+*/
+const inTestRealm = typeof navigator !== "undefined" && /\bjsdom\b/i.test(navigator.userAgent);
+/** Aegis has no native DNT switch; `beforeReport` returning false drops a report. */
+function doNotTrack() {
+	const nav = navigator;
+	return nav.doNotTrack === "1" || nav.msDoNotTrack === "1";
+}
+const rum = inTestRealm ? null : new import_aegis_min.default({
+	id: APP_ID,
+	uin: anonymousUin(),
+	hostUrl: "https://rumt-zh.com",
+	version: "1.1.1",
+	pagePerformance: false,
+	webVitals: false,
+	onError: false,
+	reportApiSpeed: false,
+	reportAssetSpeed: false,
+	spa: false,
+	pageUrl: "dsh-aside-note",
+	beforeReport: () => !doNotTrack()
+});
+function reportEvent(name, fields = {}) {
+	rum?.reportEvent({
+		name,
+		...fields
+	});
+}
+
+// \0dsh-css:src/client/styles/panel.css.mjs
+var panel_css_default = "/*\n * Panel, composer dock, header entry and toast styles.\n *\n * Only DSH semantic aliases and the shared scale are used here — no palette of\n * its own. The entry point injects this sheet once for the whole frame, because\n * the dock mounts outside the panel tree.\n */\n/* ── 1 令牌 · 只映射 DSH 语义别名与共享尺度，不新建调色板 ─────────── */\nbody{--an-space-1:4px;--an-space-2:8px;--an-space-3:12px;--an-space-4:16px;--an-space-5:24px;--an-space-6:32px;--an-radius-pill:999px;--an-fs-caption:12px;--an-lh-caption:20px;--an-fs-row:13px;--an-lh-row:20px;--an-fs-title:14px;--an-lh-title:20px;--an-hover:var(--dsw-alias-interactive-bg-hover);--an-active:var(--dsw-alias-interactive-bg-active);--an-field:var(--dsw-alias-bg-layer-1);--an-field-line:var(--dsw-alias-border-l4);--an-divider:var(--dsw-alias-border-l2);--an-dur-fast:var(--ds-transition-duration-fast);--an-dur-base:var(--ds-transition-duration);--an-dur-spin:700ms;--an-ease:var(--ds-ease-in-out);--an-transition:background-color var(--an-dur-fast) var(--an-ease),border-color var(--an-dur-fast) var(--an-ease),color var(--an-dur-fast) var(--an-ease),opacity var(--an-dur-fast) var(--an-ease),transform var(--an-dur-fast) var(--an-ease),box-shadow var(--an-dur-fast) var(--an-ease)}\n\n/* ── 2 浮层 · 菜单材质 + 三层阴影，边框为 0（发丝线在阴影第一层） ── */\n.dsh-an-popover{position:fixed;z-index:1000;box-sizing:border-box;display:flex;flex-direction:column;gap:var(--an-space-3);min-height:0;padding:var(--an-space-4);border:0;border-radius:var(--dsw-radius-panel);background:var(--dsh-an-panelSurface);box-shadow:var(--dsw-elevation-panel);color:var(--dsw-alias-label-primary);font-size:var(--an-fs-row);line-height:var(--an-lh-row);--dsw-elevation-stroke-color:var(--dsw-alias-border-l2);--dsh-scrollbar-thumb:var(--dsw-alias-scrollbar-bg-l2,var(--an-divider));--dsh-scrollbar-thumb-hover:var(--dsw-alias-scrollbar-hover-l2,var(--dsw-alias-scrollbar-bg-l2,var(--an-divider)));--dsh-an-panelSurface:var(--dsw-alias-bg-layer-2);--dsh-an-listGutter:var(--an-space-4);--dsh-an-scrollRail:9px;--dsh-an-scrollInset:2px;overflow:hidden;animation:dsh-an-pop-in var(--an-dur-base) var(--an-ease) both}\n.dsh-an-popoverRight{padding-left:var(--an-space-4)}\n\n/* ── 3 面板头 · 标题与计数同一行，动作收在右侧 ───────────────────── */\n.dsh-an-popHead{display:flex;align-items:center;justify-content:space-between;gap:var(--an-space-3);min-width:0}\n.dsh-an-popTitleLine{display:flex;align-items:center;gap:var(--an-space-3);flex:1 1 auto;min-width:0}\n.dsh-an-popTitle{min-width:0;overflow:hidden;font-size:var(--an-fs-title);line-height:var(--an-lh-title);font-weight:500;color:var(--dsw-alias-label-primary);white-space:nowrap;text-overflow:ellipsis}\n.dsh-an-popMeta{min-width:0;margin:0;overflow:hidden;font-size:var(--an-fs-caption);line-height:16px;color:var(--dsw-alias-label-secondary);font-weight:400;font-variant-numeric:tabular-nums;white-space:nowrap;text-overflow:ellipsis}\n.dsh-an-popActions{display:flex;align-items:center;flex:none;gap:var(--an-space-2)}\n.dsh-an-popClose,.dsh-an-settingsBtn{display:grid;place-items:center;flex:none;width:24px;height:24px;padding:0;border:0;border-radius:var(--dsw-radius-sm);background:transparent;color:var(--dsw-alias-label-secondary);font:inherit;cursor:pointer;transition:var(--an-transition)}\n.dsh-an-popClose:active,.dsh-an-settingsBtn:active{background:var(--an-active)}\n.dsh-an-settingsBtn[data-active=\"true\"]{background:var(--an-hover);color:var(--dsw-alias-label-primary)}\n.dsh-an-settingsBtn{position:relative}\n.dsh-an-updateDot{position:absolute;top:3px;right:3px;width:6px;height:6px;border-radius:var(--an-radius-pill);corner-shape:round;background:var(--dsw-alias-brand-primary);box-shadow:0 0 0 2px var(--dsh-an-panelSurface)}\n/* The list-scope switch sits at the far right of the title line. */\n.dsh-an-scope{display:inline-flex;align-items:center;flex:none;box-sizing:border-box;height:24px;padding:1px;margin-left:auto;border:0.5px solid var(--dsw-alias-border-l2);border-radius:var(--an-radius-pill);corner-shape:round;background:var(--dsw-alias-bg-layer-1)}\n.dsh-an-scopeBtn{display:inline-flex;align-items:center;justify-content:center;height:20px;padding:0 var(--an-space-2);border:0;border-radius:var(--an-radius-pill);corner-shape:round;background:transparent;color:var(--dsw-alias-label-secondary);font:inherit;font-size:var(--an-fs-caption);line-height:16px;font-weight:500;cursor:pointer;transition:var(--an-transition)}\n.dsh-an-scopeBtn[data-active=\"true\"]{background:var(--dsw-alias-interactive-bg-hover-solid);color:var(--dsw-alias-label-primary)}\n.dsh-an-scopeBtn:focus-visible{outline:2px solid var(--dsw-alias-label-primary);outline-offset:1px}\n\n/* ── 4 添加区 · 嵌套表单组 R16，字段 0.5px 发丝线 ──────────────────── */\n.dsh-an-add{display:flex;flex-direction:column;gap:var(--an-space-2);padding:var(--an-space-3);border:0.5px solid var(--dsw-alias-settings-card-stroke);border-radius:var(--dsw-radius-lg);background:var(--dsw-alias-settings-card-fill);transition:var(--an-transition)}\n.dsh-an-add:focus-within{border-color:var(--dsw-alias-state-business-primary)}\n.dsh-an-input{display:block;flex:0 0 auto;width:100%;min-width:0;box-sizing:border-box;min-height:var(--an-lh-row);max-height:120px;padding:0;border:0;outline:0;background:transparent;color:var(--dsw-alias-label-primary);font:inherit;font-size:var(--an-fs-row);line-height:var(--an-lh-row);resize:none;overflow-y:auto;overflow-x:hidden}\n.dsh-an-input::placeholder{color:var(--dsw-alias-label-secondary)}\n.dsh-an-addFoot{display:flex;align-items:center;justify-content:space-between;gap:var(--an-space-2);width:100%;min-width:0}\n.dsh-an-addShortcut{min-width:0;overflow:hidden;font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);color:var(--dsw-alias-label-secondary);white-space:nowrap;text-overflow:ellipsis}\n.dsh-an-addBtn{display:inline-flex;align-items:center;justify-content:center;flex:none;height:28px;padding:0 var(--an-space-2);border:0;border-radius:var(--dsw-radius-sm);background:var(--dsw-alias-button-primary-fill);color:var(--dsw-alias-label-primary-foreground);font:inherit;font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);font-weight:500;cursor:pointer;transition:var(--an-transition)}\n.dsh-an-addBtn:active{background:var(--dsw-alias-button-primary-dimmed);transform:scale(.97)}\n.dsh-an-addBtn[disabled]{background:transparent;color:var(--dsw-alias-label-secondary);box-shadow:inset 0 0 0 0.5px var(--an-field-line);cursor:not-allowed}\n\n/* ── 5 分区与列表 · 9px 轨道内嵌 2px，底部羽化只盖内容不盖滚动条 ──── */\n/* The viewport grows into the popover padding so the 9px rail does not steal from the cards; the list pays the padding back minus the rail, so cards and the add field keep one content width at every panel size. */\n.dsh-an-listViewport{position:relative;display:flex;flex-direction:column;flex:1 1 auto;min-height:0;margin-right:calc(var(--dsh-an-listGutter) * -1)}\n/* Bottom edge treatment: a viewport-fixed alpha mask over the scroller itself, exactly like the DSH scroll areas. The first gradient fades the last 48px to transparent; the second keeps the 9px scrollbar rail opaque so the thumb stays crisp. There is no backdrop-filter layer, so there is no hard compositing edge to see. */\n.dsh-an-listViewport[data-bottom=\"true\"] .dsh-an-listArea{--dsh-an-fadeHeight:calc(var(--an-space-6) + var(--an-space-4));-webkit-mask-image:linear-gradient(to bottom,currentColor 0,currentColor calc(100% - var(--dsh-an-fadeHeight)),transparent 100%),linear-gradient(to right,transparent calc(100% - var(--dsh-an-scrollRail)),currentColor calc(100% - var(--dsh-an-scrollRail)));mask-image:linear-gradient(to bottom,currentColor 0,currentColor calc(100% - var(--dsh-an-fadeHeight)),transparent 100%),linear-gradient(to right,transparent calc(100% - var(--dsh-an-scrollRail)),currentColor calc(100% - var(--dsh-an-scrollRail)));-webkit-mask-composite:source-over;mask-composite:add}\n/* Geometry only: the shared DSH skin paints the thumb, so the plugin declares no scrollbar pseudo-elements. The popover already binds the l2 thumb pair for the menu material. */\n.dsh-an-listArea{--dsh-scrollbar-width:var(--dsh-an-scrollRail);--dsh-scrollbar-thumb-border:var(--dsh-an-scrollInset);display:flex;flex-direction:column;flex:1 1 auto;min-height:0;padding-right:calc(var(--dsh-an-listGutter) - var(--dsh-an-scrollRail));overflow-x:hidden;overflow-y:auto;scrollbar-gutter:stable}\n.dsh-an-listSection{display:flex;flex-direction:column;gap:var(--an-space-2);min-width:0}\n.dsh-an-listSection+.dsh-an-listSection{margin-top:var(--an-space-2)}\n.dsh-an-sectionHead,.dsh-an-doneHead{position:sticky;top:0;z-index:3;display:flex;align-items:center;justify-content:space-between;gap:var(--an-space-3);min-height:28px;margin:0;padding:var(--an-space-1) 0;background:transparent;transition:background-color var(--an-dur-fast) var(--an-ease)}\n.dsh-an-sectionHead[data-stuck],.dsh-an-doneHead[data-stuck]{background:var(--dsh-an-panelSurface,var(--dsw-alias-bg-layer-2))}\n.dsh-an-doneToggle{display:flex;align-items:center;gap:var(--an-space-2);flex:none;min-width:0;margin:0;padding:var(--an-space-1) var(--an-space-2) var(--an-space-1) 0;border:0;border-radius:var(--dsw-radius-sm);background:transparent;color:var(--dsw-alias-label-secondary);font:inherit;font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);font-weight:500;text-align:left;cursor:pointer;transition:var(--an-transition)}\n.dsh-an-doneToggle:active{background:var(--an-active)}\n.dsh-an-doneToggle[disabled]{color:var(--dsw-alias-label-tertiary);cursor:not-allowed;pointer-events:none}\n.dsh-an-chevron{display:flex;align-items:center;justify-content:center;flex:none;width:16px;height:16px;color:var(--dsw-alias-label-secondary);transition:transform var(--an-dur-fast) var(--an-ease)}\n.dsh-an-chevron[data-open=\"true\"]{transform:rotate(90deg)}\n.dsh-an-sectionCount{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;padding:0 var(--an-space-1);border:0.5px solid var(--dsw-alias-border-l3);border-radius:var(--an-radius-pill);corner-shape:round;background:var(--dsw-alias-interactive-bg-hover-solid);color:var(--dsw-alias-label-primary);font-size:var(--an-fs-caption);line-height:16px;font-weight:500;font-variant-numeric:tabular-nums}\n.dsh-an-clear{display:inline-flex;align-items:center;flex:none;height:24px;margin-left:auto;padding:0 var(--an-space-2);border:0;border-radius:var(--dsw-radius-sm);background:transparent;color:var(--dsw-alias-label-secondary);font:inherit;font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);font-weight:500;cursor:pointer;transition:var(--an-transition)}\n.dsh-an-clear:active{background:var(--an-active);color:var(--dsw-alias-label-primary)}\n.dsh-an-clearConfirm{display:flex;align-items:center;justify-content:space-between;gap:var(--an-space-2);min-width:0;margin-top:var(--an-space-1);padding:var(--an-space-2);border:0.5px solid var(--dsw-alias-settings-card-stroke);border-radius:var(--dsw-radius-lg);background:var(--dsw-alias-settings-card-fill)}\n.dsh-an-clearConfirmText{flex:1 1 auto;min-width:0;margin:0;font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);color:var(--dsw-alias-label-primary);overflow-wrap:anywhere}\n.dsh-an-clearConfirmActions{display:flex;align-items:center;flex:none;gap:var(--an-space-1)}\n.dsh-an-doneRows{margin-top:var(--an-space-2)}\n.dsh-an-rows{list-style:none;margin:0;padding:0;border:0.5px solid var(--dsw-alias-settings-card-stroke);border-radius:var(--dsw-radius-lg);background:var(--dsw-alias-settings-card-fill);overflow:hidden}\n.dsh-an-row{display:flex;align-items:flex-start;gap:var(--an-space-2);padding:var(--an-space-2);border-top:0.5px solid var(--an-divider);transition:var(--an-transition)}\n.dsh-an-row:first-child{border-top:0}\n\n/* ── 6 一行便笺 · 勾选圈 14px，命中区 24px ─────────────────────────── */\n.dsh-an-check{display:flex;align-items:center;justify-content:center;flex:none;width:24px;height:24px;margin:-2px 0 0;padding:0;border:0;border-radius:var(--an-radius-pill);corner-shape:round;background:transparent;color:transparent;font:inherit;cursor:pointer;transition:var(--an-transition)}\n.dsh-an-checkCircle{display:flex;align-items:center;justify-content:center;width:14px;height:14px;box-sizing:border-box;border:0.5px solid var(--dsw-alias-label-tertiary);border-radius:var(--an-radius-pill);corner-shape:round;background:transparent;color:transparent;transition:border-color var(--an-dur-fast) var(--an-ease),background-color var(--an-dur-fast) var(--an-ease),color var(--an-dur-fast) var(--an-ease),transform var(--an-dur-fast) var(--an-ease)}\n.dsh-an-check:active .dsh-an-checkCircle{transform:scale(.9)}\n.dsh-an-check[aria-checked=\"true\"] .dsh-an-checkCircle{border-color:var(--dsw-alias-brand-primary);background:var(--dsw-alias-brand-primary);color:var(--dsw-alias-label-primary-foreground)}\n.dsh-an-itemBody{display:flex;flex:1;flex-direction:column;gap:var(--an-space-1);min-width:0}\n.dsh-an-text{display:block;width:100%;margin:0;padding:0;border:0;background:transparent;color:var(--dsw-alias-label-primary);font:inherit;font-size:var(--an-fs-row);line-height:var(--an-lh-row);text-align:left;white-space:pre-wrap;overflow-wrap:anywhere;cursor:text;user-select:text;-webkit-user-select:text}\n.dsh-an-rowDone .dsh-an-text{color:var(--dsw-alias-label-secondary);text-decoration:line-through;text-decoration-thickness:1px;text-decoration-color:var(--dsw-alias-label-tertiary)}\n.dsh-an-rowFoot{display:flex;align-items:center;justify-content:space-between;gap:var(--an-space-2);min-height:24px}\n.dsh-an-meta{flex:0 1 auto;min-width:0;overflow:hidden;font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);color:var(--dsw-alias-label-secondary);font-variant-numeric:tabular-nums;white-space:nowrap;text-overflow:ellipsis}\n\n/* ── 7 行操作 · 图标按钮 H24/R8，触摸端常显 ────────────────────────── */\n.dsh-an-actions{display:flex;flex:none;gap:var(--an-space-1)}\n.dsh-an-iconBtn{position:relative;display:flex;align-items:center;justify-content:center;width:24px;height:24px;padding:0;border:0;border-radius:var(--dsw-radius-sm);background:transparent;color:var(--dsw-alias-label-secondary);font:inherit;cursor:pointer;transition:var(--an-transition)}\n.dsh-an-iconBtn:active{background:var(--an-active);color:var(--dsw-alias-label-primary);transform:scale(.94)}\n.dsh-an-iconBtn:disabled,.dsh-an-iconBtn[disabled]{color:var(--dsw-alias-label-tertiary);cursor:not-allowed;pointer-events:none}\n.dsh-an-forwardMark{position:absolute;right:0;bottom:0;display:flex;align-items:center;justify-content:center;width:10px;height:10px;border-radius:var(--an-radius-pill);corner-shape:round;background:var(--dsw-alias-label-secondary);color:var(--dsw-alias-label-primary-foreground);pointer-events:none}\n\n/* ── 8 就地编辑 · 保存/取消为紧凑描边按钮 ──────────────────────────── */\n.dsh-an-edit{display:flex;flex-direction:column;gap:var(--an-space-1);width:100%}\n.dsh-an-editInput{display:block;width:100%;box-sizing:border-box;min-height:var(--an-lh-row);max-height:160px;padding:var(--an-space-1) var(--an-space-2);border:0.5px solid var(--an-field-line);border-radius:var(--dsw-radius-sm);background:var(--an-field);color:var(--dsw-alias-label-primary);font:inherit;font-size:var(--an-fs-row);line-height:var(--an-lh-row);outline:0;resize:none;overflow-y:auto;overflow-x:hidden;transition:var(--an-transition)}\n.dsh-an-editInput:focus{border-color:var(--dsw-alias-state-business-primary)}\n.dsh-an-editActions{display:flex;align-items:center;gap:var(--an-space-1)}\n.dsh-an-editHint{flex:1 1 auto;min-width:0;margin-left:auto;overflow:hidden;font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);text-align:right;color:var(--dsw-alias-label-secondary);white-space:nowrap;text-overflow:ellipsis}\n.dsh-an-mini{display:inline-flex;align-items:center;justify-content:center;flex:none;height:24px;padding:0 var(--an-space-2);border:0.5px solid var(--dsw-alias-border-l3);border-radius:var(--dsw-radius-sm);background:transparent;color:var(--dsw-alias-label-primary);font:inherit;font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);font-weight:500;cursor:pointer;transition:var(--an-transition)}\n.dsh-an-mini:active{background:var(--an-active)}\n.dsh-an-mini[disabled]{color:var(--dsw-alias-label-tertiary);cursor:not-allowed;pointer-events:none}\n.dsh-an-miniPrimary{border-color:transparent;background:var(--dsw-alias-button-primary-fill);color:var(--dsw-alias-label-primary-foreground)}\n.dsh-an-miniPrimary:active{background:var(--dsw-alias-button-primary-dimmed)}\n.dsh-an-miniDanger{border-color:transparent;background:var(--dsw-alias-state-error-primary);color:var(--dsw-alias-label-primary-foreground)}\n.dsh-an-miniDanger:active{background:var(--dsw-alias-state-error-primary)}\n\n/* ── 9 空态 · 虚线 1px，说明 12/次级墨色 ──────────────────────────── */\n.dsh-an-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:var(--an-space-2);padding:var(--an-space-5) var(--an-space-4);border:1px dashed var(--an-divider);border-radius:var(--dsw-radius-lg);text-align:center}\n.dsh-an-emptyIcon{display:flex;align-items:center;justify-content:center;width:32px;height:32px;margin:0 0 var(--an-space-1);border-radius:var(--dsw-radius-md);background:var(--an-hover);color:var(--dsw-alias-label-secondary)}\n.dsh-an-emptyTitle{font-size:var(--an-fs-row);line-height:var(--an-lh-row);font-weight:500;color:var(--dsw-alias-label-primary)}\n.dsh-an-emptyBody{max-width:36ch;font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);color:var(--dsw-alias-label-secondary);overflow-wrap:anywhere}\n\n/* ── 10 设置 · 分组 R16，项间 0.5px 分隔线，链接走 --dsw-alias-link ── */\n.dsh-an-settings{--dsh-an-settingIndent:var(--an-space-3);display:flex;flex-direction:column;gap:var(--an-space-2);margin:0;padding:var(--an-space-3);border:0.5px solid var(--dsw-alias-settings-card-stroke);border-radius:var(--dsw-radius-lg);background:var(--dsw-alias-settings-card-fill)}\n.dsh-an-settingsHead{font-size:var(--an-fs-row);line-height:var(--an-lh-row);font-weight:500;color:var(--dsw-alias-label-primary)}\n.dsh-an-settingGroup{display:flex;flex-direction:column;gap:var(--an-space-1);min-width:0}\n.dsh-an-settingGroup+.dsh-an-settingGroup{margin-top:var(--an-space-2);padding-top:var(--an-space-2);border-top:0.5px solid var(--an-divider)}\n.dsh-an-settingLabel{font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);font-weight:500;color:var(--dsw-alias-label-secondary)}\n.dsh-an-settingBody{display:flex;flex-direction:column;gap:var(--an-space-1);padding-left:var(--dsh-an-settingIndent)}\n.dsh-an-settingItem{display:flex;flex-direction:column;gap:var(--an-space-1);min-width:0}\n.dsh-an-settingItem+.dsh-an-settingItem{margin-top:var(--an-space-2);padding-top:var(--an-space-2);border-top:0.5px solid var(--an-divider)}\n.dsh-an-settingChoices{display:flex;flex-direction:column;gap:var(--an-space-1)}\n.dsh-an-settingChoice{display:flex;align-items:flex-start;gap:var(--an-space-2);font-size:var(--an-fs-row);line-height:var(--an-lh-row);color:var(--dsw-alias-label-primary);cursor:pointer}\n.dsh-an-settingChoice input{appearance:none;flex:none;width:14px;height:14px;margin:calc((var(--an-lh-row) - 14px) / 2) 0 0;box-sizing:border-box;border:0.5px solid var(--dsw-alias-label-tertiary);border-radius:var(--an-radius-pill);corner-shape:round;background:transparent;cursor:pointer;transition:var(--an-transition)}\n.dsh-an-settingChoice input:checked{border-color:var(--dsw-alias-brand-primary);background:var(--dsw-alias-brand-primary);box-shadow:inset 0 0 0 3px var(--an-field)}\n.dsh-an-settingInput{box-sizing:border-box;width:100%;height:28px;padding:0 var(--an-space-2);border:0.5px solid var(--an-field-line);border-radius:var(--dsw-radius-sm);background:var(--an-field);color:var(--dsw-alias-label-primary);font-family:inherit;font-size:var(--an-fs-row);line-height:var(--an-lh-row);font-weight:500;outline:0;transition:var(--an-transition)}\n.dsh-an-settingItem>.dsh-an-settingInput{font-family:inherit;font-size:var(--an-fs-row);line-height:var(--an-lh-row);font-weight:500}\n.dsh-an-settingInput:focus{border-color:var(--dsw-alias-state-business-primary)}\n/* 前缀提示词改为文本域：min-height 兜住三行，空态也不会被内联高度压扁 */\n.dsh-an-settingTextarea{display:block;height:auto;min-height:calc(var(--an-lh-row) + var(--an-space-4) + 2px);padding:var(--an-space-2);resize:none;overflow-y:auto;white-space:pre-wrap;overflow-wrap:anywhere}\n.dsh-an-settingHint{margin:0;font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);color:var(--dsw-alias-label-secondary)}\n.dsh-an-settingHintNote{margin-top:var(--an-space-1)}\n.dsh-an-settingBrand{display:flex;flex-direction:column;gap:2px;min-width:0}\n.dsh-an-settingBrandName{font-size:var(--an-fs-row);line-height:var(--an-lh-row);font-weight:500;color:var(--dsw-alias-label-primary)}\n.dsh-an-settingBrandTagline{font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);color:var(--dsw-alias-label-secondary);overflow-wrap:anywhere}\n.dsh-an-settingAbout{display:flex;align-items:center;gap:var(--an-space-2);flex-wrap:wrap;min-width:0;font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);color:var(--dsw-alias-label-secondary)}\n.dsh-an-settingAbout>span{flex:none}\n.dsh-an-settingAbout .dsh-an-updateHint{flex:0 1 auto;min-width:0}\n.dsh-an-settingMetaRow{display:flex;align-items:baseline;gap:var(--an-space-1);min-width:0;overflow:hidden;font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);color:var(--dsw-alias-label-secondary);white-space:nowrap}\n.dsh-an-settingMetaRow>span{flex:none}\n.dsh-an-settingDot{flex:none;color:var(--dsw-alias-label-tertiary)}\n.dsh-an-settingLink{flex:0 1 auto;min-width:0;overflow:hidden;color:var(--dsw-alias-link);font-weight:500;text-decoration:none;text-overflow:ellipsis;transition:var(--an-transition)}\n.dsh-an-settingLink:focus-visible{text-decoration:underline;text-decoration-style:dotted;text-decoration-thickness:1px;text-underline-offset:3px}\n/* 更新中心：检查入口、可展开的更新说明与更新动作，全部走共享令牌 */\n.dsh-an-updateCheck{flex:none;height:24px;padding:0 var(--an-space-2);border:0.5px solid var(--dsw-alias-border-l3);border-radius:var(--dsw-radius-sm);background:transparent;color:var(--dsw-alias-label-primary);font:inherit;font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);font-weight:500;cursor:pointer;transition:var(--an-transition)}\n.dsh-an-updateCheck:active{background:var(--an-active)}\n.dsh-an-updateCheck:disabled{color:var(--dsw-alias-label-tertiary);cursor:default}\n.dsh-an-updateCheck:focus-visible{outline-offset:2px}\n.dsh-an-updateHint{margin:0;font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);color:var(--dsw-alias-label-secondary);overflow-wrap:anywhere}\n.dsh-an-updateHintError{color:var(--dsw-alias-state-error-primary)}\n.dsh-an-updateCard{display:flex;flex-direction:column;gap:var(--an-space-2);margin-top:var(--an-space-1);padding:var(--an-space-2);border:0.5px solid var(--dsw-alias-border-l2);border-radius:var(--dsw-radius-md);background:var(--dsw-alias-bg-layer-1)}\n.dsh-an-updateTitle{font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);font-weight:500;color:var(--dsw-alias-label-primary)}\n.dsh-an-updateFull:focus-visible,.dsh-an-updateLinkBtn:focus-visible{text-decoration:underline;text-decoration-style:dotted;text-decoration-thickness:1px;text-underline-offset:3px}\n.dsh-an-updateFull{flex:none;color:var(--dsw-alias-link);font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);font-weight:500;text-decoration:none;transition:var(--an-transition)}\n.dsh-an-updateNotes{display:flex;flex-direction:column;gap:var(--an-space-2);max-height:220px;overflow-y:auto;padding-right:0;overscroll-behavior:contain;--dsh-scrollbar-width:var(--dsh-an-scrollRail);--dsh-scrollbar-thumb-border:var(--dsh-an-scrollInset);scrollbar-gutter:stable}\n.dsh-an-updateNotes[data-fade=\"true\"]{--dsh-an-fadeHeight:var(--an-space-5);-webkit-mask-image:linear-gradient(to bottom,currentColor 0,currentColor calc(100% - var(--dsh-an-fadeHeight)),transparent 100%),linear-gradient(to right,transparent calc(100% - var(--dsh-an-scrollRail)),currentColor calc(100% - var(--dsh-an-scrollRail)));mask-image:linear-gradient(to bottom,currentColor 0,currentColor calc(100% - var(--dsh-an-fadeHeight)),transparent 100%),linear-gradient(to right,transparent calc(100% - var(--dsh-an-scrollRail)),currentColor calc(100% - var(--dsh-an-scrollRail)));-webkit-mask-composite:source-over;mask-composite:add}\n.dsh-an-updateVersions{display:flex;flex-direction:column;gap:var(--an-space-1);min-width:0}\n.dsh-an-updateVersion{display:flex;flex-direction:column;gap:var(--an-space-1);min-width:0}\n.dsh-an-updateVersion+.dsh-an-updateVersion{padding-top:var(--an-space-1);border-top:0.5px solid var(--an-divider)}\n.dsh-an-updateVersionHead{display:flex;align-items:center;gap:var(--an-space-1);width:100%;padding:2px 0;border:0;border-radius:var(--dsw-radius-sm);background:transparent;color:var(--dsw-alias-label-primary);font:inherit;font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);font-weight:500;text-align:left;cursor:pointer}\n.dsh-an-updateVersionHead:active{background:var(--an-active)}\n.dsh-an-updateVersionHead:focus-visible{text-decoration:underline;text-decoration-style:dotted;text-decoration-thickness:1px;text-underline-offset:3px}\n.dsh-an-updateChevron{display:flex;align-items:center;justify-content:center;flex:none;width:16px;height:16px;color:var(--dsw-alias-label-secondary);font-size:var(--an-fs-caption);transition:transform var(--an-dur-fast) var(--an-ease)}\n.dsh-an-updateChevron[data-open=\"true\"]{transform:rotate(90deg)}\n.dsh-an-updateVersionLabel{font-variant-numeric:tabular-nums}\n.dsh-an-updateLatest{display:inline-flex;align-items:center;justify-content:center;flex:none;min-width:18px;height:18px;padding:0 var(--an-space-1);border:0.5px solid var(--dsw-alias-border-l3);border-radius:var(--an-radius-pill);corner-shape:round;background:var(--dsw-alias-interactive-bg-hover-solid);color:var(--dsw-alias-label-primary);font-size:var(--an-fs-caption);line-height:16px;font-weight:500}\n.dsh-an-updateVersionBody{display:flex;flex-direction:column;gap:var(--an-space-2);padding-left:var(--an-space-4);min-width:0}\n.dsh-an-updateGroup{display:flex;flex-direction:column;gap:var(--an-space-1);min-width:0}\n.dsh-an-updateGroupTitle{font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);font-weight:500;color:var(--dsw-alias-label-secondary)}\n.dsh-an-updateItems{display:flex;flex-direction:column;gap:var(--an-space-1);margin:0;padding-left:var(--an-space-4);color:var(--dsw-alias-label-primary)}\n.dsh-an-updateItem{font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);overflow-wrap:anywhere}\n.dsh-an-updateItem strong{font-weight:500}\n.dsh-an-updateActions{display:flex;align-items:center;gap:var(--an-space-2);flex-wrap:wrap;min-width:0}\n.dsh-an-updatePrimary{display:inline-flex;align-items:center;justify-content:center;flex:none;height:24px;padding:0 var(--an-space-3);border:0;border-radius:var(--dsw-radius-sm);background:var(--dsw-alias-button-primary-fill);color:var(--dsw-alias-label-primary-foreground);font:inherit;font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);font-weight:500;cursor:pointer;transition:var(--an-transition)}\n.dsh-an-updatePrimary:active{background:var(--dsw-alias-button-primary-dimmed)}\n.dsh-an-updatePrimary:disabled{opacity:.55;cursor:default}\n.dsh-an-updatePrimary:focus-visible{outline-offset:2px}\n.dsh-an-updateDone{display:flex;align-items:center;gap:var(--an-space-2);flex-wrap:wrap;min-width:0}\n.dsh-an-updateErrorRow{display:flex;align-items:baseline;gap:var(--an-space-2);flex-wrap:wrap;min-width:0}\n.dsh-an-updateError{flex:1 1 auto;min-width:0;margin:0;font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);color:var(--dsw-alias-state-error-primary);overflow-wrap:anywhere}\n.dsh-an-updateLinkBtn{padding:0;border:0;background:transparent;color:var(--dsw-alias-link);font:inherit;font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);font-weight:500;cursor:pointer}\n.dsh-an-updateFallback{display:flex;align-items:center;gap:var(--an-space-2);flex-wrap:wrap;min-width:0;padding-top:var(--an-space-1);border-top:0.5px solid var(--an-divider)}\n.dsh-an-updateFallback .dsh-an-updateHint{flex:1 1 100%;min-width:0}\n.dsh-an-updateCopy{flex:none;height:24px;padding:0 var(--an-space-2);border:0.5px solid var(--dsw-alias-border-l3);border-radius:var(--dsw-radius-sm);background:transparent;color:var(--dsw-alias-label-primary);font:inherit;font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);font-weight:500;cursor:pointer;transition:var(--an-transition)}\n.dsh-an-updateCopy:active{background:var(--an-active)}\n.dsh-an-updateCopy:focus-visible{outline-offset:2px}\n\n/* ── 11 面板脚注 · 存储状态就地提示，错误用状态色 ─────────────────── */\n.dsh-an-popFoot{margin:0;font-size:var(--an-fs-caption);line-height:var(--an-lh-caption);color:var(--dsw-alias-label-secondary)}\n.dsh-an-error{color:var(--dsw-alias-state-error-primary)}\n\n/* ── 12 会话顶部入口 · H28/R8，计数徽标为胶囊 ──────────────────────── */\n.dsh-an-headerBtn{position:relative;display:inline-flex;align-items:center;justify-content:center;flex:none;width:28px;height:28px;padding:0;border:0;border-radius:var(--dsw-radius-sm);background:transparent;color:var(--dsw-alias-label-secondary);font:inherit;cursor:pointer;transition:var(--an-transition)}\n.dsh-an-headerBtn:active{background:var(--an-active);color:var(--dsw-alias-label-primary)}\n.dsh-an-headerBtn[data-active=\"true\"]{background:var(--an-hover);color:var(--dsw-alias-label-primary)}\n.dsh-an-headerBtn[data-disabled=\"true\"]{color:var(--dsw-alias-label-tertiary);cursor:not-allowed;pointer-events:none}\n.dsh-an-headerIcon{display:flex;align-items:center;justify-content:center;flex:none;width:16px;height:16px;color:currentColor}\n.dsh-an-headerCount{position:absolute;top:-2px;right:-2px;box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;min-width:16px;height:16px;padding:0 var(--an-space-1);border:0.5px solid var(--dsw-alias-bg-base);border-radius:var(--an-radius-pill);corner-shape:round;background:var(--dsw-alias-interactive-bg-hover-solid);color:var(--dsw-alias-label-secondary);font-size:var(--an-fs-caption);line-height:14px;font-weight:500;font-variant-numeric:tabular-nums}\n\n/* ── 13 拖拽把手 · 8px 命中带，3px 视觉条 ─────────────────────────── */\n.dsh-an-resizeHandle{position:absolute;left:0;top:0;bottom:0;z-index:2;display:flex;align-items:center;justify-content:center;width:var(--an-space-2);cursor:ew-resize;touch-action:none;outline:0}\n.dsh-an-resizeHandle::before{content:\"\";width:3px;height:var(--an-space-6);border-radius:var(--an-radius-pill);corner-shape:round;background:var(--dsw-alias-border-l4);transition:transform var(--an-dur-fast) var(--an-ease),background-color var(--an-dur-fast) var(--an-ease)}\n.dsh-an-resizeHandle:focus-visible::before{background:var(--dsw-alias-label-secondary)}\n.dsh-an-resizeHandle:focus-visible{outline-offset:-2px;border-radius:var(--dsw-radius-sm)}\n.dsh-an-resizeHandleBottom{position:absolute;left:50%;bottom:0;z-index:2;display:flex;align-items:center;justify-content:center;width:var(--an-space-6);height:var(--an-space-3);transform:translateX(-50%);cursor:ns-resize;touch-action:none;outline:0}\n.dsh-an-resizeHandleBottom::before{content:\"\";width:var(--an-space-5);height:3px;border-radius:var(--an-radius-pill);corner-shape:round;background:var(--dsw-alias-border-l4);transition:transform var(--an-dur-fast) var(--an-ease),background-color var(--an-dur-fast) var(--an-ease)}\n.dsh-an-resizeHandleBottom:focus-visible::before{background:var(--dsw-alias-label-secondary)}\n.dsh-an-resizeHandleBottom:focus-visible{outline-offset:-2px;border-radius:var(--dsw-radius-sm)}\n\n/* ── 14 加载 · 控件内 12px 环，文字隐藏，不报\"进行中\" ──────────────── */\n[data-loading=\"true\"]{position:relative;color:transparent!important;pointer-events:none;cursor:progress}\n[data-loading=\"true\"]>*{visibility:hidden}\n[data-loading=\"true\"]::after{content:\"\";position:absolute;left:50%;top:50%;box-sizing:border-box;width:12px;height:12px;margin:-6px 0 0 -6px;border:1.5px solid var(--dsw-alias-label-secondary);border-top-color:transparent;border-radius:var(--an-radius-pill);corner-shape:round;animation:dsh-an-spin var(--an-dur-spin) linear infinite}\n\n/* ── 15 悬停 · 只在支持 hover 的设备上启用（触摸端常显操作） ────────── */\n@media (hover:hover){\n.dsh-an-row:hover{background:var(--an-hover)}\n.dsh-an-actions{opacity:0;pointer-events:none}\n.dsh-an-row:hover .dsh-an-actions,.dsh-an-row:focus-within .dsh-an-actions{opacity:1;pointer-events:auto}\n.dsh-an-iconBtn:hover{background:var(--an-hover);color:var(--dsw-alias-label-primary)}\n.dsh-an-iconBtnDanger:hover{background:var(--dsw-alias-interactive-bg-hover-danger);color:var(--dsw-alias-state-error-primary)}\n.dsh-an-popClose:hover,.dsh-an-settingsBtn:hover{background:var(--an-hover);color:var(--dsw-alias-label-primary)}\n.dsh-an-scopeBtn:hover:not([data-active=\"true\"]){background:var(--an-hover);color:var(--dsw-alias-label-primary)}\n.dsh-an-addBtn:hover:not([disabled]){background:var(--dsw-alias-button-primary-hover)}\n.dsh-an-mini:hover:not([disabled]){background:var(--an-hover)}\n.dsh-an-miniPrimary:hover:not([disabled]){background:var(--dsw-alias-button-primary-hover);color:var(--dsw-alias-label-primary-foreground)}\n.dsh-an-miniDanger:hover:not([disabled]){background:var(--dsw-alias-interactive-bg-hover-danger);color:var(--dsw-alias-state-error-primary)}\n.dsh-an-clear:hover{background:var(--an-hover);color:var(--dsw-alias-label-primary)}\n.dsh-an-doneToggle:hover{background:var(--an-hover)}\n.dsh-an-check:hover .dsh-an-checkCircle{border-color:var(--dsw-alias-label-primary)}\n.dsh-an-settingChoice:hover input{border-color:var(--dsw-alias-label-primary)}\n.dsh-an-settingLink:hover{text-decoration:underline;text-decoration-style:dotted;text-decoration-thickness:1px;text-underline-offset:3px}\n.dsh-an-updatePrimary:hover:not(:disabled){background:var(--dsw-alias-button-primary-hover)}\n.dsh-an-headerBtn:hover{background:var(--an-hover);color:var(--dsw-alias-label-primary)}\n.dsh-an-resizeHandle:hover::before{transform:scaleY(1.4);background:var(--dsw-alias-label-secondary)}\n.dsh-an-resizeHandleBottom:hover::before{transform:scaleX(1.4);background:var(--dsw-alias-label-secondary)}\n}\n\n/* ── 16 动效 · 只动 opacity/transform，错峰出场封顶 ─────────────────── */\n@media (prefers-reduced-motion:no-preference){\n.dsh-an-rows>.dsh-an-row{animation:dsh-an-row-in var(--an-dur-base) var(--an-ease) both}\n.dsh-an-rows>.dsh-an-row:nth-child(2){animation-delay:var(--an-space-1)}\n.dsh-an-rows>.dsh-an-row:nth-child(3){animation-delay:var(--an-space-2)}\n.dsh-an-rows>.dsh-an-row:nth-child(4){animation-delay:calc(var(--an-space-2) + var(--an-space-1))}\n.dsh-an-rows>.dsh-an-row:nth-child(n+5){animation-delay:var(--an-space-3)}\n}\n@keyframes dsh-an-pop-in{from{opacity:0}to{opacity:1}}\n@keyframes dsh-an-row-in{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}\n@keyframes dsh-an-spin{to{transform:rotate(360deg)}}\n@media (prefers-reduced-motion:reduce){\n.dsh-an-popover,.dsh-an-rows>.dsh-an-row,.dsh-an-chevron,[data-loading=\"true\"]::after{animation:none}\n.dsh-an-popover,.dsh-an-row,.dsh-an-actions,.dsh-an-iconBtn{transition-duration:1ms}\n}\n\n/* ── 17 窄视口 · 390 基准下收紧内边距，主操作全部可达 ──────────────── */\n@media (max-width:480px){\n.dsh-an-popover{padding:var(--an-space-3);--dsh-an-listGutter:var(--an-space-3)}\n.dsh-an-popoverRight{padding-left:var(--an-space-4)}\n.dsh-an-popHead{gap:var(--an-space-2)}\n.dsh-an-add{padding:var(--an-space-2) var(--an-space-3)}\n.dsh-an-sectionHead,.dsh-an-doneHead{min-height:24px}\n}\n\n";
 
 // src/client/i18n/en.ts
 /** English copy; a missing key fails the typecheck rather than falling back at runtime. */
@@ -616,6 +4875,23 @@ function writeSectionState(state) {
 			open: state.open === true,
 			done: state.done === true
 		}));
+	} catch {}
+}
+/** Whether this browser has ever opened the panel; the first open is reported once. */
+function hasOpenedPanel() {
+	const ls = storage();
+	try {
+		return Boolean(ls && ls.getItem("dsh.aside-note.panel-opened"));
+	} catch {
+		return false;
+	}
+}
+/** Record the first panel open; the caller decides what to report. */
+function markPanelOpened() {
+	const ls = storage();
+	if (!ls) return;
+	try {
+		ls.setItem(PANEL_OPENED_KEY, "1");
 	} catch {}
 }
 
@@ -2450,8 +6726,20 @@ function useUpdateCenter(localeId) {
 		if ("1.1.1".includes("-")) return void 0;
 		let active = true;
 		fetchLatestVersion().then((version) => {
-			if (!active || version === null) return;
-			if (isNewerVersion(version, "1.1.1")) setCheck({
+			if (!active) return;
+			if (version === null) {
+				reportEvent("update_checked", {
+					ext1: "auto",
+					ext2: "error"
+				});
+				return;
+			}
+			const newer = isNewerVersion(version, PLUGIN_VERSION);
+			reportEvent("update_checked", {
+				ext1: "auto",
+				ext2: newer ? "available" : "current"
+			});
+			if (newer) setCheck({
 				status: "available",
 				latestVersion: version,
 				checkedAt: Date.now()
@@ -2493,6 +6781,10 @@ function useUpdateCenter(localeId) {
 		if (remaining > 0) await sleep(remaining);
 		if (disposed.current) return;
 		if (version === null) {
+			reportEvent("update_checked", {
+				ext1: "manual",
+				ext2: "error"
+			});
 			setCheck({
 				status: "error",
 				latestVersion: previousOffer,
@@ -2500,6 +6792,10 @@ function useUpdateCenter(localeId) {
 			});
 			return;
 		}
+		reportEvent("update_checked", {
+			ext1: "manual",
+			ext2: isNewerVersion(version, "1.1.1") ? "available" : "current"
+		});
 		if (isNewerVersion(version, "1.1.1")) {
 			const sameRelease = previousOffer !== null && version === previousOffer;
 			setCheck({
@@ -2592,6 +6888,10 @@ function useUpdateCenter(localeId) {
 				if (disposed.current) return;
 			}
 			if ("error" in started) {
+				reportEvent("update_started", {
+					ext1: "market",
+					ext2: "failed"
+				});
 				setRun(terminalRun("error", {
 					failureCode: started.error.code,
 					message: started.error.message || null,
@@ -2625,6 +6925,10 @@ function useUpdateCenter(localeId) {
 					continue;
 				}
 				if (operation.state === "succeeded") {
+					reportEvent("update_started", {
+						ext1: "market",
+						ext2: "done"
+					});
 					setRun(terminalRun("done", {
 						percent: 100,
 						installedVersion: operation.installedVersion,
@@ -2633,6 +6937,10 @@ function useUpdateCenter(localeId) {
 					}));
 					return;
 				}
+				reportEvent("update_started", {
+					ext1: "market",
+					ext2: "failed"
+				});
 				setRun(terminalRun("error", {
 					failureCode: operation.failure?.code || "UPDATE_FAILED",
 					message: operation.failure?.message || null,
@@ -2681,7 +6989,7 @@ function useUpdateCenter(localeId) {
 
 // src/client/ui/useComposerDraft.ts
 /** The add box: draft persistence, auto-grow, send chords and newline insertion. */
-function useComposerDraft({ draftKey, commit, report, sendShortcut }) {
+function useComposerDraft({ draftKey, commit, report, sendShortcut, scopeKind }) {
 	const key = draftKey ? String(draftKey) : "";
 	const [draft, setDraft] = react.default.useState(() => readScopeDrafts(key).add);
 	const addRef = react.default.useRef(null);
@@ -2720,6 +7028,7 @@ function useComposerDraft({ draftKey, commit, report, sendShortcut }) {
 		}
 		setDraft("");
 		clearAddDraft(key);
+		reportEvent("note_created", { ext1: scopeKind });
 	};
 	const insertDraftNewline = (node) => {
 		if (!node) return;
@@ -2775,7 +7084,7 @@ function useComposerDraft({ draftKey, commit, report, sendShortcut }) {
 
 // src/client/ui/useNoteActions.ts
 /** Row actions: toggle, delete, and the inline edit session. */
-function useNoteActions({ draftKey, commit, report, forgetForwardedItems }) {
+function useNoteActions({ draftKey, commit, report, forgetForwardedItems, scopeKind }) {
 	const key = draftKey ? String(draftKey) : "";
 	const [editingId, setEditingId] = react.default.useState(null);
 	const [editDraft, setEditDraft] = react.default.useState("");
@@ -2805,6 +7114,10 @@ function useNoteActions({ draftKey, commit, report, forgetForwardedItems }) {
 			report("saveFailed");
 			return;
 		}
+		reportEvent("note_status_changed", {
+			ext1: scopeKind,
+			ext2: item.done ? "open" : "done"
+		});
 		if (item.id === editingId) {
 			setEditingId(null);
 			setEditDraft("");
@@ -2817,6 +7130,7 @@ function useNoteActions({ draftKey, commit, report, forgetForwardedItems }) {
 			return;
 		}
 		report("deleted");
+		reportEvent("note_deleted", { ext1: scopeKind });
 		clearEditDraft(key, item.id);
 		forgetForwardedItems(item.id);
 		resetEditing(item.id);
@@ -2846,6 +7160,7 @@ function useNoteActions({ draftKey, commit, report, forgetForwardedItems }) {
 				report("saveFailed");
 				return;
 			}
+			reportEvent("note_edited", { ext1: scopeKind });
 		}
 		setEditingId(null);
 		setEditDraft("");
@@ -3024,6 +7339,7 @@ function TodoRow(props) {
 			return;
 		}
 		if (onForwarded) onForwarded(item);
+		reportEvent("note_forwarded", { ext1: props.scopeKind });
 		if (onToast) onToast("forwarded");
 	};
 	const toggleCheck = () => onToggle(item);
@@ -3308,6 +7624,10 @@ function UpdateNotice(props) {
 	const copyPrompt = () => {
 		const text = say("update.prompt");
 		Promise.resolve(props.onCopyPrompt(text)).then((ok) => {
+			reportEvent("update_started", {
+				ext1: "command",
+				ext2: ok ? "copied" : "copy_failed"
+			});
 			if (typeof props.onToast === "function") props.onToast(ok ? "copied" : "copyFailed");
 		});
 	};
@@ -3596,13 +7916,15 @@ function MemoPopover(props) {
 		draftKey,
 		commit,
 		report,
-		sendShortcut
+		sendShortcut,
+		scopeKind: scope.kind
 	});
 	const { editingId, editDraft, setEditDraft, editRef, startEdit, finishEdit, cancelEdit, stopEditing, toggle, remove } = useNoteActions({
 		draftKey,
 		commit,
 		report,
-		forgetForwardedItems
+		forgetForwardedItems,
+		scopeKind: scope.kind
 	});
 	const { confirmClear, askClearConfirm, dismissClearConfirm, confirmClearDone } = useClearConfirm({
 		sessionId,
@@ -3635,6 +7957,7 @@ function MemoPopover(props) {
 		stopEditing();
 		dismissClearConfirm();
 		notifyTodoChange();
+		reportEvent("note_scope_changed", { ext1: next });
 	};
 	const clearDone = () => {
 		const clearedItems = items.filter((item) => item.done);
@@ -3643,6 +7966,10 @@ function MemoPopover(props) {
 			return;
 		}
 		report("cleared");
+		reportEvent("completed_notes_cleared", {
+			ext1: scope.kind,
+			ext2: String(clearedItems.length)
+		});
 		forgetForwardedItems(clearedItems.map((item) => item.id));
 		applySections({
 			open: sectionsRef.current.open,
@@ -3655,6 +7982,7 @@ function MemoPopover(props) {
 		done: item.done,
 		say,
 		localeId,
+		scopeKind: scope.kind,
 		onToast: report,
 		onToggle: toggle,
 		onStartEdit: startEdit,
@@ -3703,7 +8031,10 @@ function MemoPopover(props) {
 		openCount,
 		total,
 		showSettings,
-		onToggleSettings: () => setShowSettings((value) => !value),
+		onToggleSettings: () => {
+			if (!showSettings) reportEvent("settings_opened");
+			setShowSettings((value) => !value);
+		},
 		onClose: props.onClose,
 		newerVersion,
 		scopeMode: mode,
@@ -3773,6 +8104,14 @@ function MemoPopover(props) {
 const h = react.default.createElement;
 /** Hosts without ui-workspace (and the bundle test) keep the session list. */
 const useNoWorkspace = () => null;
+/** Panel dwell time as a stable RUM dimension. */
+function dwellBucket(ms) {
+	if (ms < 5e3) return "<5s";
+	if (ms < 3e4) return "5-30s";
+	if (ms < 12e4) return "30-120s";
+	if (ms < 6e5) return "2-10m";
+	return ">=10m";
+}
 /** Compact floating memo list, anchored to the entry that opened it. */
 function apply(ctx) {
 	const locale = ctx.get("locale");
@@ -3805,6 +8144,10 @@ function apply(ctx) {
 		const current = activePopover;
 		activePopover = null;
 		if (!current) return;
+		reportEvent("panel_closed", {
+			ext1: current.scopeKind,
+			ext2: dwellBucket(performance.now() - current.openedAt)
+		});
 		const hadFocus = current.container.contains(document.activeElement);
 		try {
 			current.root.unmount();
@@ -3825,6 +8168,12 @@ function apply(ctx) {
 		const workspace = workspaceScopeForSession(sessionId);
 		if (workspace) ensureDraftScope(draftKeyForSession(sessionId), sessionId, workspace.sessionIds);
 		setForwardTarget(sessionId);
+		const firstOpen = !hasOpenedPanel();
+		if (firstOpen) markPanelOpened();
+		reportEvent("panel_opened", {
+			ext1: scope.kind,
+			ext2: firstOpen ? "first" : "again"
+		});
 		const container = document.createElement("div");
 		container.dataset.dshMemoPopoverRoot = "true";
 		document.body.appendChild(container);
@@ -3833,7 +8182,9 @@ function apply(ctx) {
 			container,
 			root,
 			anchor,
-			placement
+			placement,
+			openedAt: performance.now(),
+			scopeKind: scope.kind
 		};
 		root.render(h(MemoPopover, {
 			sessionId,
