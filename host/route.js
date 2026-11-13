@@ -245,6 +245,13 @@ export function registerUpdateRoutes(server, options) {
     },
   })
 
+  // No running-agent guard here, on purpose. The plugin market refuses an
+  // update while any agent runs; this package is UI-only — agents never import
+  // it and this host half is already in memory — so replacing its files cannot
+  // disturb a working turn. Blocking a panel update behind an unrelated agent
+  // run costs more than it protects. docs/architecture.md §8 records the
+  // decision and the condition that would reverse it; read that before adding
+  // an `agents` check.
   const disposeApply = server.register({
     kind: 'exact',
     path: APPLY_PATH,
