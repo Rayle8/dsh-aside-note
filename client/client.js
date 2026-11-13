@@ -111,8 +111,7 @@ const en = {
 	"popover.clearConfirm": "Clear {n} completed notes?",
 	"popover.clearConfirmAction": "Clear",
 	"popover.clearDone": "Clear completed",
-	"popover.storage": "Separate per session · saved only on this device",
-	"popover.shared": "Shared across this workspace · saved only on this device",
+	"popover.local": "Notes are saved only on this device",
 	"scope.label": "Note scope",
 	"scope.workspace": "Workspace",
 	"scope.session": "Session",
@@ -225,8 +224,7 @@ const zh = {
 	"popover.clearConfirm": "清除 {n} 项已完成记录？",
 	"popover.clearConfirmAction": "确认清除",
 	"popover.clearDone": "清除已完成",
-	"popover.storage": "按会话隔离 · 数据仅保存在本地",
-	"popover.shared": "工作区共享 · 数据仅保存在本地",
+	"popover.local": "便笺数据仅保存在本地",
 	"scope.label": "便笺范围",
 	"scope.workspace": "工作区",
 	"scope.session": "会话",
@@ -3759,7 +3757,7 @@ function MemoPopover(props) {
 	}), h$1("div", {
 		className: "dsh-an-popFoot",
 		role: "status"
-	}, h$1("span", { className: syncError ? "dsh-an-error" : void 0 }, say(syncError ? "storage.failed" : scope.kind === "workspace" ? "popover.shared" : "popover.storage"))));
+	}, h$1("span", { className: syncError ? "dsh-an-error" : void 0 }, say(syncError ? "storage.failed" : "popover.local"))));
 	return react_dom.default.createPortal(content, document.body);
 }
 

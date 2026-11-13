@@ -248,7 +248,7 @@ export function MemoPopover(props) {
       { className: 'dsh-an-popFoot', role: 'status' },
       h('span', { className: syncError ? 'dsh-an-error' : undefined }, say(syncError
         ? 'storage.failed'
-        : scope.kind === 'workspace' ? 'popover.shared' : 'popover.storage')),
+        : 'popover.local')),
     ),
   )
 

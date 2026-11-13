@@ -6,6 +6,16 @@ This file records user-visible changes only. Screenshots, marketplace listing ma
 
 ## next-released
 
+<!-- app-update-notes:en:start -->
+### Changed
+- **Footer:** the panel footer no longer names the Workspace/Session scope; both scopes now read “Notes are saved only on this device”, and the switch under the title says which list is showing.
+<!-- app-update-notes:en:end -->
+
+<!-- app-update-notes:zh:start -->
+### 变更
+- **页脚：** 面板页脚不再区分工作区 / 会话，两种范围都显示「便笺数据仅保存在本地」；当前清单看标题下方的范围切换。
+<!-- app-update-notes:zh:end -->
+
 ## 1.1.1
 
 <!-- app-update-notes:en:start -->

@@ -526,7 +526,7 @@ test('one workspace shares its notes and forwards into the visible session', asy
   assert.deepEqual(scopeButtons().map(node => node.textContent), ['工作区', '会话'])
   assert.equal(scopeButtons()[0].getAttribute('aria-pressed'), 'true',
     'the workspace list is the default scope')
-  assert.match(popover.querySelector('.dsh-an-popFoot').textContent, /工作区共享/)
+  assert.match(popover.querySelector('.dsh-an-popFoot').textContent, /便笺数据仅保存在本地/)
   const inputOf = root => root.querySelector('.dsh-an-input')
   const setter = Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, 'value').set
   const typeInto = async (node, text) => {
@@ -547,7 +547,8 @@ test('one workspace shares its notes and forwards into the visible session', asy
 
   // The header switch can drop to this session's own list without reopening.
   await act(async () => { popover.querySelector('[data-scope-mode="session"]').click() })
-  assert.match(popover.querySelector('.dsh-an-popFoot').textContent, /按会话隔离/)
+  assert.match(popover.querySelector('.dsh-an-popFoot').textContent, /便笺数据仅保存在本地/,
+    'the footer stays the neutral storage line in either scope')
   assert.deepEqual(
     [...popover.querySelectorAll('.dsh-an-text')].map(node => node.textContent),
     ['会话一的事项'],
@@ -561,7 +562,7 @@ test('one workspace shares its notes and forwards into the visible session', asy
   // Switching back restores the shared list and remembers the choice.
   await act(async () => { popover.querySelector('[data-scope-mode="workspace"]').click() })
   assert.equal(window.localStorage.getItem('dsh.aside-note.scope-mode'), 'workspace')
-  assert.match(popover.querySelector('.dsh-an-popFoot').textContent, /工作区共享/)
+  assert.match(popover.querySelector('.dsh-an-popFoot').textContent, /便笺数据仅保存在本地/)
   assert.deepEqual(
     [...popover.querySelectorAll('.dsh-an-text')].map(node => node.textContent).sort(),
     ['会话二的事项', '会话一的事项'].sort(),
@@ -641,7 +642,7 @@ test('one workspace shares its notes and forwards into the visible session', asy
     'the shared draft stays visible in the session scope too')
   assert.equal(window.localStorage.getItem('dsh.aside-note.scope-mode'), 'session')
   await act(async () => { secondPopover.querySelector('[data-scope-mode="workspace"]').click() })
-  assert.match(secondPopover.querySelector('.dsh-an-popFoot').textContent, /工作区共享/)
+  assert.match(secondPopover.querySelector('.dsh-an-popFoot').textContent, /便笺数据仅保存在本地/)
 
   // Forwarding writes into session-2's composer only: session-1's stays empty,
   // proving the shared note follows the conversation currently on screen.
