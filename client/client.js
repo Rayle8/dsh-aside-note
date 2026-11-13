@@ -1906,7 +1906,7 @@ function selectReleaseHistory(list, query) {
 	const max = query.max && query.max > 0 ? query.max : 6;
 	const seen = /* @__PURE__ */ new Set();
 	const entries = [];
-	const allowPrerelease = isPrerelease(query.current);
+	const allowPrerelease = isPrerelease(query.current) && isPrerelease(query.latest ?? "");
 	for (const item of Array.isArray(list) ? list : []) {
 		const release = item;
 		if (!release || typeof release !== "object") continue;
@@ -1957,6 +1957,16 @@ const UPDATE_TIMEOUT_MS = 8e3;
 /** A version carrying a prerelease part, e.g. `1.2.0-beta.1`. */
 function isPrereleaseVersion(version) {
 	return /^\D*\d+\.\d+\.\d+-/.test(version.trim());
+}
+/**
+* A prerelease on a channel this project actually publishes.
+*
+* `1.1.2-beta.1` is a build someone installed on purpose and it should check
+* for updates like any other release; `2.1.0-dev` is a local build and must not
+* nag. The suffix alone cannot tell them apart, so the channel names do.
+*/
+function isPublishedChannel(version) {
+	return /^\d+\.\d+\.\d+-(?:alpha|beta|rc)\./.test(version.trim());
 }
 /**
 * Full ordering, tolerant of a `v` prefix and short forms, with the prerelease
@@ -2623,7 +2633,7 @@ function useUpdateCenter(localeId) {
 	}, []);
 	const latestVersion = check.latestVersion;
 	react.default.useEffect(() => {
-		if ("1.1.1".includes("-")) return void 0;
+		if ("1.1.1".includes("-") && !isPublishedChannel("1.1.1")) return void 0;
 		let active = true;
 		fetchLatestVersion().then((version) => {
 			if (!active || version === null) return;

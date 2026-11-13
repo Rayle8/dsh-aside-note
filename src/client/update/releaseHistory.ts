@@ -105,9 +105,11 @@ export function selectReleaseHistory(list: unknown, query: ReleaseHistoryQuery):
   const seen = new Set<string>()
   const entries: ReleaseEntry[] = []
 
-  // Stable users are never offered a prerelease, so its notes stay hidden too.
-  // A prerelease build is on that channel already and needs the same notes.
-  const allowPrerelease = isPrerelease(query.current)
+  // Prerelease entries are notes only when the release being offered is itself
+  // a prerelease: a beta tester upgrading beta.1 -> beta.2 needs beta.2's notes,
+  // while someone crossing into a stable release reads the stable notes and not
+  // a prerelease of that same release crowding the list.
+  const allowPrerelease = isPrerelease(query.current) && isPrerelease(query.latest ?? '')
 
   for (const item of Array.isArray(list) ? list : []) {
     const release = item as Record<string, any> | null

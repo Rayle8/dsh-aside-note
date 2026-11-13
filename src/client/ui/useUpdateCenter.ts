@@ -25,6 +25,7 @@ import { updateNotesForLocale } from '../update/releaseNotes'
 import type { ReleaseNoteGroup } from '../update/releaseNotes'
 import { MARKET_PACKAGE, marketClient } from '../update/market'
 import { applyHostUpdate } from '../update/host'
+import { isPublishedChannel } from '../update/latest'
 import type { MarketCapabilities } from '../update/market'
 import { copyText } from '../domain/clipboard'
 
@@ -138,9 +139,10 @@ export function useUpdateCenter(localeId: string) {
   const latestVersion = check.latestVersion
 
   // Quiet check on open: keeps the gear dot meaningful without a click. A local
-  // dev build (`2.1.0-dev`) never nags, but a manual check still works.
+  // dev build (`2.1.0-dev`) never nags, but a build from a published channel
+  // (`1.1.2-beta.1`) is one a tester installed on purpose and must be checked.
   React.useEffect(() => {
-    if (PLUGIN_VERSION.includes('-')) return undefined
+    if (PLUGIN_VERSION.includes('-') && !isPublishedChannel(PLUGIN_VERSION)) return undefined
     let active = true
     fetchLatestVersion().then(version => {
       if (!active || version === null) return

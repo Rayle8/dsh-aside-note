@@ -67,6 +67,17 @@ export function isPrereleaseVersion(version: string): boolean {
 }
 
 /**
+ * A prerelease on a channel this project actually publishes.
+ *
+ * `1.1.2-beta.1` is a build someone installed on purpose and it should check
+ * for updates like any other release; `2.1.0-dev` is a local build and must not
+ * nag. The suffix alone cannot tell them apart, so the channel names do.
+ */
+export function isPublishedChannel(version: string): boolean {
+  return /^\d+\.\d+\.\d+-(?:alpha|beta|rc)\./.test(version.trim())
+}
+
+/**
  * Full ordering, tolerant of a `v` prefix and short forms, with the prerelease
  * identifiers compared as semver does: a release outranks any prerelease on the
  * same core, `rc.1` sorts below `rc.2`, and a numeric identifier sorts below an

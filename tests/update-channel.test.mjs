@@ -24,7 +24,7 @@ function readUpdateHelpers() {
   const start = bundle.indexOf('const UPDATE_REGISTRY_HOSTS = ')
   const end = bundle.indexOf('const updateProbe = createUpdateProbe', start)
   assert.ok(start > 0 && end > start, 'update helpers not found in the bundle')
-  return new Function(`${repoLine}\n${bundle.slice(start, end)}\nreturn { createUpdateProbe, isNewerVersion, isPrereleaseVersion }`)()
+  return new Function(`${repoLine}\n${bundle.slice(start, end)}\nreturn { createUpdateProbe, isNewerVersion, isPrereleaseVersion, isPublishedChannel }`)()
 }
 
 const json = version => ({ ok: true, json: async () => ({ version }) })
@@ -93,6 +93,17 @@ test('prerelease identifiers order as semver does', () => {
   assert.equal(isNewerVersion('1.2.0-alpha.1', '1.2.0-beta.1'), false, 'alphanumerics order lexically: alpha < beta')
   assert.equal(isNewerVersion('1.2.0-rc.1', '1.2.0-beta.1'), true, 'rc > beta')
   assert.equal(isNewerVersion('1.2.0-beta.1', '1.2.0-beta.1'), false)
+})
+
+test('only a published channel checks for updates on open', () => {
+  const { isPublishedChannel } = readUpdateHelpers()
+  // A tester installed a beta on purpose: it has to see the next one.
+  assert.equal(isPublishedChannel('1.1.2-beta.1'), true)
+  assert.equal(isPublishedChannel('1.2.0-rc.1'), true)
+  assert.equal(isPublishedChannel('1.2.0-alpha.3'), true)
+  // A local or dirty build must stay quiet.
+  assert.equal(isPublishedChannel('2.1.0-dev'), false)
+  assert.equal(isPublishedChannel('1.1.1'), false)
 })
 
 test('the host and browser comparators agree', () => {
