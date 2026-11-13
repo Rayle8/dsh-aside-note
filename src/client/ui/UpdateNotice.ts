@@ -20,6 +20,7 @@
 import React from 'react'
 import type { NotesEntry, NotesState, RunPhase, UpdateRunState } from './useUpdateCenter'
 import type { ReleaseNoteGroup } from '../update/releaseNotes'
+import { reportEvent } from '../rum'
 
 const h = React.createElement
 
@@ -119,6 +120,9 @@ export function UpdateNotice(props: {
   const copyPrompt = () => {
     const text = say('update.prompt')
     Promise.resolve(props.onCopyPrompt(text)).then(ok => {
+      // The command channel of the update flow: the card hands the terminal
+      // prompt over instead of driving the market.
+      reportEvent('update_started', { ext1: 'command', ext2: ok ? 'copied' : 'copy_failed' })
       if (typeof props.onToast === 'function') props.onToast(ok ? 'copied' : 'copyFailed')
     })
   }

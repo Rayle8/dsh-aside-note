@@ -74,6 +74,9 @@ export default defineConfig({
   // CJS would default to Node, but this is a browser classic script; name the
   // platform rather than inheriting the format default.
   inputOptions: { platform: 'browser' },
+  // The panel reports its own release to RUM. `pkg.version` is committed, so
+  // the value is reproducible; a build-time env would break the bundle gate.
+  define: { __PLUGIN_VERSION__: JSON.stringify(pkg.version) },
   deps: {
     neverBundle: CLIENT_EXTERNALS,
     // Anything not in the loader's module table must inline: a require() the

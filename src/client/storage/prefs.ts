@@ -12,6 +12,7 @@ import {
   SEND_SHORTCUT_DEFAULT,
   SEND_SHORTCUT_KEY,
   FORWARD_PREFIX_STORAGE_KEY,
+  PANEL_OPENED_KEY,
 } from '../constants'
 import { storage } from './codec'
 
@@ -145,6 +146,27 @@ export function writeSectionState(state) {
   if (!ls) return
   try {
     ls.setItem(SECTION_STATE_KEY, JSON.stringify({ open: state.open === true, done: state.done === true }))
+  } catch {
+    /* storage is best effort */
+  }
+}
+
+/** Whether this browser has ever opened the panel; the first open is reported once. */
+export function hasOpenedPanel() {
+  const ls = storage()
+  try {
+    return Boolean(ls && ls.getItem(PANEL_OPENED_KEY))
+  } catch {
+    return false
+  }
+}
+
+/** Record the first panel open; the caller decides what to report. */
+export function markPanelOpened() {
+  const ls = storage()
+  if (!ls) return
+  try {
+    ls.setItem(PANEL_OPENED_KEY, '1')
   } catch {
     /* storage is best effort */
   }

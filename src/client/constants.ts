@@ -16,6 +16,10 @@ export const WORKSPACE_STORAGE_KEY = 'dsh.aside-note.workspaces'
 export const DRAFT_STORAGE_KEY = 'dsh.aside-note.drafts'
 /** Notes already forwarded to the composer, per session; marks the forward button. */
 export const FORWARDED_STORAGE_KEY = 'dsh.aside-note.forwarded'
+/** Anonymous RUM visitor id; fills the SDK's `uin` so UV survives reloads. */
+export const ANONYMOUS_UIN_KEY = 'dsh.aside-note.uin'
+/** Whether this browser has opened the panel before; reported once as `first`. */
+export const PANEL_OPENED_KEY = 'dsh.aside-note.panel-opened'
 /** Shown in the in-panel settings; keep in sync with package.json. */
 export const PLUGIN_VERSION = '1.1.1'
 export const PLUGIN_AUTHOR = '阿三石'

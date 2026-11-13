@@ -9,12 +9,14 @@
 import React from 'react'
 import ReactDOMClient from 'react-dom/client'
 
+import './rum'
 import CSS from './styles/panel.css?inline'
 import { NS, PANEL_ID } from './constants'
 import { DICT, fill, makeSay } from './i18n'
 import { bindWorkspace, draftKeyForSession, scopeForSession, workspaceScopeForSession } from './scope'
 import { setForwardTarget } from './domain/forward'
-import { readScopeMode } from './storage/prefs'
+import { reportEvent } from './rum'
+import { hasOpenedPanel, markPanelOpened, readScopeMode } from './storage/prefs'
 import { ensureDraftScope } from './storage/drafts'
 import { ensureWorkspaceRecord } from './storage/workspace'
 import { createToastSeat } from './ui/toastSeat'
@@ -72,6 +74,15 @@ const h = React.createElement
 /** Hosts without ui-workspace (and the bundle test) keep the session list. */
 const useNoWorkspace = () => null
 
+/** Panel dwell time as a stable RUM dimension. */
+function dwellBucket(ms: number) {
+  if (ms < 5_000) return '<5s'
+  if (ms < 30_000) return '5-30s'
+  if (ms < 120_000) return '30-120s'
+  if (ms < 600_000) return '2-10m'
+  return '>=10m'
+}
+
 /** Compact floating memo list, anchored to the entry that opened it. */
 function apply(ctx: DshClientCtx) {
   const locale = ctx.get('locale')
@@ -114,6 +125,9 @@ function apply(ctx: DshClientCtx) {
     const current = activePopover
     activePopover = null
     if (!current) return
+    // RUM dimensions are strings and stay low-cardinality in buckets; the exact
+    // dwell time would make `ext2` useless as a dimension.
+    reportEvent('panel_closed', { ext1: current.scopeKind, ext2: dwellBucket(performance.now() - current.openedAt) })
     // Only hand focus back to the entry when the panel itself had it; a click
     // elsewhere must leave focus where the user put it.
     const hadFocus = current.container.contains(document.activeElement)
@@ -145,11 +159,16 @@ function apply(ctx: DshClientCtx) {
     const workspace = workspaceScopeForSession(sessionId)
     if (workspace) ensureDraftScope(draftKeyForSession(sessionId), sessionId, workspace.sessionIds)
     setForwardTarget(sessionId)
+    // The only way in is the header entry, and the early return above already
+    // answered the toggle-to-close case.
+    const firstOpen = !hasOpenedPanel()
+    if (firstOpen) markPanelOpened()
+    reportEvent('panel_opened', { ext1: scope.kind, ext2: firstOpen ? 'first' : 'again' })
     const container = document.createElement('div')
     container.dataset.dshMemoPopoverRoot = 'true'
     document.body.appendChild(container)
     const root = ReactDOMClient.createRoot(container)
-    activePopover = { container, root, anchor, placement }
+    activePopover = { container, root, anchor, placement, openedAt: performance.now(), scopeKind: scope.kind }
     root.render(h(MemoPopover, {
       sessionId,
       say: tr,

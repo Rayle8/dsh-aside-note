@@ -216,6 +216,12 @@ Therefore:
 - Clearing site data clears the notes.
 - Reading old data never rewrites the shape of `dsh.aside-note`; workspace lists are read from `dsh.aside-note.workspaces`, and the first visit to a workspace folds its member-session notes in once. Keys like `dsh.aside-notes.*` from earlier builds are not read. If your data still sits under the old `dsh.aside-notes.*.v2` keys, rename them to the matching `dsh.aside-note.*` keys and reload.
 
+### Anonymous usage statistics
+
+The panel reports a handful of anonymous events to Tencent Cloud RUM: panel opened (first / repeat), panel closed with a dwell-time bucket, settings opened, update checked (auto / manual + result), update started (in-app market / copy-update-prompt + result), note created, completed/uncompleted, edited, deleted, forwarded, the scope switched, and how many completed notes a clear removed. An event carries the scope kind (`workspace` / `session`) and a `done` / `open` status — never note text, a session id, or conversation content.
+
+Only custom events are reported: page performance, web vitals, global JS errors, API and asset speed are all off, and the reported page name is the constant `dsh-aside-note` instead of the shell's URL. Statistics are on by default and dropped through the SDK's `beforeReport` hook when the browser sends Do Not Track. The SDK keeps two anonymous ids in `localStorage`: `AEGIS_ID` (device) and `dsh.aside-note.uin` (visitor, reported as `uin` so the console can count UV and stitch a session across reloads). Neither carries an account, device model or note content, and clearing site data rotates them; no cookie is set.
+
 ## Update notice
 
 When the panel opens, the plugin quietly checks the latest published version (npm, falling back to npmmirror and then the latest GitHub Release) and caches the answer for an hour. When a newer version exists, the settings button gains a dot and Settings › About shows the update card:
