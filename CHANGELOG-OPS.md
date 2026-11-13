@@ -15,6 +15,8 @@
 
 ## next-released
 
+## 1.1.2-beta.4
+
 - **构建：** 统计改用腾讯云 RUM（`aegis-web-sdk`），appId 直接写在 `src/client/rum.ts`。它不走构建期 `.env`：`client/client.js` 是提交进仓库的产物，本地 env 会让 CI 在无 env 时重建出不同的字节，bundle 校验必然失败。SDK 在构建时内联，所以放在 `devDependencies`。
 - **体积：** 只开自定义事件（页面性能、web vitals、`onError`、接口与资源测速关闭），bundle 为 362 KB（95 KB gzip），比接 PostHog 时的 382 KB（105 KB gzip）略小。
 - **版本号注入：** `tsdown.config.ts` 用 `define` 把 `package.json` 的 `version` 注入成 `__PLUGIN_VERSION__`，RUM 控制台因此能按插件版本拆分上报；取值来自已提交的文件，不破坏逐字节复现。

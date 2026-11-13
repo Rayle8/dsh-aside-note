@@ -6,6 +6,8 @@ This file records user-visible changes only. Screenshots, marketplace listing ma
 
 ## next-released
 
+## 1.1.2-beta.4
+
 <!-- app-update-notes:en:start -->
 ### Added
 - **Anonymous usage statistics:** the panel reports a few anonymous events to Tencent Cloud RUM — panel opened (first / repeat), panel closed with a dwell-time bucket, settings opened, update checked (auto / manual + result), update started (host / market / copy-update-prompt + result), note created, completed/uncompleted, edited, deleted, forwarded, scope switched, and how many completed notes a clear removed. Events carry the scope kind and a `done` / `open` status only, plus an anonymous visitor id (`uin`) so the console can count unique users. Only custom events are reported: page performance, web vitals, global JS errors, API and asset speed stay off, the reported page name is a constant, and Do Not Track drops the reports.

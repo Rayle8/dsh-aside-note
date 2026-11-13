@@ -4243,7 +4243,7 @@ const ANONYMOUS_UIN_KEY = "dsh.aside-note.uin";
 /** Whether this browser has opened the panel before; reported once as `first`. */
 const PANEL_OPENED_KEY = "dsh.aside-note.panel-opened";
 /** Shown in the in-panel settings; keep in sync with package.json. */
-const PLUGIN_VERSION = "1.1.2-beta.3";
+const PLUGIN_VERSION = "1.1.2-beta.4";
 const PLUGIN_AUTHOR = "阿三石";
 const PLUGIN_REPO_URL = "https://github.com/Rayle8/dsh-aside-note";
 const PLUGIN_REPO_LABEL = "github.com/Rayle8/dsh-aside-note";
@@ -4337,7 +4337,7 @@ const rum = inTestRealm ? null : new import_aegis_min.default({
 	id: APP_ID,
 	uin: anonymousUin(),
 	hostUrl: "https://rumt-zh.com",
-	version: "1.1.2-beta.3",
+	version: "1.1.2-beta.4",
 	pagePerformance: false,
 	webVitals: false,
 	onError: false,
@@ -6874,7 +6874,7 @@ function useUpdateCenter(localeId) {
 	}, []);
 	const latestVersion = check.latestVersion;
 	react.default.useEffect(() => {
-		if ("1.1.2-beta.3".includes("-") && !isPublishedChannel("1.1.2-beta.3")) return void 0;
+		if ("1.1.2-beta.4".includes("-") && !isPublishedChannel("1.1.2-beta.4")) return void 0;
 		let active = true;
 		fetchLatestVersion().then((version) => {
 			if (!active) return;
@@ -6933,9 +6933,9 @@ function useUpdateCenter(localeId) {
 		}
 		reportEvent("update_checked", {
 			ext1: "manual",
-			ext2: isNewerVersion(version, "1.1.2-beta.3") ? "available" : "current"
+			ext2: isNewerVersion(version, "1.1.2-beta.4") ? "available" : "current"
 		});
-		if (isNewerVersion(version, "1.1.2-beta.3")) {
+		if (isNewerVersion(version, "1.1.2-beta.4")) {
 			const sameRelease = previousOffer !== null && version === previousOffer;
 			setCheck({
 				status: "available",
