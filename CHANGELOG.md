@@ -6,6 +6,8 @@ This file records user-visible changes only. Screenshots, marketplace listing ma
 
 ## next-released
 
+## 1.1.2
+
 <!-- app-update-notes:en:start -->
 ### Added
 - **Anonymous feature statistics:** the panel reports a small set of anonymous events to the Tencent Cloud Observability Platform — panel opened, note created/completed/edited/deleted/forwarded, scope switched, update checked — to see which features are used and where people get stuck. Events carry the action and outcome, the plugin version, an anonymous visitor ID and basic environment details such as network, region and device type; note text, conversations and account details are never read. Only custom events are sent: page performance, web vitals, JS errors, API and asset speed are off, and Do Not Track drops reports.
