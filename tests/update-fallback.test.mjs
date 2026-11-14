@@ -164,6 +164,29 @@ test('a host with no update route hands over the offered version, without touchi
   await dispose()
 })
 
+test('a prerelease host hint without the npmjs pin is replaced by the pinned command', async t => {
+  // An older host half pins the version but not the registry. Handing that hint
+  // over would let npx fetch the stable installer and miss the prerelease.
+  const stale = `npx -y dsh-aside-note install --version ${NEXT} --profile-dir "${PROFILE}"`
+  const { act, popover, until, dispose } = await boot(t, () => json(501, {
+    ok: false,
+    code: 'AUTO_UPDATE_UNAVAILABLE',
+    message: 'this host offers no installer for the running profile',
+    retryable: false,
+    hint: stale,
+  }))
+
+  const updateButton = await until(() => popover.querySelector('.dsh-an-updatePrimary'), 4000)
+  await act(async () => { updateButton.click() })
+  const fallback = await until(() => popover.querySelector('.dsh-an-updateFallback'), 4000)
+
+  assert.ok(!fallback.textContent.includes(stale), 'the stale hint is not rendered verbatim')
+  assert.match(fallback.textContent, /--registry=https:\/\/registry\.npmjs\.org\//)
+  assert.match(fallback.textContent, /dsh-aside-note@9\.9\.9-beta\.1/)
+  assert.match(fallback.textContent, /--version 9\.9\.9-beta\.1/)
+  await dispose()
+})
+
 test('a host refusal a terminal can get past uses the pinned command', async t => {
   const { window, act, popover, calls, until, dispose } = await boot(t, () => json(409, {
     ok: false,

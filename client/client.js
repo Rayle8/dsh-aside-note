@@ -7645,8 +7645,10 @@ function UpdateNotice(props) {
 	*/
 	const manualCommand = react.default.useMemo(() => {
 		const hinted = run.message?.trim() ?? "";
-		if (/^npx\s/u.test(hinted)) return hinted;
 		const prerelease = isPrereleaseVersion(latestVersion);
+		const hintPinsTarget = hinted.includes(latestVersion);
+		const hintPinsRegistry = !prerelease || hinted.includes("--registry=https://registry.npmjs.org/");
+		if (/^npx\s/u.test(hinted) && hintPinsTarget && hintPinsRegistry) return hinted;
 		return `npx -y${prerelease ? " --registry=https://registry.npmjs.org/" : ""} ${prerelease ? `${UPDATE_PACKAGE}@${latestVersion}` : UPDATE_PACKAGE} install --version ${latestVersion}`;
 	}, [run.message, latestVersion]);
 	/**

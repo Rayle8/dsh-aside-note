@@ -122,8 +122,14 @@ export function UpdateNotice(props: {
    */
   const manualCommand = React.useMemo(() => {
     const hinted = run.message?.trim() ?? ''
-    if (/^npx\s/u.test(hinted)) return hinted
     const prerelease = isPrereleaseVersion(latestVersion)
+    // A host from an older build may send a command that omits the version, or
+    // one that omits the npmjs pin for a prerelease. Use its hint only when it
+    // names both, so the card cannot hand over a command that installs the
+    // stable line.
+    const hintPinsTarget = hinted.includes(latestVersion)
+    const hintPinsRegistry = !prerelease || hinted.includes('--registry=https://registry.npmjs.org/')
+    if (/^npx\s/u.test(hinted) && hintPinsTarget && hintPinsRegistry) return hinted
     const registry = prerelease ? ' --registry=https://registry.npmjs.org/' : ''
     const packageSpec = prerelease ? `${UPDATE_PACKAGE}@${latestVersion}` : UPDATE_PACKAGE
     return `npx -y${registry} ${packageSpec} install --version ${latestVersion}`

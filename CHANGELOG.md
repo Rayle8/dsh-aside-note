@@ -6,6 +6,16 @@ This file records user-visible changes only. Screenshots, marketplace listing ma
 
 ## next-released
 
+<!-- app-update-notes:en:start -->
+### Fixed
+- **Manual update command:** when a host from an older build sends a fallback command without the offered version, or without the npmjs pin for a prerelease, the card now replaces it with its own pinned command instead of handing over one that could install the stable line.
+<!-- app-update-notes:en:end -->
+
+<!-- app-update-notes:zh:start -->
+### 修复
+- **手动更新命令：** 旧宿主返回的兜底命令如果没带目标版本、或预发布没带 npmjs 固定，卡片会用自己生成的固定版本命令替换它，避免把用户带回稳定版。
+<!-- app-update-notes:zh:end -->
+
 ## 1.1.2-beta.7
 
 <!-- app-update-notes:en:start -->
