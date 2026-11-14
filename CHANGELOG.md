@@ -6,6 +6,41 @@ This file records user-visible changes only. Screenshots, marketplace listing ma
 
 ## next-released
 
+<!-- app-update-notes:en:start -->
+### Added
+- **Anonymous feature statistics:** the panel reports a small set of anonymous events to the Tencent Cloud Observability Platform — panel opened, note created/completed/edited/deleted/forwarded, scope switched, update checked — to see which features are used and where people get stuck. Events carry the action and outcome, the plugin version, an anonymous visitor ID and basic environment details such as network, region and device type; note text, conversations and account details are never read. Only custom events are sent: page performance, web vitals, JS errors, API and asset speed are off, and Do Not Track drops reports.
+- **Privacy switch:** Settings › Privacy now has an “Anonymous feature statistics” switch, on by default. Turning it off stops reporting immediately; the final event only records that choice, and the preference stays in this browser.
+
+### Changed
+- **In-app updates now run through the host:** the plugin no longer uses the plugin market. The host installs over the running copy and verifies the version on disk; prerelease builds also read the `next` dist-tag, while stable builds keep reading `latest` only.
+- **Failed updates stay actionable:** a failed update states its cause. When the host has no update route or refuses an in-place install, the card hands over a command pinned to the offered version; prereleases also pin the npmjs registry, and the installer retries npmjs when the configured mirror has not caught up.
+- **No more waiting on unrelated work:** updates no longer queue behind the plugin market or wait for an unrelated agent to finish.
+- **No “Restart DSH” button:** after an update the card offers a page refresh and says the new version lands at the next start.
+- **One neutral footer line:** both the workspace and session scopes now read “Notes are saved only on this device”; the switch under the title shows which list is visible.
+
+### Fixed
+- **Settings card scrolling:** in a short window the settings card now scrolls inside the panel instead of being cut off below its bottom edge, while a tall panel still shows the whole card.
+- **Manual update command:** when an older host sends a fallback command without the offered version, or without the npmjs pin for a prerelease, the card replaces it with its own pinned command so it cannot install the stable line.
+<!-- app-update-notes:en:end -->
+
+<!-- app-update-notes:zh:start -->
+### 新增
+- **匿名功能统计：** 面板通过腾讯云可观测平台上报少量匿名事件——打开面板、新建/完成/编辑/删除/转发便笺、切换清单、检查更新等，用来判断哪些功能常用、哪里容易卡住。事件带操作类型与结果、插件版本、匿名访客 ID，以及网络、地域、设备类型等基础环境信息；不读取便笺正文、对话或账号信息。只上报自定义事件，页面性能、Web Vitals、JS 报错、接口与资源测速均关闭，浏览器开启 DNT 时丢弃上报。
+- **隐私开关：** 设置 › 隐私新增「匿名功能统计」开关，默认开启。关闭后不再上报，最后一条事件只记录这次选择；开关状态仅保存在本机。
+
+### 变更
+- **应用内更新改走宿主：** 不再使用插件市场。宿主就地覆盖安装并回读磁盘版本；预发布版同时读取 `next` 标签，稳定版仍只读 `latest`。
+- **更新失败仍可继续：** 失败时说明原因；宿主没有更新路由或拒绝就地覆盖时，卡片给出固定目标版本的命令。预发布还会固定 npmjs registry，安装器在默认镜像缺版本时也会用 npmjs 重试。
+- **更新不再被无关任务阻塞：** 不再排队等插件市场，也不会因为别的 agent 正在运行而拒绝更新。
+- **不再提供「重启 DSH」按钮：** 更新完成后提供「刷新页面」，并说明新版本在下次启动生效。
+- **页脚统一为一条中性说明：** 工作区与会话都显示「便笺数据仅保存在本地」，当前清单只由标题下方的切换表示。
+
+### 修复
+- **设置卡滚动：** 窗口偏矮时设置卡在面板内滚动，不再被面板下沿裁掉；面板够高时仍完整显示。
+- **手动更新命令：** 旧宿主返回的兜底命令如果没带目标版本、或预发布没带 npmjs 固定，卡片会换成自己生成的固定版本命令，避免装回稳定版。
+<!-- app-update-notes:zh:end -->
+
+
 ## 1.1.2-beta.8
 
 <!-- app-update-notes:en:start -->
