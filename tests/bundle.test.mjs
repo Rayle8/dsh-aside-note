@@ -264,6 +264,10 @@ test('the built bundle boots, applies, and seats its slots', async t => {
   // Settings: the shortcut radio persists, and so does the forward prefix.
   await act(async () => { popover.querySelector('.dsh-an-settingsBtn').click() })
   assert.ok(popover.querySelector('.dsh-an-settings'), 'the gear must open the settings card')
+  const settingsViewport = popover.querySelector('.dsh-an-settingsViewport')
+  assert.ok(settingsViewport, 'the settings card must sit in its own scroll viewport')
+  assert.ok(settingsViewport.contains(popover.querySelector('.dsh-an-settings')), 'the viewport wraps the card')
+  assert.equal(popover.dataset.settings, 'true', 'the panel marks the settings state for the layout rules')
   const brand = popover.querySelector('.dsh-an-settingBrand')
   assert.ok(brand, 'About must show the product identity')
   assert.match(brand.textContent, /旁边记/)

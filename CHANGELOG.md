@@ -6,6 +6,20 @@ This file records user-visible changes only. Screenshots, marketplace listing ma
 
 ## next-released
 
+<!-- app-update-notes:en:start -->
+### Changed
+- **Analytics copy:** the settings switch now says the statistics come from the Tencent Cloud Observability Platform and what they are for — seeing which features are used and where people get stuck — and spells out what travels with each event: an anonymous visitor ID plus basic environment details such as network, region and device type. Notes, conversations and account details are never read.
+### Fixed
+- **Settings:** opening Settings in a short window no longer cuts the card off below the panel edge with no scrollbar. The card now scrolls on its own rail, and the note list gives up its height first, so the whole card still fits whenever the panel is tall enough.
+<!-- app-update-notes:en:end -->
+
+<!-- app-update-notes:zh:start -->
+### 变更
+- **统计说明：** 设置开关现在写明统计通过腾讯云可观测平台完成，用途是找出常用功能和卡点；同时写明事件会带上匿名访客 ID，以及网络、地域、设备类型等基础环境信息；不读取便笺、对话或账号信息。
+### 修复
+- **设置：** 窗口偏矮时打开设置，设置卡不再被面板下沿裁掉、也没有滚动条。设置卡改为在面板内的轨道里滚动，列表先让出高度，面板够高时整张卡片仍然完整显示。
+<!-- app-update-notes:zh:end -->
+
 ## 1.1.2-beta.5
 
 <!-- app-update-notes:en:start -->

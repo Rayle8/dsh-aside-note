@@ -177,6 +177,7 @@ export function MemoPopover(props) {
       ref: panelRef,
       className: props.placement === 'right' ? 'dsh-an-popover dsh-an-popoverRight' : 'dsh-an-popover',
       style,
+      'data-settings': showSettings ? 'true' : undefined,
       role: 'dialog',
       'aria-label': say('popover.title'),
     },
@@ -222,18 +223,24 @@ export function MemoPopover(props) {
       onScopeChange: chooseScope,
     }),
     showSettings
-      ? h(SettingsPanel, {
-          say,
-          sendShortcut,
-          chooseShortcut,
-          forwardPrefix,
-          changeForwardPrefix,
-          prefixRef,
-          analyticsEnabled,
-          onToggleAnalytics: toggleAnalytics,
-          update,
-          onToast: report,
-        })
+      // The card scrolls on its own rail when the panel is shorter than the
+      // settings, so nothing falls below the popover's clipped bottom edge.
+      ? h(
+          'div',
+          { className: 'dsh-an-settingsViewport' },
+          h(SettingsPanel, {
+            say,
+            sendShortcut,
+            chooseShortcut,
+            forwardPrefix,
+            changeForwardPrefix,
+            prefixRef,
+            analyticsEnabled,
+            onToggleAnalytics: toggleAnalytics,
+            update,
+            onToast: report,
+          }),
+        )
       : null,
     h(ComposerForm, {
       say,

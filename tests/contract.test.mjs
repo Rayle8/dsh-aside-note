@@ -350,6 +350,36 @@ test('locale files carry metadata and the dictionary stays in sync', () => {
   assert.match(dict.en['item.forwarded'], /remove the mark/)
 })
 
+test('the analytics switch names the platform, the purpose and the limits', () => {
+  const dict = readDict()
+  assert.equal(dict.zh['settings.analytics'], '匿名功能统计')
+  assert.equal(dict.en['settings.analytics'], 'Anonymous feature statistics')
+  // The copy leads with who measures what and why, then states the limits in
+  // plain language instead of a bare "anonymous statistics" label.
+  assert.match(dict.zh['settings.analyticsHint'], /腾讯云可观测平台/)
+  assert.match(dict.zh['settings.analyticsHint'], /常用功能/)
+  assert.match(dict.zh['settings.analyticsHint'], /容易卡住/)
+  assert.match(dict.zh['settings.analyticsHint'], /操作类型/)
+  assert.match(dict.zh['settings.analyticsHint'], /匿名访客 ID/)
+  assert.match(dict.zh['settings.analyticsHint'], /网络、地域、设备类型/)
+  assert.match(dict.zh['settings.analyticsHint'], /不读取便笺、对话或账号信息/)
+  assert.match(dict.zh['settings.analyticsHint'], /插件版本/)
+  assert.match(dict.zh['settings.analyticsHint'], /关闭后不再上报/)
+  // The SDK also collects basic environment metadata, so the copy must not
+  // claim an exclusive "only these fields" list.
+  assert.doesNotMatch(dict.zh['settings.analyticsHint'], /只记录|仅记录/)
+  assert.match(dict.en['settings.analyticsHint'], /Tencent Cloud Observability Platform/)
+  assert.match(dict.en['settings.analyticsHint'], /which features are used/)
+  assert.match(dict.en['settings.analyticsHint'], /get stuck/)
+  assert.match(dict.en['settings.analyticsHint'], /reports include/)
+  assert.match(dict.en['settings.analyticsHint'], /anonymous visitor ID/)
+  assert.match(dict.en['settings.analyticsHint'], /network, region and device type/)
+  assert.match(dict.en['settings.analyticsHint'], /the plugin version/)
+  assert.match(dict.en['settings.analyticsHint'], /never notes, conversations or account details/)
+  assert.match(dict.en['settings.analyticsHint'], /stops all further reporting/)
+  assert.doesNotMatch(dict.en['settings.analyticsHint'], /only the action type/)
+})
+
 test('documentation and preview assets are present', () => {
   const previews = [
     'docs/assets/preview-badge.png',
@@ -607,6 +637,28 @@ test('the rail grows into the popover padding without shrinking the cards', () =
   // the rail consumes, and the stable gutter keeps that width when idle.
   assert.match(list[1], /padding-right:calc\(var\(--dsh-an-listGutter\) - var\(--dsh-an-scrollRail\)\)/)
   assert.match(list[1], /scrollbar-gutter:stable/)
+})
+
+test('the settings card scrolls instead of being clipped by the popover edge', () => {
+  const css = readCss()
+  const viewport = /\.dsh-an-settingsViewport\{([^}]*)\}/.exec(css)
+  assert.ok(viewport, 'missing settings scroll viewport')
+  // The same rail geometry as the list, but only when the card needs it.
+  assert.match(viewport[1], /flex:0 1 auto/)
+  assert.match(viewport[1], /min-height:0/)
+  assert.match(viewport[1], /overflow-y:auto/)
+  assert.match(viewport[1], /margin-right:calc\(var\(--dsh-an-listGutter\) \* -1\)/)
+  assert.match(viewport[1], /padding-right:calc\(var\(--dsh-an-listGutter\) - var\(--dsh-an-scrollRail\)\)/)
+  assert.match(viewport[1], /scrollbar-gutter:stable/)
+  assert.match(viewport[1], /--dsh-scrollbar-width:var\(--dsh-an-scrollRail\)/)
+  assert.match(viewport[1], /--dsh-scrollbar-thumb-border:var\(--dsh-an-scrollInset\)/)
+  assert.doesNotMatch(viewport[1], /::-webkit-scrollbar|(?:^|[;{])scrollbar-(?:width|color):/)
+  // The list yields its height first; the card only starts scrolling once the
+  // list has nothing left to give, so a tall panel keeps the whole card.
+  assert.match(css, /\.dsh-an-popover\[data-settings="true"\] \.dsh-an-listViewport\{flex-shrink:10000\}/)
+  const client = read('src/client/ui/MemoPopover.ts') + read('src/client/ui/SettingsPanel.ts')
+  assert.match(client, /'data-settings': showSettings \? 'true' : undefined/)
+  assert.match(client, /className: 'dsh-an-settingsViewport'[\s\S]{0,160}h\(SettingsPanel/)
 })
 
 test('the bottom edge fades only while notes sit below the fold', () => {
