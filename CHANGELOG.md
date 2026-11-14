@@ -6,6 +6,8 @@ This file records user-visible changes only. Screenshots, marketplace listing ma
 
 ## next-released
 
+## 1.1.2-beta.7
+
 <!-- app-update-notes:en:start -->
 ### Changed
 - **Updates:** the plugin no longer probes or calls the plugin market. An update is one request to the host, and when that route is unavailable the card states a command pinned to the offered version; prereleases also pin the npmjs registry. The installer retries a prerelease against npmjs when the configured registry has not caught up.
