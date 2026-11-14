@@ -6,6 +6,8 @@ This file records user-visible changes only. Screenshots, marketplace listing ma
 
 ## next-released
 
+## 1.1.2-beta.6
+
 <!-- app-update-notes:en:start -->
 ### Changed
 - **Analytics copy:** the settings switch now says the statistics come from the Tencent Cloud Observability Platform and what they are for — seeing which features are used and where people get stuck — and spells out what travels with each event: an anonymous visitor ID plus basic environment details such as network, region and device type. Notes, conversations and account details are never read.
