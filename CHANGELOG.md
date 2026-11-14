@@ -6,6 +6,8 @@ This file records user-visible changes only. Screenshots, marketplace listing ma
 
 ## next-released
 
+## 1.1.2-beta.8
+
 <!-- app-update-notes:en:start -->
 ### Fixed
 - **Manual update command:** when a host from an older build sends a fallback command without the offered version, or without the npmjs pin for a prerelease, the card now replaces it with its own pinned command instead of handing over one that could install the stable line.

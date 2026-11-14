@@ -4245,7 +4245,7 @@ const ANALYTICS_ENABLED_KEY = "dsh.aside-note.analytics";
 /** Whether this browser has opened the panel before; reported once as `first`. */
 const PANEL_OPENED_KEY = "dsh.aside-note.panel-opened";
 /** Shown in the in-panel settings; keep in sync with package.json. */
-const PLUGIN_VERSION = "1.1.2-beta.7";
+const PLUGIN_VERSION = "1.1.2-beta.8";
 const PLUGIN_AUTHOR = "阿三石";
 const PLUGIN_REPO_URL = "https://github.com/Rayle8/dsh-aside-note";
 const PLUGIN_REPO_LABEL = "github.com/Rayle8/dsh-aside-note";
@@ -4511,7 +4511,7 @@ function createRum() {
 		id: APP_ID,
 		uin: anonymousUin(),
 		hostUrl: "https://rumt-zh.com",
-		version: "1.1.2-beta.7",
+		version: "1.1.2-beta.8",
 		pagePerformance: false,
 		webVitals: false,
 		onError: false,
@@ -6797,7 +6797,7 @@ function useUpdateCenter(localeId) {
 	}, []);
 	const latestVersion = check.latestVersion;
 	react.default.useEffect(() => {
-		if ("1.1.2-beta.7".includes("-") && !isPublishedChannel("1.1.2-beta.7")) return void 0;
+		if ("1.1.2-beta.8".includes("-") && !isPublishedChannel("1.1.2-beta.8")) return void 0;
 		let active = true;
 		fetchLatestVersion().then((version) => {
 			if (!active) return;
@@ -6856,9 +6856,9 @@ function useUpdateCenter(localeId) {
 		}
 		reportEvent("update_checked", {
 			ext1: "manual",
-			ext2: isNewerVersion(version, "1.1.2-beta.7") ? "available" : "current"
+			ext2: isNewerVersion(version, "1.1.2-beta.8") ? "available" : "current"
 		});
-		if (isNewerVersion(version, "1.1.2-beta.7")) {
+		if (isNewerVersion(version, "1.1.2-beta.8")) {
 			const sameRelease = previousOffer !== null && version === previousOffer;
 			setCheck({
 				status: "available",
