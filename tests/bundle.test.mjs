@@ -62,9 +62,9 @@ test('the built bundle boots, applies, and seats its slots', async t => {
   const ReactDOMClient = await import('react-dom/client')
   const { act } = React
 
-  // The panel probes npm when it opens and asks the market only when a newer
-  // version exists. Answer inside this realm so the shipped fallback, notes
-  // fetch, cache and update flow run without touching the network.
+  // The panel probes npm when it opens and asks the host only when a newer
+  // version exists. Answer inside this realm so the shipped notes fetch,
+  // cache and update flow run without touching the network.
   const RELEASE_BODY = `# English
 
 <!-- app-update-notes:en:start -->
@@ -98,20 +98,9 @@ test('the built bundle boots, applies, and seats its slots', async t => {
     { tag_name: `v${PRERELEASE}`, prerelease: true, body: RELEASE_BODY },
     { tag_name: `v${DRAFT}`, draft: true, body: RELEASE_BODY },
   ]
-  const MARKET_CAPABILITIES = {
-    schema: 'dsh-market/update-api/v1',
-    stability: 'beta',
-    marketVersion: '1.73.3',
-    restart: { supported: false, managedBy: 'operator' },
-    endpoints: {
-      updates: '/dsh-market/api/v1/updates',
-      operations: '/dsh-market/api/v1/operations',
-      restart: '/dsh-market/api/v1/restart',
-    },
-  }
   const calls = []
-  let startedUpdates = 0
-  let polledOperations = 0
+  let hostUpdates = 0
+  let hostTarget = null
   // One manual check is held open so the test can see the in-flight render.
   let holdManualCheck = false
   let releaseManualCheck = null
@@ -133,23 +122,16 @@ test('the built bundle boots, applies, and seats its slots', async t => {
     if (url === 'https://api.github.com/repos/Rayle8/dsh-aside-note/releases?per_page=50') {
       return json(200, RELEASES)
     }
-    if (url === '/dsh-market/api/v1/capabilities') return json(200, MARKET_CAPABILITIES)
-    if (url === '/dsh-market/api/v1/updates' && method === 'POST') {
-      startedUpdates += 1
-      return json(202, { operation: { operationId: 'boot-1-update-1', state: 'queued' } })
-    }
-    if (url.startsWith('/dsh-market/api/v1/operations?operationId=boot-1-update-1')) {
-      polledOperations += 1
+    if (url === '/dsh-aside-note/update/apply' && method === 'POST') {
+      hostUpdates += 1
+      hostTarget = JSON.parse(init.body).target
       return json(200, {
-        operation: {
-          operationId: 'boot-1-update-1',
-          state: 'succeeded',
-          beforeVersion: RUNNING,
-          installedVersion: LATEST,
-          progress: { percent: 100 },
-          outcome: { refreshRequired: true, restartRequired: false },
-          failure: null,
-        },
+        ok: true,
+        route: 'dsh',
+        previousVersion: RUNNING,
+        installedVersion: hostTarget,
+        updated: true,
+        restartRequired: true,
       })
     }
     return json(404, {})
@@ -349,15 +331,17 @@ test('the built bundle boots, applies, and seats its slots', async t => {
   assert.ok(updateButton, 'the update button shares that row')
   assert.equal(updateButton.textContent, '立即更新')
   assert.equal(popover.querySelector('.dsh-an-updateFallback'), null,
-    'a reachable market shows no manual fallback before it is needed')
+    'a reachable host shows no manual fallback before it is needed')
 
-  // "Update now" queues the market operation and settles on the refresh action.
+  // "Update now" posts one host request and settles on the refresh action.
   await act(async () => { updateButton.click() })
-  await act(async () => { await new Promise(resolve => window.setTimeout(resolve, 2200)) })
-  assert.equal(startedUpdates, 1, 'the update must POST exactly once')
-  assert.ok(polledOperations >= 1, 'the operation must be polled')
+  await act(async () => { await new Promise(resolve => window.setTimeout(resolve, 200)) })
+  assert.equal(hostUpdates, 1, 'the update must POST to the host exactly once')
+  assert.equal(hostTarget, LATEST, 'the host receives the offered version')
+  assert.equal(calls.filter(call => call.url.includes('/dsh-market/')).length, 0,
+    'the update path must not probe the plugin market')
   const done = [...popover.querySelectorAll('.dsh-an-updatePrimary')].map(node => node.textContent)
-  assert.ok(done.includes('刷新页面'), `the finished operation offers a refresh, saw ${JSON.stringify(done)}`)
+  assert.ok(done.includes('刷新页面'), `the finished host update offers a refresh, saw ${JSON.stringify(done)}`)
 
   const prefixField = popover.querySelector('#dsh-an-forward-prefix')
   await act(async () => {

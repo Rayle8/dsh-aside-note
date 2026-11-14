@@ -6,6 +6,16 @@ This file records user-visible changes only. Screenshots, marketplace listing ma
 
 ## next-released
 
+<!-- app-update-notes:en:start -->
+### Changed
+- **Updates:** the plugin no longer probes or calls the plugin market. An update is one request to the host, and when that route is unavailable the card states a command pinned to the offered version; prereleases also pin the npmjs registry. The installer retries a prerelease against npmjs when the configured registry has not caught up.
+<!-- app-update-notes:en:end -->
+
+<!-- app-update-notes:zh:start -->
+### 变更
+- **更新：** 插件不再探测或调用插件市场，更新只走宿主一个请求；宿主没有路由时，卡片直接给出带目标版本与 profile 目录的命令，预发布还会固定 npmjs registry；安装器在默认 registry 缺版本时也会用 npmjs 重试一次。
+<!-- app-update-notes:zh:end -->
+
 ## 1.1.2-beta.6
 
 <!-- app-update-notes:en:start -->

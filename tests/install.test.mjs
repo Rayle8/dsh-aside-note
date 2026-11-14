@@ -159,6 +159,53 @@ test(
   },
 )
 
+test(
+  'a prerelease retries against npmjs when the configured registry has not caught up',
+  { skip: process.platform === 'win32' && 'the stand-in node is a POSIX shell script' },
+  (t) => {
+    const dir = makeProfile(structuredClone(BASE), t)
+    const root = mkdtempSync(join(tmpdir(), 'asidenote-prerelease-runtime-'))
+    t.after(() => rmSync(root, { recursive: true, force: true }))
+    const node = join(root, 'primary-runtime', 'dependencies', 'node', 'bin', 'node')
+    const pnpm = join(root, 'primary-runtime', 'dependencies', 'pnpm', 'bin', 'pnpm.mjs')
+    mkdirSync(dirname(node), { recursive: true })
+    mkdirSync(dirname(pnpm), { recursive: true })
+    const log = join(root, 'invocations.log')
+    writeFileSync(node, [
+      '#!/bin/sh',
+      'set -e',
+      `printf '%s\\n' "$*" >> "${log}"`,
+      'case " $* " in',
+      '  *" --registry=https://registry.npmjs.org/"*) ;;',
+      '  *) printf "[ERR_PNPM_NO_MATCHING_VERSION] No matching version found\\n" >&2; exit 1 ;;',
+      'esac',
+      'mkdir -p node_modules/dsh-aside-note/client',
+      `printf '{"version":"1.1.2-beta.7"}' > node_modules/dsh-aside-note/package.json`,
+      `printf '// bundle\\n' > node_modules/dsh-aside-note/client/client.js`,
+      '',
+    ].join('\n'))
+    chmodSync(node, 0o755)
+    writeFileSync(pnpm, '// stand-in for pnpm.mjs\n')
+    const env = { ...process.env, DSH_RUNTIME_DIR: root }
+    delete env.DSH_PROFILE_DIR
+
+    const result = spawnSync(process.execPath, [
+      SCRIPT,
+      '--profile-dir', dir,
+      '--version', '1.1.2-beta.7',
+    ], { encoding: 'utf8', env })
+
+    assert.equal(result.status, 0, result.stderr)
+    assert.match(result.stdout, /retrying against npmjs/)
+    const invocations = readFileSync(log, 'utf8').trim().split('\n')
+    assert.equal(invocations.length, 2, 'one miss, one npmjs retry')
+    assert.doesNotMatch(invocations[0], /--registry=/)
+    assert.match(invocations[1], /--registry=https:\/\/registry\.npmjs\.org\//)
+    assert.equal(manifestOf(dir).dependencies['dsh-aside-note'], '1.1.2-beta.7')
+    assert.match(result.stdout, /installed: dsh-aside-note@1\.1\.2-beta\.7/)
+  },
+)
+
 test('re-running is idempotent and keeps the existing bundle order', (t) => {
   const manifest = structuredClone(BASE)
   manifest.dependencies['dsh-aside-note'] = '~0.9.9'

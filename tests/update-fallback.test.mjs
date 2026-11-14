@@ -1,12 +1,12 @@
 /**
- * Regression: when the market cannot run the update — it is absent, or it keeps
- * answering `409 OPERATION_BUSY` because another operation holds the lock — the
- * card must not stop at "try again later". It states the terminal command and
- * copies a ready-to-paste prompt.
+ * Regression: the update card has exactly two paths — the host route, then the
+ * terminal command. There is no plugin-market probe in between, and the command
+ * always names the version the card offered.
  *
- * The busy case is the one users hit: the market allows one mutation per host
- * process, so a neighbour update or a lingering install lock refuses the click.
- * The panel waits the short window out and then hands over the command.
+ * The host is the only automatic route: a browser cannot install a package, and
+ * the panel never runs a package manager itself. When the host answers 501, or
+ * refuses with a code a terminal can get past, the card states the command and
+ * copies a ready-to-paste prompt.
  */
 import assert from 'node:assert/strict'
 import fs from 'node:fs'
@@ -18,18 +18,19 @@ import { JSDOM } from 'jsdom'
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const bundle = fs.readFileSync(path.join(root, 'client', 'client.js'), 'utf8')
 
-/** A version any released build treats as an offered update. */
-const NEXT = '9.9.9'
+/** A prerelease any published build treats as an offered update. */
+const NEXT = '9.9.9-beta.1'
+const PROFILE = '/Users/example/.dsh/profiles/desktop'
 
 const json = (status, body) => ({ ok: status >= 200 && status < 300, status, json: async () => body })
 const wait = (window, ms) => new Promise(resolve => window.setTimeout(resolve, ms))
 
 /**
  * Boot the shipped bundle in jsdom, open the panel and its settings card, and
- * hand back the pieces a test needs. `market` decides what the v1 endpoints
- * answer; the version check always offers {@link NEXT}.
+ * hand back the pieces a test needs. `apply` decides what the host's update
+ * route answers; every market URL is recorded and must stay unused.
  */
-async function boot(t, market) {
+async function boot(t, apply) {
   const dom = new JSDOM(
     '<!doctype html><html><body><div class="_headerUtilities"></div></body></html>',
     { url: 'https://example.test/', pretendToBeVisual: true, runScripts: 'outside-only' },
@@ -45,18 +46,14 @@ async function boot(t, market) {
   const ReactDOMClient = await import('react-dom/client')
   const { act } = React
 
-  const starts = []
+  const calls = []
   window.fetch = async (input, init = {}) => {
     const url = String(input)
+    calls.push({ url, method: init.method || 'GET' })
     if (url.startsWith('https://registry.npmjs.org/')) return json(200, { version: NEXT })
     if (url.startsWith('https://registry.npmmirror.com/')) return json(404, {})
     if (url.startsWith('https://api.github.com/')) return json(200, [])
-    if (url === '/dsh-market/api/v1/capabilities') return market.capabilities()
-    if (url === '/dsh-market/api/v1/updates' && init.method === 'POST') {
-      starts.push(init.body)
-      return market.start()
-    }
-    if (url.startsWith('/dsh-market/api/v1/operations')) return market.operation()
+    if (url === '/dsh-aside-note/update/apply' && init.method === 'POST') return apply(JSON.parse(init.body))
     return json(404, {})
   }
 
@@ -120,7 +117,13 @@ async function boot(t, market) {
     }
   }
 
-  return { window, act, popover, starts, until, reactRoot, disposers, dom }
+  const dispose = async () => {
+    await act(async () => { reactRoot.unmount() })
+    for (const item of disposers) item()
+    dom.window.close()
+  }
+
+  return { window, act, popover, calls, until, dispose }
 }
 
 const clipboard = window => {
@@ -132,126 +135,80 @@ const clipboard = window => {
   return copied
 }
 
-test('a market that stays busy hands over the command instead of only an error', async t => {
-  const { window, act, popover, starts, until, reactRoot, disposers, dom } = await boot(t, {
-    capabilities: () => json(200, {
-      schema: 'dsh-market/update-api/v1',
-      marketVersion: '1.73.3',
-      stability: 'beta',
-      restart: { supported: false },
-      endpoints: {
-        updates: '/dsh-market/api/v1/updates',
-        operations: '/dsh-market/api/v1/operations',
-        restart: '/dsh-market/api/v1/restart',
-      },
-    }),
-    start: () => json(409, {
-      schema: 'dsh-market/update-api/v1',
-      error: 'another public update operation is already running',
-      failure: { code: 'OPERATION_BUSY', message: 'another update is running', retryable: true },
-    }),
-    operation: () => json(404, {}),
-  })
+test('a host with no update route hands over the offered version, without touching the market', async t => {
+  const hint = `npx -y --registry=https://registry.npmjs.org/ dsh-aside-note@${NEXT} install --version ${NEXT} --profile-dir "${PROFILE}"`
+  const { window, act, popover, calls, until, dispose } = await boot(t, () => json(501, {
+    ok: false,
+    code: 'AUTO_UPDATE_UNAVAILABLE',
+    message: 'this host offers no installer for the running profile',
+    retryable: false,
+    hint,
+  }))
 
-  await until(() => popover.querySelector('.dsh-an-updateCard'), 4000)
-  const updateButton = popover.querySelector('.dsh-an-updatePrimary')
-  assert.equal(updateButton.textContent, '立即更新', 'a reachable market offers the one-click path')
-  assert.equal(popover.querySelector('.dsh-an-updateFallback'), null,
-    'the manual fallback waits until the market actually refuses')
-
-  await act(async () => { updateButton.click() })
-  // The first refusal lands quickly; the card reports the wait, not a failure.
-  await until(() => {
-    const node = popover.querySelector('.dsh-an-updatePrimary')
-    return node && node.textContent.includes('等待中') ? node : null
-  }, 3000)
-
-  const fallback = await until(() => popover.querySelector('.dsh-an-updateFallback'), 12000)
-  assert.equal(starts.length, 4, 'the busy answer is retried before giving up')
-  assert.match(fallback.textContent, /npx -y dsh-aside-note install/, 'the fallback states the command')
-  assert.match(popover.textContent, /自动更新正在执行另一个任务/, 'the refusal is still reported')
-  assert.equal(popover.querySelector('.dsh-an-updatePrimary').textContent, '立即更新',
-    'the retry button stays available next to the command')
-
-  const copied = clipboard(window)
-  await act(async () => { fallback.querySelector('.dsh-an-updateCopy').click() })
-  await act(async () => { await wait(window, 20) })
-  assert.equal(copied.length, 1, 'one click copies one prompt')
-  assert.equal(copied[0], '帮我更新 DSH 插件 AsideNote（旁边记）到最新版本：在终端执行 npx -y dsh-aside-note install。',
-    'the prompt is handed over verbatim')
-
-  await act(async () => { reactRoot.unmount() })
-  for (const dispose of disposers) dispose()
-  dom.window.close()
-})
-
-test('a market that refuses under a running agent hands over the command', async t => {
-  const { window, act, popover, until, reactRoot, disposers, dom } = await boot(t, {
-    capabilities: () => json(200, {
-      schema: 'dsh-market/update-api/v1',
-      marketVersion: '1.73.3',
-      stability: 'beta',
-      restart: { supported: false },
-      endpoints: {
-        updates: '/dsh-market/api/v1/updates',
-        operations: '/dsh-market/api/v1/operations',
-        restart: '/dsh-market/api/v1/restart',
-      },
-    }),
-    // The market refuses to replace plugin files under a live agent, and the
-    // refusal is final: no amount of waiting makes it answer differently.
-    start: () => json(409, {
-      schema: 'dsh-market/update-api/v1',
-      error: 'an agent is running',
-      failure: { code: 'AGENTS_RUNNING', message: 'an agent is running', retryable: false },
-    }),
-    operation: () => json(404, {}),
-  })
-
-  await until(() => popover.querySelector('.dsh-an-updateCard'), 4000)
-  const updateButton = popover.querySelector('.dsh-an-updatePrimary')
-  assert.equal(updateButton.textContent, '立即更新', 'a reachable market offers the one-click path')
-
+  const updateButton = await until(() => popover.querySelector('.dsh-an-updatePrimary'), 4000)
+  assert.equal(updateButton.textContent, '立即更新')
   await act(async () => { updateButton.click() })
 
   const fallback = await until(() => popover.querySelector('.dsh-an-updateFallback'), 4000)
-  assert.match(popover.textContent, /有 agent 正在运行/, 'the refusal is named instead of the raw market text')
-  assert.match(fallback.textContent, /npx -y dsh-aside-note install/, 'the command is the way past the market')
+  assert.match(popover.textContent, /没有可用的自动更新通道/, 'the card names the reason')
+  assert.ok(fallback.textContent.includes(hint), 'the host command is shown verbatim')
+  assert.equal(calls.filter(call => call.url.includes('/dsh-market/')).length, 0,
+    'the market must not be probed')
 
   const copied = clipboard(window)
   await act(async () => { fallback.querySelector('.dsh-an-updateCopy').click() })
   await act(async () => { await wait(window, 20) })
-  assert.match(copied[0], /npx -y dsh-aside-note install/, 'the prompt carries the command')
-
-  await act(async () => { reactRoot.unmount() })
-  for (const dispose of disposers) dispose()
-  dom.window.close()
+  assert.equal(copied.length, 1)
+  assert.ok(copied[0].includes(NEXT), 'the prompt names the offered version')
+  assert.ok(copied[0].includes(hint), 'the prompt carries the exact command')
+  await dispose()
 })
 
-test('a host with neither the update route nor a market hands over the command', async t => {
-  const { window, act, popover, until, reactRoot, disposers, dom } = await boot(t, {
-    capabilities: () => json(404, {}),
-    start: () => json(404, {}),
-    operation: () => json(404, {}),
-  })
+test('a host refusal a terminal can get past uses the pinned command', async t => {
+  const { window, act, popover, calls, until, dispose } = await boot(t, () => json(409, {
+    ok: false,
+    code: 'OPERATION_BUSY',
+    message: 'another update is already running',
+    retryable: true,
+  }))
 
-  // The one-click path stays offered until it is tried: with no host route and
-  // no market, the attempt is what discovers there is nothing behind it.
-  const button = await until(() => popover.querySelector('.dsh-an-updatePrimary'), 4000)
-  assert.equal(button.textContent, '立即更新')
-  await act(async () => { button.click() })
+  const updateButton = await until(() => popover.querySelector('.dsh-an-updatePrimary'), 4000)
+  await act(async () => { updateButton.click() })
 
-  const fallback = await until(() => popover.querySelector('.dsh-an-updateFallback'), 6000)
-  assert.match(fallback.textContent, /npx -y dsh-aside-note install/)
-  assert.match(popover.textContent, /没有可用的自动更新通道/, 'the card names the reason instead of ending silently')
+  const fallback = await until(() => popover.querySelector('.dsh-an-updateFallback'), 4000)
+  assert.match(popover.textContent, /更新正在执行另一个任务/, 'the host lock is reported')
+  // The host sent no hint for this code, so the card pins the offered version
+  // itself; a prerelease also names npmjs so npx cannot pick the stable line.
+  assert.match(fallback.textContent, /npx -y --registry=https:\/\/registry\.npmjs\.org\//)
+  assert.match(fallback.textContent, new RegExp(`dsh-aside-note@${NEXT.replaceAll('.', '\\.')}`))
+  assert.match(fallback.textContent, new RegExp(`--version ${NEXT.replaceAll('.', '\\.')}`))
+  assert.equal(calls.filter(call => call.url.includes('/dsh-market/')).length, 0,
+    'the market is never probed')
 
   const copied = clipboard(window)
   await act(async () => { fallback.querySelector('.dsh-an-updateCopy').click() })
   await act(async () => { await wait(window, 20) })
-  assert.match(copied[0], /^帮我更新 DSH 插件 AsideNote（旁边记）到最新版本/, 'the prompt asks for the latest release')
-  assert.match(copied[0], /npx -y dsh-aside-note install/)
+  assert.match(copied[0], new RegExp(`--version ${NEXT.replaceAll('.', '\\.')}`), 'the prompt pins the version')
+  await dispose()
+})
 
-  await act(async () => { reactRoot.unmount() })
-  for (const dispose of disposers) dispose()
-  dom.window.close()
+test('a successful host update offers the page refresh instead of a command', async t => {
+  const { window, act, popover, until, dispose } = await boot(t, () => json(200, {
+    ok: true,
+    route: 'dsh',
+    previousVersion: '9.9.8',
+    installedVersion: NEXT,
+    updated: true,
+    restartRequired: true,
+  }))
+
+  const updateButton = await until(() => popover.querySelector('.dsh-an-updatePrimary'), 4000)
+  await act(async () => { updateButton.click() })
+
+  const refresh = await until(() => [
+    ...popover.querySelectorAll('.dsh-an-updatePrimary'),
+  ].find(node => node.textContent === '刷新页面'), 4000)
+  assert.ok(refresh, 'the finished host update offers a page refresh')
+  assert.equal(popover.querySelector('.dsh-an-updateFallback'), null, 'no command is needed after success')
+  await dispose()
 })

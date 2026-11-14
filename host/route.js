@@ -18,6 +18,15 @@ export const PROBE_PATH = '/dsh-aside-note/update/probe'
 export const APPLY_PATH = '/dsh-aside-note/update/apply'
 
 const REGISTRIES = ['https://registry.npmjs.org', 'https://registry.npmmirror.com']
+/** Failures a terminal command can get past; the card shows the exact command for these. */
+const MANUAL_HINT_CODES = new Set([
+  'AUTO_UPDATE_UNAVAILABLE',
+  'bundle-in-use',
+  'already-installed',
+  'management-required',
+  'not-removable',
+  'stop-profile',
+])
 const CHECK_TIMEOUT_MS = 8_000
 const BODY_LIMIT = 4 * 1024
 
@@ -331,7 +340,7 @@ export function registerUpdateRoutes(server, options) {
           message: failure.message,
           retryable: failure.retryable,
           ...(failure.diagnostic === undefined ? {} : { diagnostic: failure.diagnostic }),
-          ...(failure.code === 'AUTO_UPDATE_UNAVAILABLE' ? { hint: manualCommand(dir, target) } : {}),
+          ...(MANUAL_HINT_CODES.has(failure.code) ? { hint: manualCommand(dir, target) } : {}),
         })
       } finally {
         state.promise = undefined

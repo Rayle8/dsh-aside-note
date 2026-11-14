@@ -110,15 +110,23 @@ test('the client checks for a newer release, reads its notes inline and falls ba
   assert.match(client, /export function resetUpdateChecks/)
   assert.match(client, /export function useUpdateCenter/)
   assert.match(client, /updateNotesForLocale/)
-  assert.match(client, /dsh-market\/api\/v1/)
-  assert.match(client, /export function createMarketClient/)
-  assert.match(client, /packageName: name/)
+  // The market is not a dependency of any kind: the update goes through the
+  // host route, then the terminal command.
+  assert.match(client, /\/dsh-aside-note\/update\/apply/)
+  assert.match(client, /export async function applyHostUpdate/)
+  assert.doesNotMatch(client, /dsh-market|createMarketClient|marketClient/)
+  assert.equal(exists('src/client/update/market.ts'), false, 'the market client must be gone')
+  assert.doesNotMatch(read('client/client.js'), /createMarketClient/, 'the shipped bundle must not carry the market client')
   assert.doesNotMatch(client, /update\.notesShow|update\.notesHide/)
   assert.match(client, /'update\.now'/)
   assert.match(client, /'update\.copyPrompt'/)
   assert.match(client, /'update\.manualHint'/)
   assert.match(client, /'update\.prompt'/)
-  assert.match(client, /npx -y dsh-aside-note install/)
+  // A manual command always pins the offered version; prereleases also tell
+  // npx where to fetch the package from.
+  assert.match(client, /const UPDATE_PACKAGE = 'dsh-aside-note'/)
+  assert.match(client, /npx -y\$\{registry\}/)
+  assert.match(client, /--version \$\{latestVersion\}/)
   assert.match(client, /PLUGIN_VERSION\.includes\('-'\)/)
   assert.match(css, /\.dsh-an-updateDot\{/)
   assert.match(css, /\.dsh-an-updateCard\{/)
@@ -132,7 +140,7 @@ test('the client checks for a newer release, reads its notes inline and falls ba
   assert.match(css, /\.dsh-an-updateChevron\[data-open="true"\]\{/)
   assert.match(css, /\.dsh-an-updatePrimary\{/)
   assert.match(read('client/client.js'), /function createUpdateProbe/, 'the shipped bundle carries the check')
-  assert.match(read('client/client.js'), /function createMarketClient/, 'the shipped bundle carries the market client')
+  assert.match(read('client/client.js'), /function applyHostUpdate/, 'the shipped bundle carries the host client')
   assert.match(read('client/client.js'), /function extractUpdateNotes/, 'the shipped bundle carries the notes parser')
   // Read-only check: it installs and executes nothing.
   assert.doesNotMatch(client, /child_process|node:child_process/)

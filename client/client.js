@@ -4664,21 +4664,15 @@ const en = {
 	"update.full": "Full release notes",
 	"update.now": "Update now",
 	"update.starting": "Preparing the update…",
-	"update.waiting": "Another automatic update is running — waiting…",
 	"update.updating": "Updating…",
-	"update.updatingPercent": "Updating… {percent}%",
 	"update.updated": "Updated to {version}",
 	"update.refresh": "Refresh page",
 	"update.restartHint": "Restart DSH manually to finish the update",
 	"update.failed": "Update failed: {reason}",
-	"update.force": "Update anyway",
-	"update.tooFresh": "This release is too new for the automatic update right now — retry later or update anyway",
-	"update.unchanged": "The automatic update answered with the same version — retry later or update anyway",
 	"update.notInstalled": "This plugin is not installed in the current profile, so it cannot be updated in-app",
 	"update.forbidden": "The automatic update refused this request",
 	"update.rejected": "The automatic update did not run; a linked checkout updates from its own directory",
-	"update.busy": "Another automatic update is already running — try again shortly",
-	"update.agentsRunning": "An agent is running, and the automatic update will not replace plugin files under it; wait for it to finish, or update with the command below",
+	"update.busy": "Another update is already running — try again shortly",
 	"update.timeout": "Timed out waiting for the update result — try again later",
 	"update.bundleInUse": "This plugin is in use, and Desktop will not remove it first; the host route installs over it — if that still fails, run the command below",
 	"update.alreadyInstalled": "This DSH only replaces a package after removing it, so it cannot install over the current copy; run the command below",
@@ -4689,9 +4683,9 @@ const en = {
 	"update.versionMismatch": "The installed version is not the one requested — a mirror or the release-age hold may have substituted it; retry later or install manually",
 	"update.downgrade": "Refused: the target version is older than the installed one",
 	"update.autoUnavailable": "This host offers no automatic update route; run the command below",
-	"update.manualHint": "Or update directly: run npx -y dsh-aside-note install in a terminal, or update from the Plugins page, then reload",
+	"update.manualHint": "Or update directly: run {command} in a terminal, or update from the Plugins page, then reload",
 	"update.copyPrompt": "Copy update prompt",
-	"update.prompt": "Update the DSH plugin AsideNote to the latest version by running: npx -y dsh-aside-note install."
+	"update.prompt": "Update the DSH plugin AsideNote to {version} by running: {command}. Reload the page when it finishes."
 };
 
 // src/client/i18n/zh.ts
@@ -4788,21 +4782,15 @@ const zh = {
 	"update.full": "完整更新说明",
 	"update.now": "立即更新",
 	"update.starting": "正在准备更新…",
-	"update.waiting": "自动更新正在执行另一个任务，等待中…",
 	"update.updating": "正在更新…",
-	"update.updatingPercent": "正在更新… {percent}%",
 	"update.updated": "已更新到 {version}",
 	"update.refresh": "刷新页面",
 	"update.restartHint": "请手动重启 DSH 以完成更新",
 	"update.failed": "更新失败：{reason}",
-	"update.force": "仍要更新",
-	"update.tooFresh": "新版本刚发布，自动更新会暂缓安装；可稍后重试，或选择仍要更新",
-	"update.unchanged": "自动更新拿到的版本没有变化；可稍后重试，或选择仍要更新",
 	"update.notInstalled": "当前 profile 中没有安装这个插件，无法在应用内更新",
 	"update.forbidden": "自动更新被拒绝，这次请求没有执行",
 	"update.rejected": "自动更新没有执行；link 安装的插件需要在 checkout 中更新后刷新",
-	"update.busy": "自动更新正在执行另一个任务，请稍后再试",
-	"update.agentsRunning": "有 agent 正在运行，自动更新不会在它运行期间替换插件文件；可以等它结束，或用下面的命令直接更新",
+	"update.busy": "更新正在执行另一个任务，请稍后再试",
 	"update.timeout": "等待更新结果超时，请稍后再试",
 	"update.bundleInUse": "这个插件正被当前 DSH 使用中，桌面端不允许先移除再安装；宿主通道会就地覆盖，若仍失败请用下面的命令",
 	"update.alreadyInstalled": "这个 DSH 只支持先移除再安装，无法原地覆盖；请用下面的命令",
@@ -4813,9 +4801,9 @@ const zh = {
 	"update.versionMismatch": "装到的版本与目标不一致（可能被镜像或发布保护替换）；可稍后重试或手动安装",
 	"update.downgrade": "拒绝降级：目标版本低于当前已装版本",
 	"update.autoUnavailable": "这台宿主没有可用的自动更新通道；请用下面的命令",
-	"update.manualHint": "也可以直接更新：在终端执行 npx -y dsh-aside-note install，或到「插件」页更新，装好后刷新页面即可",
+	"update.manualHint": "也可以直接更新：在终端执行 {command}，或到「插件」页更新，装好后刷新页面即可",
 	"update.copyPrompt": "拷贝更新提示词",
-	"update.prompt": "帮我更新 DSH 插件 AsideNote（旁边记）到最新版本：在终端执行 npx -y dsh-aside-note install。"
+	"update.prompt": "帮我更新 DSH 插件 AsideNote（旁边记）到 {version}：在终端执行 {command}，装好后刷新页面。"
 };
 
 // src/client/i18n/index.ts
@@ -6643,145 +6631,6 @@ function updateNotesForLocale(body, locale) {
 	return parseReleaseNotes(extractUpdateNotes(body, locale));
 }
 
-// src/client/update/market.ts
-/**
-* Client for the plugin market's public update API (v1, beta).
-*
-* The market publishes a small same-origin JSON API so a plugin can offer its
-* own update button without running a package manager itself. Everything here
-* degrades to `null` when the market is absent, older than the API, or refuses
-* the request: an update button is a convenience, not a dependency.
-*
-* Contract: `dshmarket/UPDATE-API-V1.md` — endpoints come from
-* `/capabilities`, so a path change does not need a client release.
-*/
-/** Where the market mounts its public API. */
-const MARKET_API_BASE = "/dsh-market/api/v1";
-/** The package this panel updates. */
-const MARKET_PACKAGE = "dsh-aside-note";
-/** A check should answer quickly; a slow market falls back to the manual path. */
-const MARKET_TIMEOUT_MS = 8e3;
-function asText(value) {
-	return typeof value === "string" && value.trim() !== "" ? value.trim() : null;
-}
-function asRecord(value) {
-	return value !== null && typeof value === "object" && !Array.isArray(value) ? value : null;
-}
-function operationView(raw) {
-	const operation = asRecord(raw);
-	if (!operation) return null;
-	const progress = asRecord(operation.progress) || {};
-	const outcome = asRecord(operation.outcome) || {};
-	const failure = asRecord(operation.failure);
-	const percent = typeof progress.percent === "number" && Number.isFinite(progress.percent) ? Math.max(0, Math.min(100, Math.round(progress.percent))) : null;
-	const state = asText(operation.state);
-	return {
-		operationId: asText(operation.operationId) || "",
-		state: [
-			"queued",
-			"running",
-			"succeeded",
-			"failed",
-			"cancelled",
-			"rolled-back"
-		].includes(state) ? state : "failed",
-		percent,
-		detail: asText(progress.detail),
-		beforeVersion: asText(operation.beforeVersion),
-		installedVersion: asText(operation.installedVersion),
-		refreshRequired: outcome.refreshRequired === true,
-		restartRequired: outcome.restartRequired === true,
-		failure: failure ? {
-			code: asText(failure.code) || "UPDATE_FAILED",
-			message: asText(failure.message) || "",
-			retryable: failure.retryable === true
-		} : null
-	};
-}
-function errorFrom(body, fallback) {
-	const failure = asRecord(asRecord(body)?.failure);
-	return {
-		code: asText(failure?.code) || "UPDATE_FAILED",
-		message: asText(failure?.message) || asText(asRecord(body)?.error) || fallback,
-		retryable: failure?.retryable === true
-	};
-}
-/**
-* Build a market client. `fetchImpl` is injected so the client can be tested
-* without a browser or a live market.
-*/
-function createMarketClient(options = {}) {
-	const fetchImpl = options.fetchImpl || ((url, init) => fetch(url, init));
-	const timeoutMs = options.timeoutMs || 8e3;
-	const base = (options.base || "/dsh-market/api/v1").replace(/\/$/, "");
-	async function request(path, init = {}) {
-		const controller = typeof AbortController === "function" ? new AbortController() : null;
-		const timer = setTimeout(() => controller?.abort(), timeoutMs);
-		try {
-			const response = await fetchImpl(path.startsWith("http") ? path : `${base}${path}`, {
-				...init,
-				...controller ? { signal: controller.signal } : {}
-			});
-			const body = await response.json().catch(() => null);
-			return {
-				status: response.status,
-				body
-			};
-		} catch {
-			return null;
-		} finally {
-			clearTimeout(timer);
-		}
-	}
-	return {
-		/**
-		* Whether this host has a usable market: the v1 schema answered. The panel
-		* needs no more than that — the endpoints it calls are fixed, and nothing
-		* reads the market's version, restart support or advertised paths.
-		*/
-		async available() {
-			const result = await request("/capabilities");
-			const body = asRecord(result?.body);
-			return result !== null && result.status === 200 && body !== null && body !== void 0 && body.schema === "dsh-market/update-api/v1";
-		},
-		/** Queue an update; returns the operation to poll or a stable failure code. */
-		async start(name = MARKET_PACKAGE, force = false) {
-			const result = await request("/updates", {
-				method: "POST",
-				headers: { "content-type": "application/json" },
-				body: JSON.stringify({
-					packageName: name,
-					...force ? { force: true } : {}
-				})
-			});
-			if (!result) return { error: {
-				code: "UPDATE_FAILED",
-				message: "market did not answer",
-				retryable: true
-			} };
-			const operation = asRecord(asRecord(result.body)?.operation);
-			const operationId = asText(operation?.operationId);
-			if ((result.status === 200 || result.status === 202) && operationId) {
-				const state = asText(operation?.state);
-				return {
-					operationId,
-					state: state === "queued" || state === "running" ? state : "queued"
-				};
-			}
-			return { error: errorFrom(result.body, `update failed with HTTP ${result.status}`) };
-		},
-		/** Poll one operation. */
-		async operation(operationId) {
-			if (!operationId) return null;
-			const result = await request(`/operations?operationId=${encodeURIComponent(operationId)}`);
-			if (!result || result.status !== 200) return null;
-			return operationView(asRecord(result.body)?.operation);
-		}
-	};
-}
-/** Process-wide market client: one request shape, shared by every panel open. */
-const marketClient = createMarketClient();
-
 // src/client/update/host.ts
 /**
 * The host-side update, as the panel sees it.
@@ -6789,8 +6638,7 @@ const marketClient = createMarketClient();
 * The host half of this package exposes two same-origin endpoints; a browser
 * cannot install a package itself. Nothing here throws: every branch answers
 * with a value the card can render, because "the host has no update route"
-* (an older build, or a headless host) must fall back to the market path
-* rather than look like a failed update.
+* falls back to the manual command rather than looking like a failed install.
 */
 /** Where the host listens; keep in sync with `host/route.js`. */
 const HOST_APPLY_PATH = "/dsh-aside-note/update/apply";
@@ -6806,7 +6654,11 @@ function text(value) {
 */
 async function applyHostUpdate(target) {
 	const controller = typeof AbortController === "function" ? new AbortController() : void 0;
-	const timer = setTimeout(() => controller?.abort(), APPLY_TIMEOUT_MS);
+	let timedOut = false;
+	const timer = setTimeout(() => {
+		timedOut = true;
+		controller?.abort();
+	}, APPLY_TIMEOUT_MS);
 	let response;
 	try {
 		response = await fetch(HOST_APPLY_PATH, {
@@ -6816,6 +6668,12 @@ async function applyHostUpdate(target) {
 			...controller === void 0 ? {} : { signal: controller.signal }
 		});
 	} catch {
+		if (timedOut) return {
+			kind: "error",
+			code: "UPDATE_TIMEOUT",
+			message: "the host update timed out",
+			retryable: true
+		};
 		return { kind: "unavailable" };
 	} finally {
 		clearTimeout(timer);
@@ -6878,14 +6736,12 @@ async function copyText(text) {
 * Three things are allowed to be independent here: the published version check
 * (auto on open, manual on demand), the release notes behind that version
 * (loaded as soon as an update is offered), and the in-app update itself
-* (queued through the plugin market's public API and polled to a terminal
-* state). Keeping them separate means a missing market or a missing release
-* body cannot take the version check down with it.
+* (one host request that installs over the running copy). Keeping them separate
+* means a missing release body cannot take the version check down with it.
 *
-* The market runs one mutation per host process, so it may answer
-* `OPERATION_BUSY`. That window is waited out; when the market is absent or
-* stays busy, the card falls back to the terminal command — the panel never
-* runs a package manager itself.
+* The panel never runs a package manager itself. When the host has no update
+* route, the card falls back to the exact command the host reports, or pins the
+* offered version when the failure has no command of its own.
 */
 const CHECK_IDLE = {
 	status: "idle",
@@ -6899,7 +6755,6 @@ const NOTES_IDLE = {
 };
 const RUN_IDLE = {
 	phase: "idle",
-	percent: null,
 	failureCode: null,
 	message: null,
 	retryable: false,
@@ -6907,28 +6762,12 @@ const RUN_IDLE = {
 	restartRequired: false,
 	installedVersion: null
 };
-const POLL_INTERVAL_MS = 900;
-/**
-* The market runs one mutation per host process and answers `409
-* OPERATION_BUSY` while another update — or its install lock — is held. That
-* window is usually short (pnpm exiting, install post-processing, a neighbour
-* update finishing), so the button waits it out before falling back to the
-* terminal command. Waiting is capped: an operation that stayed busy is a real
-* "do it yourself now", and the card shows how.
-*/
-const BUSY_RETRY_DELAYS_MS = [
-	1e3,
-	2e3,
-	4e3
-];
 /**
 * A manual check stays on screen for at least this long. A fast registry answer
 * would otherwise flip the button back in a few milliseconds, which reads as
 * "did that do anything?" and invites repeat clicks.
 */
 const MIN_CHECK_MS = 3e3;
-/** A terminal state never arrives for an abandoned operation; stop asking. */
-const MAX_POLLS = 400;
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 function terminalRun(phase, patch = {}) {
 	return {
@@ -7085,138 +6924,55 @@ function useUpdateCenter(localeId) {
 		check.latestVersion,
 		localeId
 	]);
-	const startUpdate = react.default.useCallback(async (force = false) => {
+	const startUpdate = react.default.useCallback(async () => {
 		if (starting.current) return;
-		if (runRef.current.phase === "running") return;
+		if (runRef.current.phase === "starting" || runRef.current.phase === "running") return;
 		if (runRef.current.phase === "done" && runRef.current.installedVersion === latestRef.current) return;
 		starting.current = true;
 		try {
 			setRun(terminalRun("starting"));
 			const target = latestRef.current;
-			if (target !== null) {
-				const host = await applyHostUpdate(target);
-				if (disposed.current) return;
-				if (host.kind === "ok") {
-					reportEvent("update_started", {
-						ext1: "host",
-						ext2: "done"
-					});
-					setRun(terminalRun("done", {
-						percent: 100,
-						installedVersion: host.installedVersion,
-						refreshRequired: !host.restartRequired,
-						restartRequired: host.restartRequired
-					}));
-					return;
-				}
-				if (host.kind === "error") {
-					reportEvent("update_started", {
-						ext1: "host",
-						ext2: "failed"
-					});
-					setRun(terminalRun("error", {
-						failureCode: host.code,
-						message: host.hint ?? host.message,
-						retryable: host.retryable
-					}));
-					return;
-				}
-			}
-			const usable = await marketClient.available();
-			if (disposed.current) return;
-			if (!usable) {
+			if (target === null) {
 				setRun(terminalRun("error", {
 					failureCode: "AUTO_UPDATE_UNAVAILABLE",
 					retryable: false
 				}));
 				return;
 			}
-			let started = await marketClient.start(MARKET_PACKAGE, force);
+			setRun(terminalRun("running"));
+			const host = await applyHostUpdate(target);
 			if (disposed.current) return;
-			for (let attempt = 0; attempt < BUSY_RETRY_DELAYS_MS.length; attempt += 1) {
-				if (!("error" in started) || started.error.code !== "OPERATION_BUSY") break;
-				setRun(terminalRun("waiting"));
-				await sleep(BUSY_RETRY_DELAYS_MS[attempt]);
-				if (disposed.current) return;
-				started = await marketClient.start(MARKET_PACKAGE, force);
-				if (disposed.current) return;
-			}
-			if ("error" in started) {
+			if (host.kind === "ok") {
 				reportEvent("update_started", {
-					ext1: "market",
-					ext2: "failed"
+					ext1: "host",
+					ext2: "done"
 				});
-				setRun(terminalRun("error", {
-					failureCode: started.error.code,
-					message: started.error.message || null,
-					retryable: started.error.retryable
+				setRun(terminalRun("done", {
+					installedVersion: host.installedVersion,
+					refreshRequired: !host.restartRequired,
+					restartRequired: host.restartRequired
 				}));
 				return;
 			}
-			setRun({
-				...RUN_IDLE,
-				phase: "running",
-				percent: 0
+			if (host.kind === "error") {
+				reportEvent("update_started", {
+					ext1: "host",
+					ext2: "failed"
+				});
+				setRun(terminalRun("error", {
+					failureCode: host.code,
+					message: host.hint ?? host.message,
+					retryable: host.retryable
+				}));
+				return;
+			}
+			reportEvent("update_started", {
+				ext1: "host",
+				ext2: "failed"
 			});
-			for (let attempt = 0; attempt < MAX_POLLS; attempt += 1) {
-				await sleep(POLL_INTERVAL_MS);
-				if (disposed.current) return;
-				const operation = await marketClient.operation(started.operationId);
-				if (disposed.current) return;
-				if (operation === null) {
-					setRun(terminalRun("error", {
-						failureCode: "UPDATE_FAILED",
-						retryable: true
-					}));
-					return;
-				}
-				if (operation.state === "queued" || operation.state === "running") {
-					setRun({
-						...RUN_IDLE,
-						phase: "running",
-						percent: operation.percent
-					});
-					continue;
-				}
-				if (operation.state === "succeeded") {
-					if (latestRef.current !== null && operation.installedVersion !== null && operation.installedVersion !== latestRef.current) {
-						reportEvent("update_started", {
-							ext1: "market",
-							ext2: "failed"
-						});
-						setRun(terminalRun("error", {
-							failureCode: "RESOLVED_VERSION_MISMATCH",
-							message: `${operation.installedVersion} installed, expected ${latestRef.current}`,
-							retryable: true
-						}));
-						return;
-					}
-					reportEvent("update_started", {
-						ext1: "market",
-						ext2: "done"
-					});
-					setRun(terminalRun("done", {
-						percent: 100,
-						installedVersion: operation.installedVersion,
-						refreshRequired: operation.refreshRequired || !operation.restartRequired,
-						restartRequired: operation.restartRequired
-					}));
-					return;
-				}
-				reportEvent("update_started", {
-					ext1: "market",
-					ext2: "failed"
-				});
-				setRun(terminalRun("error", {
-					failureCode: operation.failure?.code || "UPDATE_FAILED",
-					message: operation.failure?.message || null,
-					retryable: operation.failure?.retryable !== false
-				}));
-				return;
-			}
 			setRun(terminalRun("error", {
-				failureCode: "UPDATE_TIMEOUT",
-				retryable: true
+				failureCode: "AUTO_UPDATE_UNAVAILABLE",
+				retryable: false
 			}));
 		} finally {
 			starting.current = false;
@@ -7796,13 +7552,13 @@ function PanelHead(props) {
 * One compact card: the published version, the release notes it ships with, and
 * the update action. The notes load and show as soon as an update is offered —
 * they are not hidden behind a disclosure. The action is a button, never
-* automatic: the market queues the update when it is clicked, and the panel
-* reports the operation instead of guessing.
+* automatic: one host request installs the offered version, and the panel
+* reports the outcome instead of guessing.
 *
-* When the market is missing, or stays busy with another operation after the
-* waiting window, the card stops insisting on its own button and states the
-* terminal command — with one click to copy a ready-to-paste prompt for an
-* agent. The panel still never runs a package manager itself.
+* When the host has no update route, or refuses the install in a way a terminal
+* command can get past, the card states the exact command — with one click to
+* copy a ready-to-paste prompt for an agent. The panel never runs a package
+* manager itself.
 *
 * A jump across several versions lists each release separately: the newest one
 * opens by default and the ones behind it expand on demand, so a 2.0.0 install
@@ -7811,15 +7567,13 @@ function PanelHead(props) {
 */
 const h$7 = react.default.createElement;
 const NOTES_ID = "dsh-an-update-notes";
-/** Failure codes the card can explain without echoing the market's message. */
+const UPDATE_PACKAGE = "dsh-aside-note";
+/** Failure codes the card can explain without echoing the host's message. */
 const FAILURE_COPY = {
-	RELEASE_TOO_FRESH: "update.tooFresh",
-	VERSION_UNCHANGED: "update.unchanged",
 	PLUGIN_NOT_INSTALLED: "update.notInstalled",
 	UPDATE_FORBIDDEN: "update.forbidden",
 	UPDATE_REJECTED: "update.rejected",
 	OPERATION_BUSY: "update.busy",
-	AGENTS_RUNNING: "update.agentsRunning",
 	UPDATE_TIMEOUT: "update.timeout",
 	"bundle-in-use": "update.bundleInUse",
 	"already-installed": "update.alreadyInstalled",
@@ -7834,7 +7588,6 @@ const FAILURE_COPY = {
 /** Refusals a terminal command can actually get past. */
 const MANUAL_FALLBACK = /* @__PURE__ */ new Set([
 	"OPERATION_BUSY",
-	"AGENTS_RUNNING",
 	"bundle-in-use",
 	"already-installed",
 	"management-required",
@@ -7882,25 +7635,36 @@ function UpdateNotice(props) {
 	]);
 	if (latestVersion === null) return null;
 	const phase = run.phase;
-	const busy = phase === "starting" || phase === "waiting" || phase === "running";
+	const busy = phase === "starting" || phase === "running";
 	const failureKey = run.failureCode ? FAILURE_COPY[run.failureCode] : "";
-	const canForce = run.failureCode === "RELEASE_TOO_FRESH" || run.failureCode === "VERSION_UNCHANGED";
 	/**
-	* No market, one that stayed busy, or one that refuses to replace files under
-	* a running agent: the user needs the command now, not a "try again later"
-	* with nothing behind it. The panel never runs a package manager itself, so
-	* the command is the way past a refusal — it does not go through the market.
-	* A busy market keeps its retry button, so both paths stay reachable.
+	* The host reports the exact command (with the profile directory) for the
+	* failures a terminal can get past. When a refusal has no command of its own,
+	* pin the offered version here so a later release cannot slip in between the
+	* card and the paste.
+	*/
+	const manualCommand = react.default.useMemo(() => {
+		const hinted = run.message?.trim() ?? "";
+		if (/^npx\s/u.test(hinted)) return hinted;
+		const prerelease = isPrereleaseVersion(latestVersion);
+		return `npx -y${prerelease ? " --registry=https://registry.npmjs.org/" : ""} ${prerelease ? `${UPDATE_PACKAGE}@${latestVersion}` : UPDATE_PACKAGE} install --version ${latestVersion}`;
+	}, [run.message, latestVersion]);
+	/**
+	* No host route, or a refusal a terminal can get past: the user needs the
+	* command now, not a "try again later" with nothing behind it. The panel never
+	* runs a package manager itself.
 	*/
 	const manual = run.failureCode !== null && MANUAL_FALLBACK.has(run.failureCode);
-	const progress = phase === "running" ? run.percent === null ? say("update.updating") : say("update.updatingPercent", { percent: run.percent }) : "";
 	/**
 	* Hand the user a prompt they can paste into an agent; report the outcome.
-	* The prompt asks for the latest release rather than this card's version, so
-	* it stays correct if a newer one lands between render and click.
+	* The command pins the version this card offered, so a release published
+	* between render and click cannot silently change the target.
 	*/
 	const copyPrompt = () => {
-		const text = say("update.prompt");
+		const text = say("update.prompt", {
+			version: latestVersion,
+			command: manualCommand
+		});
 		Promise.resolve(props.onCopyPrompt(text)).then((ok) => {
 			reportEvent("update_started", {
 				ext1: "command",
@@ -7958,8 +7722,8 @@ function UpdateNotice(props) {
 		className: "dsh-an-updatePrimary",
 		disabled: busy,
 		"aria-busy": busy,
-		onClick: () => props.onStartUpdate(false)
-	}, busy ? phase === "running" ? progress : phase === "waiting" ? say("update.waiting") : say("update.starting") : say("update.now")), fullReleaseUrl ? h$7("a", {
+		onClick: () => props.onStartUpdate()
+	}, busy ? phase === "running" ? say("update.updating") : say("update.starting") : say("update.now")), fullReleaseUrl ? h$7("a", {
 		className: "dsh-an-updateFull",
 		href: fullReleaseUrl,
 		target: "_blank",
@@ -7967,11 +7731,7 @@ function UpdateNotice(props) {
 	}, say("update.full")) : null), phase === "error" ? h$7("div", { className: "dsh-an-updateErrorRow" }, h$7("p", {
 		className: "dsh-an-updateError",
 		role: "status"
-	}, failureKey ? say(failureKey) : say("update.failed", { reason: run.message || run.failureCode || "" })), canForce ? h$7("button", {
-		type: "button",
-		className: "dsh-an-updateLinkBtn",
-		onClick: () => props.onStartUpdate(true)
-	}, say("update.force")) : null) : null, manual ? h$7("div", { className: "dsh-an-updateFallback" }, h$7("p", { className: "dsh-an-updateHint" }, say("update.manualHint")), h$7("button", {
+	}, failureKey ? say(failureKey) : say("update.failed", { reason: run.message || run.failureCode || "" }))) : null, manual ? h$7("div", { className: "dsh-an-updateFallback" }, h$7("p", { className: "dsh-an-updateHint" }, say("update.manualHint", { command: manualCommand })), h$7("button", {
 		type: "button",
 		className: "dsh-an-updateCopy",
 		onClick: copyPrompt

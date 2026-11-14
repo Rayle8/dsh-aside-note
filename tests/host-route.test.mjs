@@ -142,6 +142,8 @@ test('a second click during an install is answered busy', async t => {
   assert.equal(settled.status, 502)
   assert.equal(settled.body.code, 'bundle-in-use')
   assert.equal(settled.body.retryable, true)
+  assert.match(settled.body.hint, /^npx -y dsh-aside-note install --version 1\.1\.2 --profile-dir /,
+    'a refusal a terminal can get past carries the exact command')
 })
 
 test('the probe reports the profile and refuses a checkout install', async t => {

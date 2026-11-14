@@ -225,6 +225,11 @@ test('no route at all says so and hands over the command', async () => {
   )
 })
 
+test('the manual command pins a prerelease to npmjs', () => {
+  const command = manualCommand(PROFILE, '1.1.2-beta.7')
+  assert.match(command, /^npx -y --registry=https:\/\/registry\.npmjs\.org\/ dsh-aside-note@1\.1\.2-beta\.7 install --version 1\.1\.2-beta\.7 --profile-dir /)
+})
+
 test('a non-version target is rejected before anything runs', async () => {
   await assert.rejects(
     applyUpdate({ target: 'link:../elsewhere', profileDir: PROFILE, readVersion: stubVersion('1.1.1') }),

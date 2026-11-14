@@ -4,8 +4,7 @@
  * The host half of this package exposes two same-origin endpoints; a browser
  * cannot install a package itself. Nothing here throws: every branch answers
  * with a value the card can render, because "the host has no update route"
- * (an older build, or a headless host) must fall back to the market path
- * rather than look like a failed update.
+ * falls back to the manual command rather than looking like a failed install.
  */
 
 /** Where the host listens; keep in sync with `host/route.js`. */
@@ -27,7 +26,7 @@ export type HostUpdateOutcome =
       output?: string
     }
   | { kind: 'error'; code: string; message: string; retryable: boolean; hint?: string }
-  /** No update route on this host: the caller keeps its own fallback order. */
+  /** No update route on this host: the caller shows the manual command. */
   | { kind: 'unavailable' }
 
 function text(value: unknown): string | undefined {
@@ -41,7 +40,11 @@ function text(value: unknown): string | undefined {
  */
 export async function applyHostUpdate(target: string): Promise<HostUpdateOutcome> {
   const controller = typeof AbortController === 'function' ? new AbortController() : undefined
-  const timer = setTimeout(() => controller?.abort(), APPLY_TIMEOUT_MS)
+  let timedOut = false
+  const timer = setTimeout(() => {
+    timedOut = true
+    controller?.abort()
+  }, APPLY_TIMEOUT_MS)
   let response: Response
   try {
     response = await fetch(HOST_APPLY_PATH, {
@@ -51,8 +54,11 @@ export async function applyHostUpdate(target: string): Promise<HostUpdateOutcome
       ...(controller === undefined ? {} : { signal: controller.signal }),
     })
   } catch {
-    // A host without this route answers 404; a host that is gone answers
-    // nothing. Both mean "not available here", not "the update failed".
+    // A host that accepted the request but never answered is a timeout, not a
+    // missing route. A host without this route answers 404 instead.
+    if (timedOut) {
+      return { kind: 'error', code: 'UPDATE_TIMEOUT', message: 'the host update timed out', retryable: true }
+    }
     return { kind: 'unavailable' }
   } finally {
     clearTimeout(timer)

@@ -91,21 +91,15 @@ export const zh = {
   "update.full": "完整更新说明",
   "update.now": "立即更新",
   "update.starting": "正在准备更新…",
-  "update.waiting": "自动更新正在执行另一个任务，等待中…",
   "update.updating": "正在更新…",
-  "update.updatingPercent": "正在更新… {percent}%",
   "update.updated": "已更新到 {version}",
   "update.refresh": "刷新页面",
   "update.restartHint": "请手动重启 DSH 以完成更新",
   "update.failed": "更新失败：{reason}",
-  "update.force": "仍要更新",
-  "update.tooFresh": "新版本刚发布，自动更新会暂缓安装；可稍后重试，或选择仍要更新",
-  "update.unchanged": "自动更新拿到的版本没有变化；可稍后重试，或选择仍要更新",
   "update.notInstalled": "当前 profile 中没有安装这个插件，无法在应用内更新",
   "update.forbidden": "自动更新被拒绝，这次请求没有执行",
   "update.rejected": "自动更新没有执行；link 安装的插件需要在 checkout 中更新后刷新",
-  "update.busy": "自动更新正在执行另一个任务，请稍后再试",
-  "update.agentsRunning": "有 agent 正在运行，自动更新不会在它运行期间替换插件文件；可以等它结束，或用下面的命令直接更新",
+  "update.busy": "更新正在执行另一个任务，请稍后再试",
   "update.timeout": "等待更新结果超时，请稍后再试",
   "update.bundleInUse": "这个插件正被当前 DSH 使用中，桌面端不允许先移除再安装；宿主通道会就地覆盖，若仍失败请用下面的命令",
   "update.alreadyInstalled": "这个 DSH 只支持先移除再安装，无法原地覆盖；请用下面的命令",
@@ -116,9 +110,9 @@ export const zh = {
   "update.versionMismatch": "装到的版本与目标不一致（可能被镜像或发布保护替换）；可稍后重试或手动安装",
   "update.downgrade": "拒绝降级：目标版本低于当前已装版本",
   "update.autoUnavailable": "这台宿主没有可用的自动更新通道；请用下面的命令",
-  "update.manualHint": "也可以直接更新：在终端执行 npx -y dsh-aside-note install，或到「插件」页更新，装好后刷新页面即可",
+  "update.manualHint": "也可以直接更新：在终端执行 {command}，或到「插件」页更新，装好后刷新页面即可",
   "update.copyPrompt": "拷贝更新提示词",
-  "update.prompt": "帮我更新 DSH 插件 AsideNote（旁边记）到最新版本：在终端执行 npx -y dsh-aside-note install。"
+  "update.prompt": "帮我更新 DSH 插件 AsideNote（旁边记）到 {version}：在终端执行 {command}，装好后刷新页面。"
 } as const
 
 export type MessageKey = keyof typeof zh

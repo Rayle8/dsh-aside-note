@@ -172,16 +172,33 @@ npm pack --pack-destination dist
 gh release upload v1.0.0 dist/dsh-aside-note-1.0.0.tgz --clobber
 ```
 
-## 应用内更新的依赖与兜底
+## 应用内更新的路径与兜底
 
-「立即更新」通过 dshmarket 的公开更新 API（`/dsh-market/api/v1`）执行，**不是**本插件自己跑包管理器。因此：
+「立即更新」通过**宿主自己的更新端点**执行，不是插件市场，也不是本插件自己跑包管理器。客户端不再探测或调用 dshmarket；宿主端点只有两个：
 
-- 未安装或未启用 dshmarket 时，卡片不给按钮，直接给出命令（`npx -y dsh-aside-note install` 或「插件」页）与「拷贝更新提示词」；插件不会尝试安装市场。
-- 市场同一进程只允许一个安装/更新操作，被占用时返回 `409 OPERATION_BUSY`。面板会先等待重试（1s / 2s / 4s）；仍然被占用时保留重试按钮，同时给出同一条命令与「拷贝更新提示词」，而不是只显示「稍后再试」。`tests/update-fallback.test.mjs` 覆盖「一直忙」和「没有市场」两条路径。
-- 市场返回的 `RELEASE_TOO_FRESH` / `VERSION_UNCHANGED` 会显示「仍要更新」二次确认；失败时展示稳定的失败码文案。
-- 更新完成后按市场给出的 `refreshRequired` / `restartRequired` 显示「刷新页面」或「重启 DSH」；Host 重启能力由市场的 capabilities 决定，插件不自行结束进程。
-- 市场 API 处于 beta：客户端从 capabilities 读取端点与能力，不硬编码开关。
+- `GET /dsh-aside-note/update/probe`：报告 profile、安装方式与当前版本。
+- `POST /dsh-aside-note/update/apply`（body `{ target }`）：就地覆盖安装，装完回读版本。
 
+宿主没有这条路由（旧宿主、headless，或安装后尚未重启）时，卡片直接给出手动命令。命令由宿主生成，带目标版本和 profile 目录：
+
+```bash
+npx -y dsh-aside-note install --version 1.1.2-beta.7 --profile-dir "<profile>"
+```
+
+预发布还会把 `npx` 固定到 npmjs 并指定包版本，例如：
+
+```bash
+npx -y --registry=https://registry.npmjs.org/ dsh-aside-note@1.1.2-beta.7 install --version 1.1.2-beta.7 --profile-dir "<profile>"
+```
+
+安装器本身也会在默认 registry 返回 `ERR_PNPM_NO_MATCHING_VERSION` 时用 npmjs 重试一次，避免 beta 用户被装回稳定版或卡在镜像同步上。
+
+宿主拒绝码分两类：
+
+- **终端命令能绕过**：`AUTO_UPDATE_UNAVAILABLE`、`bundle-in-use`、`already-installed`、`management-required`、`not-removable`、`stop-profile`、`OPERATION_BUSY`。卡片显示错误原因，同时给出手动命令与「拷贝更新提示词」。
+- **命令也无法解决**：`UPDATE_FORBIDDEN`、`UPDATE_REJECTED`、`incompatible-version`、`DOWNGRADE_DETECTED`、`RESOLVED_VERSION_MISMATCH` 等，只显示失败原因与重试入口。
+
+更新完成后按宿主返回的 `refreshRequired` / `restartRequired` 显示「刷新页面」或「重启 DSH」。`tests/update-fallback.test.mjs` 覆盖宿主成功、无路由、可绕过拒绝三条路径，并断言不再请求 `/dsh-market/`；`tests/install.test.mjs` 覆盖预发布走 npmjs 的重试。
 ## 故障排查
 
 | 现象 | 原因 / 处理 |

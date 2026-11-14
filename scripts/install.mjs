@@ -154,8 +154,21 @@ function runInstall(command, commandArgs, cwd, extraEnv) {
   return { ok: !result.error && result.status === 0, output: `${stdout}\n${stderr}` }
 }
 
+/**
+ * Whether the requested range names a prerelease.
+ *
+ * Prereleases are excluded from the default `^1.0.0` range and reach npmjs
+ * before the configured mirror, so the package manager gets one retry against
+ * npmjs when the mirror has not caught up yet.
+ * @param {string} range
+ * @returns {boolean}
+ */
+function isPrereleaseRange(range) {
+  return /\d+\.\d+\.\d+-/.test(range)
+}
+
 /** Install with the host's runtime first, then with whatever pnpm is on PATH. */
-function install(cwd) {
+function install(cwd, range) {
   const runtime = dshRuntime()
   const plan = runtime
     ? [{ label: `DSH runtime (${runtime.root})`, command: runtime.node, args: [runtime.pnpm, 'install'] }]
@@ -165,11 +178,20 @@ function install(cwd) {
       ]
   for (const step of plan) {
     console.log(`\nRunning ${step.label} install …`)
-    const first = runInstall(step.command, step.args, cwd)
-    if (first.ok) return true
+    let result = runInstall(step.command, step.args, cwd)
+    if (result.ok) return true
+    // A prerelease is outside the installer's default range and is published to
+    // npmjs before the configured mirror. Retry once against npmjs when the
+    // registry has no matching version, so a beta update does not stall on the
+    // mirror or silently fall back to the stable line.
+    if (isPrereleaseRange(range) && /ERR_PNPM_NO_MATCHING_VERSION|No matching version found/.test(result.output)) {
+      console.log(`\n${step.label}: ${range} is not on the configured registry yet; retrying against npmjs …`)
+      result = runInstall(step.command, [...step.args, '--registry=https://registry.npmjs.org/'], cwd)
+      if (result.ok) return true
+    }
     // Switching pnpm majors leaves the old store behind node_modules; pnpm asks
     // to purge it and cannot answer its own prompt without a TTY.
-    if (!/ERR_PNPM_(?:ABORTED_REMOVE_MODULES_DIR_NO_TTY|UNEXPECTED_STORE)/.test(first.output)) continue
+    if (!/ERR_PNPM_(?:ABORTED_REMOVE_MODULES_DIR_NO_TTY|UNEXPECTED_STORE)/.test(result.output)) continue
     console.log(`\n${step.label}: the profile was built by another pnpm major; re-installing …`)
     if (runInstall(step.command, step.args, cwd, { CI: 'true' }).ok) return true
   }
@@ -230,7 +252,7 @@ if (skipInstall) {
   process.exit(0)
 }
 
-if (!install(dir)) {
+if (!install(dir, range)) {
   fail('pnpm install failed. Install pnpm (corepack enable) and re-run, or run `pnpm install` in the profile directory.')
 }
 

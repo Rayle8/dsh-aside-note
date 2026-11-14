@@ -19,7 +19,7 @@
  * without a host.
  */
 import { PACKAGE, installedVersion } from './profile.js'
-import { isExactVersion } from './versions.js'
+import { isExactVersion, isPrerelease } from './versions.js'
 
 /** An update failure with a stable code the panel can translate. */
 export class UpdateError extends Error {
@@ -42,12 +42,19 @@ export const UPDATE_TIMEOUT_MS = 10 * 60_000
 
 /**
  * The command a person can run when no automatic path is available.
+ *
+ * Prereleases are not covered by the installer's default `^1.0.0` range, and
+ * they reach npmjs before the configured mirror; pin the package and registry
+ * for the npx fetch so the command cannot quietly install the stable line.
  * @param {string} profileDir
  * @param {string} target
  * @returns {string}
  */
 export function manualCommand(profileDir, target) {
-  return `npx -y ${PACKAGE} install --version ${target} --profile-dir "${profileDir}"`
+  const prerelease = isPrerelease(target)
+  const registry = prerelease ? ' --registry=https://registry.npmjs.org/' : ''
+  const packageSpec = prerelease ? `${PACKAGE}@${target}` : PACKAGE
+  return `npx -y${registry} ${packageSpec} install --version ${target} --profile-dir "${profileDir}"`
 }
 
 /**

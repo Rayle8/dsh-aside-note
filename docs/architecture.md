@@ -27,7 +27,6 @@ src/client/
 │                        # 更新中心：useUpdateCenter（检查/说明/更新与命令兜底）、UpdateNotice
 ├─ update/               # latest（版本与 Release 探测）、releaseNotes（标记解析）、
 │                        # releaseHistory（多版本区间）、
-│                        # market（插件市场公开更新 API 客户端）、
 │                        # host（宿主更新端点客户端）
 └─ styles/panel.css      # 全局 .dsh-an-* 规则与 --an-* 尺度
 host/                    # 宿主半边：route（两个更新端点）、apply-update（三级安装）、
@@ -55,9 +54,8 @@ docs/assets/             # README 截图（preview-* 与 features/）
 | 更新 | `update/latest.ts` | npm → npmmirror → GitHub Release 的版本探测（1 小时缓存），按版本读取 Release 正文 |
 | 更新 | `update/releaseNotes.ts` | 提取 `app-update-notes` 标记块、按语言回退、压平 Markdown、上限兜底 |
 | 更新 | `update/releaseHistory.ts` | 从 releases feed 选出「本地 < 版本 ≤ 最新」的区间，剔除草稿/预发布，倒序与上限 |
-| 更新 | `update/market.ts` | dshmarket 公开更新 API v1：capabilities → check → POST update → 轮询 operation → restart |
-| 更新 | `ui/useUpdateCenter.ts` | 自动/手动检查、懒加载说明、更新状态机（starting/waiting/running/done/error），市场忙碌时自动等待重试 |
-| 更新 | `ui/UpdateNotice.ts` | 关于区里的更新卡片：说明展开、完整说明链接、立即更新/刷新/重启，市场不在或一直忙时改为命令 + 拷贝更新提示词 |
+| 更新 | `ui/useUpdateCenter.ts` | 自动/手动检查、懒加载说明、更新状态机（starting/running/done/error）；只走宿主更新端点，没有市场分支 |
+| 更新 | `ui/UpdateNotice.ts` | 关于区里的更新卡片：说明展开、完整说明链接、立即更新/刷新，宿主没有路由或拒绝时改为带版本号的命令 + 拷贝更新提示词 |
 | 存储 | `storage/prefs.ts` | 面板宽高、工作区/会话范围、发送快捷键、前缀、分区状态 |
 | UI 组件 | `ui/MemoPopover.ts` | 面板编排：组合 hook 与展示组件，portal 到 body |
 | UI 组件 | `PanelHead` / `ScopeSwitch` / `SettingsPanel` / `ComposerForm` / `NoteList` / `ClearConfirm` / `TodoRow` / `EmptyState` | 纯展示，数据与回调由面板传入 |
@@ -122,6 +120,8 @@ docs/assets/             # README 截图（preview-* 与 features/）
 装完回读 `node_modules/dsh-aside-note/package.json`，必须等于目标版本，否则报 `RESOLVED_VERSION_MISMATCH`。成功返回 `restartRequired: true`——DSH 不重载已加载的包，新版本在下次启动生效。
 
 端点只有两个，同源、POST 才可写：`GET /dsh-aside-note/update/probe`、`POST /dsh-aside-note/update/apply`（body `{ target }`）。`link:` 安装会被直接拒绝：覆盖 checkout 的依赖声明等于把工作副本悄悄换成 registry 版本。
+
+自 1.1.2-beta.7 起，客户端不再保留插件市场客户端或探测：宿主没有路由、或拒绝码属于「终端命令能绕过」的一类时，卡片直接给出手动命令。命令由宿主生成，带目标版本与 profile 目录；预发布还会固定 `npx` 的 npmjs registry，避免装回稳定版。
 
 ### 为何不查「有 agent 正在运行」
 

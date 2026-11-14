@@ -4,13 +4,13 @@
  * One compact card: the published version, the release notes it ships with, and
  * the update action. The notes load and show as soon as an update is offered —
  * they are not hidden behind a disclosure. The action is a button, never
- * automatic: the market queues the update when it is clicked, and the panel
- * reports the operation instead of guessing.
+ * automatic: one host request installs the offered version, and the panel
+ * reports the outcome instead of guessing.
  *
- * When the market is missing, or stays busy with another operation after the
- * waiting window, the card stops insisting on its own button and states the
- * terminal command — with one click to copy a ready-to-paste prompt for an
- * agent. The panel still never runs a package manager itself.
+ * When the host has no update route, or refuses the install in a way a terminal
+ * command can get past, the card states the exact command — with one click to
+ * copy a ready-to-paste prompt for an agent. The panel never runs a package
+ * manager itself.
  *
  * A jump across several versions lists each release separately: the newest one
  * opens by default and the ones behind it expand on demand, so a 2.0.0 install
@@ -20,25 +20,24 @@
 import React from 'react'
 import type { NotesEntry, NotesState, RunPhase, UpdateRunState } from './useUpdateCenter'
 import type { ReleaseNoteGroup } from '../update/releaseNotes'
+import { isPrereleaseVersion } from '../update/latest'
 import { reportEvent } from '../rum'
 
 const h = React.createElement
 
 const NOTES_ID = 'dsh-an-update-notes'
+const UPDATE_PACKAGE = 'dsh-aside-note'
 
-/** Failure codes the card can explain without echoing the market's message. */
+/** Failure codes the card can explain without echoing the host's message. */
 const FAILURE_COPY: Record<string, string> = {
-  RELEASE_TOO_FRESH: 'update.tooFresh',
-  VERSION_UNCHANGED: 'update.unchanged',
   PLUGIN_NOT_INSTALLED: 'update.notInstalled',
   UPDATE_FORBIDDEN: 'update.forbidden',
   UPDATE_REJECTED: 'update.rejected',
   OPERATION_BUSY: 'update.busy',
-  AGENTS_RUNNING: 'update.agentsRunning',
   UPDATE_TIMEOUT: 'update.timeout',
-  // DSH's own refusals, forwarded unchanged by the market's v1 API. Desktop
-  // answers `bundle-in-use` for every plugin that is loaded while it is asked
-  // to remove one — which is exactly this panel's state while it is open.
+  // DSH's own refusals, forwarded unchanged by the host. Desktop answers
+  // `bundle-in-use` for every plugin that is loaded while it is asked to remove
+  // one — which is exactly this panel's state while it is open.
   'bundle-in-use': 'update.bundleInUse',
   'already-installed': 'update.alreadyInstalled',
   'management-required': 'update.managementRequired',
@@ -53,7 +52,6 @@ const FAILURE_COPY: Record<string, string> = {
 /** Refusals a terminal command can actually get past. */
 const MANUAL_FALLBACK: ReadonlySet<string> = new Set([
   'OPERATION_BUSY',
-  'AGENTS_RUNNING',
   'bundle-in-use',
   'already-installed',
   'management-required',
@@ -71,7 +69,7 @@ export function UpdateNotice(props: {
   run: UpdateRunState
   fullReleaseUrl: string | null
   onToggleVersion: (version: string) => void
-  onStartUpdate: (force?: boolean) => void
+  onStartUpdate: () => void
   onRefresh: () => void
   onCopyPrompt: (text: string) => Promise<boolean>
   onToast?: (kind: string) => void
@@ -114,34 +112,39 @@ export function UpdateNotice(props: {
   if (latestVersion === null) return null
 
   const phase: RunPhase = run.phase
-  const busy = phase === 'starting' || phase === 'waiting' || phase === 'running'
+  const busy = phase === 'starting' || phase === 'running'
   const failureKey = run.failureCode ? FAILURE_COPY[run.failureCode] : ''
-  const canForce = run.failureCode === 'RELEASE_TOO_FRESH' || run.failureCode === 'VERSION_UNCHANGED'
   /**
-   * No market, one that stayed busy, or one that refuses to replace files under
-   * a running agent: the user needs the command now, not a "try again later"
-   * with nothing behind it. The panel never runs a package manager itself, so
-   * the command is the way past a refusal — it does not go through the market.
-   * A busy market keeps its retry button, so both paths stay reachable.
+   * The host reports the exact command (with the profile directory) for the
+   * failures a terminal can get past. When a refusal has no command of its own,
+   * pin the offered version here so a later release cannot slip in between the
+   * card and the paste.
+   */
+  const manualCommand = React.useMemo(() => {
+    const hinted = run.message?.trim() ?? ''
+    if (/^npx\s/u.test(hinted)) return hinted
+    const prerelease = isPrereleaseVersion(latestVersion)
+    const registry = prerelease ? ' --registry=https://registry.npmjs.org/' : ''
+    const packageSpec = prerelease ? `${UPDATE_PACKAGE}@${latestVersion}` : UPDATE_PACKAGE
+    return `npx -y${registry} ${packageSpec} install --version ${latestVersion}`
+  }, [run.message, latestVersion])
+  /**
+   * No host route, or a refusal a terminal can get past: the user needs the
+   * command now, not a "try again later" with nothing behind it. The panel never
+   * runs a package manager itself.
    */
   const manual = run.failureCode !== null && MANUAL_FALLBACK.has(run.failureCode)
 
-  const progress = phase === 'running'
-    ? (run.percent === null
-        ? say('update.updating')
-        : say('update.updatingPercent', { percent: run.percent }))
-    : ''
-
   /**
    * Hand the user a prompt they can paste into an agent; report the outcome.
-   * The prompt asks for the latest release rather than this card's version, so
-   * it stays correct if a newer one lands between render and click.
+   * The command pins the version this card offered, so a release published
+   * between render and click cannot silently change the target.
    */
   const copyPrompt = () => {
-    const text = say('update.prompt')
+    const text = say('update.prompt', { version: latestVersion, command: manualCommand })
     Promise.resolve(props.onCopyPrompt(text)).then(ok => {
       // The command channel of the update flow: the card hands the terminal
-      // prompt over instead of driving the market.
+      // prompt over instead of driving an installer.
       reportEvent('update_started', { ext1: 'command', ext2: ok ? 'copied' : 'copy_failed' })
       if (typeof props.onToast === 'function') props.onToast(ok ? 'copied' : 'copyFailed')
     })
@@ -261,12 +264,10 @@ export function UpdateNotice(props: {
                 className: 'dsh-an-updatePrimary',
                 disabled: busy,
                 'aria-busy': busy,
-                onClick: () => props.onStartUpdate(false),
+                onClick: () => props.onStartUpdate(),
               },
               busy
-                ? (phase === 'running'
-                    ? progress
-                    : phase === 'waiting' ? say('update.waiting') : say('update.starting'))
+                ? (phase === 'running' ? say('update.updating') : say('update.starting'))
                 : say('update.now'),
             ),
       fullReleaseUrl
@@ -293,24 +294,13 @@ export function UpdateNotice(props: {
               ? say(failureKey)
               : say('update.failed', { reason: run.message || run.failureCode || '' }),
           ),
-          canForce
-            ? h(
-                'button',
-                {
-                  type: 'button',
-                  className: 'dsh-an-updateLinkBtn',
-                  onClick: () => props.onStartUpdate(true),
-                },
-                say('update.force'),
-              )
-            : null,
         )
       : null,
     manual
       ? h(
           'div',
           { className: 'dsh-an-updateFallback' },
-          h('p', { className: 'dsh-an-updateHint' }, say('update.manualHint')),
+          h('p', { className: 'dsh-an-updateHint' }, say('update.manualHint', { command: manualCommand })),
           h(
             'button',
             { type: 'button', className: 'dsh-an-updateCopy', onClick: copyPrompt },
