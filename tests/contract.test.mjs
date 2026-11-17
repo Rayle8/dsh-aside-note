@@ -8,6 +8,9 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const read = name => fs.readFileSync(path.join(root, name), 'utf8')
 const exists = name => fs.existsSync(path.join(root, name))
 
+/** The locale ids the DSH client ships; the plugin follows them one for one. */
+const LOCALE_IDS = ['zh', 'en', 'ja', 'es', 'fr', 'de', 'ru', 'pt']
+
 test('package declares the DSH bundle and web client halves', () => {
   const manifest = JSON.parse(read('package.json'))
   assert.equal(manifest.name, 'dsh-aside-note')
@@ -331,11 +334,13 @@ test('the retired page entry is gone, not kept as a second implementation', () =
 })
 
 test('locale files carry metadata and the dictionary stays in sync', () => {
-  const zhMeta = JSON.parse(read('locale/zh.json'))
-  const enMeta = JSON.parse(read('locale/en.json'))
-  assert.ok(zhMeta.meta && zhMeta.meta.title, 'zh.json needs meta.title')
-  assert.ok(enMeta.meta && enMeta.meta.title, 'en.json needs meta.title')
-  assert.ok(zhMeta.meta.description && enMeta.meta.description, 'both locales need meta.description')
+  const metas = Object.fromEntries(LOCALE_IDS.map(id => [id, JSON.parse(read(`locale/${id}.json`))]))
+  for (const id of LOCALE_IDS) {
+    assert.ok(metas[id].meta && metas[id].meta.title, `locale/${id}.json needs meta.title`)
+    assert.ok(metas[id].meta.description, `locale/${id}.json needs meta.description`)
+  }
+  const zhMeta = metas.zh
+  const enMeta = metas.en
   assert.match(zhMeta.meta.title, /旁边记/, 'the Chinese listing must use the product name')
   assert.equal(zhMeta.meta.description, '让想法留在对话旁边，轻量会话便笺。', 'the Chinese listing carries the finalized copy')
   assert.equal(enMeta.meta.description, 'Keep your ideas beside the conversation — a lightweight session notes panel.', 'the English listing mirrors the Chinese copy')
@@ -351,13 +356,14 @@ test('locale files carry metadata and the dictionary stays in sync', () => {
   assert.equal(dict.en['add.placeholder'], 'Jot one down')
   assert.match(dict.en['popover.empty.body'], /beside the conversation/)
   assert.match(dict.en['settings.tagline'], /beside the conversation/)
-  assert.deepEqual(Object.keys(dict.zh).sort(), Object.keys(dict.en).sort(), 'zh and en drifted apart')
-  for (const key of Object.keys(dict.zh)) {
-    assert.equal(typeof dict.zh[key], 'string')
-    assert.ok(dict.zh[key].length > 0, `zh ${key} is empty`)
-    assert.ok(dict.en[key].length > 0, `en ${key} is empty`)
-    const placeholders = text => [...text.matchAll(/\{(\w+)\}/g)].map(m => m[1]).sort()
-    assert.deepEqual(placeholders(dict.zh[key]), placeholders(dict.en[key]), `placeholders differ for ${key}`)
+  const placeholders = text => [...text.matchAll(/\{(\w+)\}/g)].map(m => m[1]).sort()
+  for (const id of LOCALE_IDS) {
+    assert.deepEqual(Object.keys(dict[id]).sort(), Object.keys(dict.zh).sort(), `${id} and zh drifted apart`)
+    for (const key of Object.keys(dict.zh)) {
+      assert.equal(typeof dict[id][key], 'string')
+      assert.ok(dict[id][key].length > 0, `${id} ${key} is empty`)
+      assert.deepEqual(placeholders(dict[id][key]), placeholders(dict.zh[key]), `placeholders differ for ${key} in ${id}`)
+    }
   }
   assert.equal(dict.zh['popover.clearConfirm'], '清除 {n} 项已完成记录？')
   assert.equal(dict.en['popover.clearConfirm'], 'Clear {n} completed notes?')
@@ -507,12 +513,9 @@ function cssRules() {
   return rules
 }
 
-/** The bundled dictionary, evaluated straight from the module source. */
+/** The bundled dictionary, evaluated straight from the module sources. */
 function readDict() {
-  return {
-    zh: readLiteral('src/client/i18n/zh.ts', 'zh'),
-    en: readLiteral('src/client/i18n/en.ts', 'en'),
-  }
+  return Object.fromEntries(LOCALE_IDS.map(id => [id, readLiteral(`src/client/i18n/${id}.ts`, id)]))
 }
 
 /** Pull one JSON-compatible object literal out of a TypeScript module. */

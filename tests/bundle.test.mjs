@@ -161,9 +161,10 @@ test('the built bundle boots, applies, and seats its slots', async t => {
   const disposers = []
   const registered = []
   const injected = []
+  const dictionaries = []
   const locale = {
     bind: () => key => key,
-    register: () => {},
+    register: (ns, dict) => { dictionaries.push({ ns, dict }) },
     getLocale: () => ({ id: 'zh' }),
   }
   const ctx = {
@@ -190,6 +191,12 @@ test('the built bundle boots, applies, and seats its slots', async t => {
   assert.deepEqual(injected.sort(), ['conversation.composer.dock', 'conversation.hero.options', 'shell.overlay'])
   assert.equal(registered.length, 3, 'the capture, the new-session seat and the toast host must be registered')
   assert.deepEqual(registered.map(entry => entry.meta.name).sort(), injected)
+  assert.equal(dictionaries.length, 1, 'the bundle registers one locale namespace')
+  assert.deepEqual(
+    Object.keys(dictionaries[0].dict).sort(),
+    ['de', 'en', 'es', 'fr', 'ja', 'pt', 'ru', 'zh'],
+    'the built bundle must carry every DSH-official locale',
+  )
 
   const seeded = JSON.parse(window.localStorage.getItem('dsh.aside-note'))
   assert.equal(seeded.sessions['session-1'].items[0].text, '旧便笺')

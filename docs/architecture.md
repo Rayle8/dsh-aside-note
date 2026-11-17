@@ -20,7 +20,7 @@ src/client/
 ├─ constants.ts          # 包身份、存储键、上限、平台相关常量
 ├─ scope.ts              # 会话 → 工作区绑定；按工作区/会话选择解析清单，工作区外回落会话
 ├─ dsh.d.ts              # 宿主 ctx / locale / slots 的最小 ambient 类型
-├─ i18n/                 # zh.ts（键的唯一来源）、en.ts、index.ts（fill / makeSay）
+├─ i18n/                 # zh.ts（键的唯一来源）、其余 7 种 DSH 官方语言、index.ts（fill / makeSay）
 ├─ domain/               # id、clipboard、forward（写回输入框）、items（归一化/排序/时间）
 ├─ storage/              # codec、events（同标签页总线）、session、workspace、drafts、forwarded、prefs
 ├─ ui/                   # 面板外壳与纯展示组件、hooks、primitives、定位
@@ -45,7 +45,7 @@ docs/assets/             # README 截图（preview-* 与 features/）
 | --- | --- | --- |
 | 入口 | `index.ts` | 注入样式 → 注册字典 → 座位入口/Toast/slot |
 | 身份 | `constants.ts` | 包与插件的 id、`dsh-an-*` 相关的键与上限 |
-| 文案 | `i18n/` | `zh.ts` 定义键集合与 `MessageKey`；`en.ts` 用 `Record<MessageKey, string>`，缺键编译失败 |
+| 文案 | `i18n/` | `zh.ts` 定义键集合与 `MessageKey`；其余 7 种 DSH 官方语言用 `Record<MessageKey, string>`，缺键编译失败 |
 | 领域 | `domain/items.ts` | `normalizeItems`（防御性清洗、去重、上限）、排序、相对时间文案 |
 | 领域 | `domain/forward.ts` | 把便笺写回**当前会话**的 Lexical contenteditable 或 textarea，保留光标与换行语义；按 `[data-conversation-session]` 限定输入框 |
 | 存储 | `storage/session.ts` | 会话便笺库（`sessions`）的读写；保持原 `dsh.aside-note` 的 v1 键与结构，写失败返回 `false`，由调用方保留 UI 原状并报 Toast |
@@ -103,7 +103,7 @@ docs/assets/             # README 截图（preview-* 与 features/）
 
 ## 7. 扩展时先看这里
 
-- 新增文案：只改 `src/client/i18n/{zh,en}.ts`，两边键与占位符必须一致；中文提示不加句号。
+- 新增文案：改 `src/client/i18n/*.ts` 的 8 种语言，键与占位符必须一致；插件列表文案同步改 `locale/*.json`；中文提示不加句号。
 - 新增持久化字段：`constants.ts` 加键 → `storage/` 对应模块读写 → 补契约/集成测试；读取旧形状时要原地升级，并在架构文档记录合并/迁移规则。
 - 新增面板状态：优先放 `ui/use*.ts`；纯逻辑放 `domain/`，不要 import React。
 - 改样式：只动 `src/client/styles/panel.css`，遵守 [面板 UI 规则](./panel-ui-rules.md)（语义别名、三档字号、0.5px 发丝线、hover 门控）。

@@ -89,7 +89,7 @@ Click a note's forward button to append it to the current chat input as a list i
 - **Saved drafts**: close the panel and pick up where you left off when you reopen it; conversations in one workspace share the same draft, so switching conversations does not mean retyping.
 - **Completed history**: separate open and completed sections, with creation and completion times.
 - **Adjustable panel**: resize the width and height, with your preferences remembered.
-- **Fits into DSH**: follows the light/dark theme and Chinese/English language settings.
+- **Fits into DSH**: follows the light/dark theme and all eight DSH-official languages (Chinese, English, Japanese, Spanish, French, German, Russian and Brazilian Portuguese).
 - **Browser-local persistence**: records survive page refreshes and DSH restarts, with updates synced across tabs in the same browser.
 
 > Notes are stored in the current browser and do not sync across devices or browsers. Clearing site data removes them. See [Where data lives](#where-data-lives).

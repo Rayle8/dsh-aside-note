@@ -6,6 +6,16 @@ This file records user-visible changes only. Screenshots, marketplace listing ma
 
 ## next-released
 
+<!-- app-update-notes:en:start -->
+### Added
+- **All official DSH languages:** the panel, the note-entry tooltips and the plugin listing now follow every language the DSH client ships — Chinese, English, Japanese, Spanish, French, German, Russian and Brazilian Portuguese — and switch immediately with the DSH language setting.
+<!-- app-update-notes:en:end -->
+
+<!-- app-update-notes:zh:start -->
+### 新增
+- **支持全部 DSH 官方语言：** 面板、入口提示与插件列表现在跟随 DSH 客户端提供的全部语言——中文、英语、日语、西班牙语、法语、德语、俄语和巴西葡萄牙语，并随 DSH 语言设置即时切换。
+<!-- app-update-notes:zh:end -->
+
 ## 1.1.3
 
 <!-- app-update-notes:en:start -->

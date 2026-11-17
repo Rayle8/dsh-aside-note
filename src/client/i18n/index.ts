@@ -1,9 +1,15 @@
 import { NS } from '../constants'
+import { de } from './de'
 import { en } from './en'
+import { es } from './es'
+import { fr } from './fr'
+import { ja } from './ja'
+import { pt } from './pt'
+import { ru } from './ru'
 import { zh, type MessageKey } from './zh'
 
-/** Both locales, in the shape `locale.register` expects. */
-export const DICT = { zh, en }
+/** Every DSH-official locale, in the shape `locale.register` expects. */
+export const DICT = { zh, en, ja, es, fr, de, ru, pt }
 
 /** Interpolate `{name}` placeholders; an absent value leaves the placeholder alone. */
 export function fill(template: string, vars?: Record<string, any>): string {
@@ -30,8 +36,8 @@ export function makeSay(ctx: DshClientCtx, getLocaleId: () => string) {
         /* fall through */
       }
     }
-    const language = String(getLocaleId()).split('-')[0]
-    const dict = (DICT as Record<string, Record<string, string>>)[language] || DICT.zh
+    const language = String(getLocaleId()).split('-')[0].toLowerCase()
+    const dict = (DICT as Record<string, Record<string, string>>)[language] || DICT.en
     return dict[key] || DICT.zh[key as MessageKey] || key
   }
 }
