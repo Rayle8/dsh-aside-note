@@ -15,6 +15,8 @@
 
 ## next-released
 
+- **图标：** 插件标识换成渐变便签卡叠对话气泡的母版 `docs/assets/storefront-icon.svg`，渲染出的市场上架图 `icon.png` 与插件列表的 `icon.svg` 共用同一套图形；`icon.svg` 按宿主 36 画布重绘、不再带白底，16px 下明暗两套均已核对。
+
 ## 1.1.2-beta.4
 
 - **构建：** 统计改用腾讯云 RUM（`aegis-web-sdk`），appId 直接写在 `src/client/rum.ts`。它不走构建期 `.env`：`client/client.js` 是提交进仓库的产物，本地 env 会让 CI 在无 env 时重建出不同的字节，bundle 校验必然失败。SDK 在构建时内联，所以放在 `devDependencies`。
