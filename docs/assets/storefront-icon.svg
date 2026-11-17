@@ -3,15 +3,20 @@
     商店图标母版：插件市场只收位图，所以这里按 540px 渲染（3× 于 180）后缩到
     180×180，输出到仓库根目录的 icon.png。卡片里按 16px 圆形裁切显示，
     改动图形后务必在 16px 下再看一眼。
+    图形按宿主插件图标的 36 画布绘制，这里放大 4.4 倍并居中在白底瓦片上；
+    比宿主插件列表里的比例略大，是为了 16px 圆形裁切后仍认得出来。
   -->
   <defs>
-    <linearGradient id="tile" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#F7C661"/>
-      <stop offset="1" stop-color="#E29A2C"/>
+    <linearGradient id="aside-note-card" x1="16" y1="12" x2="28" y2="30" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#7AC2FF"/>
+      <stop offset="1" stop-color="#4A65E8"/>
     </linearGradient>
   </defs>
-  <rect width="180" height="180" rx="40" fill="url(#tile)"/>
-  <path d="M62 38H106L128 60V134A10 10 0 0 1 118 144H62A10 10 0 0 1 52 134V48A10 10 0 0 1 62 38Z" fill="#2A2216"/>
-  <rect x="68" y="90" width="44" height="9" rx="4.5" fill="#F8D488"/>
-  <rect x="68" y="109" width="30" height="9" rx="4.5" fill="#F8D488"/>
+  <rect x="0.75" y="0.75" width="178.5" height="178.5" rx="40" fill="#FFFFFF" stroke="#E0E0E0" stroke-width="1.5"/>
+  <g transform="translate(10.8 8.6) scale(4.4)">
+    <path d="M9.5 7H17.5C19.71 7 21.5 8.79 21.5 11V16C21.5 18.21 19.71 20 17.5 20H13.6L9.35 23.85C8.83 24.32 8 23.95 8 23.25V19.72C6.53 19.16 5.5 17.7 5.5 16V11C5.5 8.79 7.29 7 9.5 7Z" fill="#7CB7FF" fill-opacity="0.55"/>
+    <path d="M18 12H27C28.93 12 30.5 13.57 30.5 15.5V24.5L25 30H18C16.07 30 14.5 28.43 14.5 26.5V15.5C14.5 13.57 16.07 12 18 12Z" fill="url(#aside-note-card)"/>
+    <path d="M30.5 24.5H26.6C25.72 24.5 25 25.22 25 26.1V30L30.5 24.5Z" fill="#BCD5FD"/>
+    <path d="M18.25 17.25H26.75M18.25 21.5H22.75" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/>
+  </g>
 </svg>
