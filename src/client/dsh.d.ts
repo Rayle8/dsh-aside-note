@@ -17,11 +17,19 @@ interface Navigator {
   userAgentData?: { platform?: string }
 }
 
+/** Immutable locale state; `active` is current, the other fields are legacy shapes. */
+interface DshLocaleSnapshot {
+  active?: string
+  id?: string
+  locale?: string
+  revision?: number
+}
+
 interface DshLocaleService {
   bind(namespace: string): (key: string) => string
   register(namespace: string, dictionary: unknown): void
-  getLocale(): { id?: string; locale?: string; revision?: number } | null
-  getSnapshot?(): { active?: string; revision?: number } | null
+  getLocale(): DshLocaleSnapshot | string | null
+  getSnapshot?(): DshLocaleSnapshot | null
   subscribe?(listener: () => void): () => void
 }
 

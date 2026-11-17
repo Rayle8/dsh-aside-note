@@ -6,6 +6,16 @@ This file records user-visible changes only. Screenshots, marketplace listing ma
 
 ## next-released
 
+<!-- app-update-notes:en:start -->
+### Fixed
+- **Panel language follows DSH:** the panel now reads DSH's live locale (`active`) instead of a field the locale service no longer exposes, and re-binds its dictionary when a client-plugin reload replaces the locale service. Previously it could fall back to English while DSH was set to Chinese.
+<!-- app-update-notes:en:end -->
+
+<!-- app-update-notes:zh:start -->
+### 修复
+- **面板语言跟随 DSH：** 面板改为读取 DSH 当前语言的 `active` 字段（不再读语言服务已不提供的旧字段），并在客户端插件热重载替换语言服务后重新绑定字典；此前可能在 DSH 为中文时回退成英文。
+<!-- app-update-notes:zh:end -->
+
 ## 1.1.4
 
 <!-- app-update-notes:en:start -->

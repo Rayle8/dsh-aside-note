@@ -378,8 +378,14 @@ test('runtime fallbacks land on English, never Chinese', () => {
   assert.doesNotMatch(i18n, /DICT\.zh\[key/, 'a drifted dictionary must not fall back to Chinese')
 
   const client = read('src/client/index.ts')
+  // The live LocaleSnapshot exposes `active`; `id`/string are legacy shapes.
+  assert.match(client, /current\.active \|\| current\.id \|\| current\.locale/)
   assert.match(client, /return typeof id === 'string' && id \? id : 'en'/, 'an absent locale id reads as English')
   assert.match(client, /\} catch \{\n\s+return 'en'\n\s+\}/, 'a throwing locale service reads as English')
+  // The dictionary binding must not be pinned to the service captured at apply:
+  // a client-plugin reload replaces the service and the old binding goes silent.
+  assert.match(i18n, /locale = ctx\.get\('locale'\)/)
+  assert.match(i18n, /locale === boundService/)
 })
 
 test('the analytics switch names the platform, the purpose and the limits', () => {

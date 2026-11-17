@@ -5592,11 +5592,31 @@ function fill(template, vars) {
 * literal objects, so a stricter key type waits until those call sites settle.
 */
 function makeSay(ctx, getLocaleId) {
-	const locale = ctx.get("locale");
-	const bound = locale && typeof locale.bind === "function" ? locale.bind(NS) : null;
+	let boundService;
+	let bound = null;
+	let hasSynced = false;
+	/**
+	* Bind lazily and re-bind when the service identity changes: a client-plugin
+	* reload can replace the locale service after this closure was created, and a
+	* binding captured from the old one would silently stop translating.
+	*/
+	const translate = () => {
+		let locale;
+		try {
+			locale = ctx.get("locale");
+		} catch {
+			return null;
+		}
+		if (hasSynced && locale === boundService) return bound;
+		hasSynced = true;
+		boundService = locale;
+		bound = locale && typeof locale.bind === "function" ? locale.bind(NS) : null;
+		return bound;
+	};
 	return (key) => {
-		if (bound) try {
-			const value = bound(key);
+		const boundTranslate = translate();
+		if (boundTranslate) try {
+			const value = boundTranslate(key);
 			if (typeof value === "string" && value && value !== key) return value;
 		} catch {}
 		const language = String(getLocaleId()).split("-")[0].toLowerCase();
@@ -9023,8 +9043,9 @@ function apply(ctx) {
 	if (locale && typeof locale.register === "function") ctx.effect(() => locale.register(NS, DICT), "dsh-aside-note: dictionaries");
 	const localeId = () => {
 		try {
-			const current = locale && typeof locale.getLocale === "function" ? locale.getLocale() : null;
-			const id = current && (current.id || current.locale);
+			const service = ctx.get("locale") || locale;
+			const current = service && typeof service.getSnapshot === "function" ? service.getSnapshot() : service && typeof service.getLocale === "function" ? service.getLocale() : null;
+			const id = typeof current === "string" ? current : current && (current.active || current.id || current.locale);
 			return typeof id === "string" && id ? id : "en";
 		} catch {
 			return "en";

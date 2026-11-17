@@ -165,7 +165,7 @@ test('the built bundle boots, applies, and seats its slots', async t => {
   const locale = {
     bind: () => key => key,
     register: (ns, dict) => { dictionaries.push({ ns, dict }) },
-    getLocale: () => ({ id: 'zh' }),
+    getLocale: () => ({ active: 'zh' }),
   }
   const ctx = {
     get: name => (name === 'locale' ? locale : undefined),
@@ -488,7 +488,7 @@ test('one workspace shares its notes and forwards into the visible session', asy
   const locale = {
     bind: () => key => key,
     register: () => {},
-    getLocale: () => ({ id: 'zh' }),
+    getLocale: () => ({ active: 'zh' }),
   }
   const ctx = {
     get: name => (name === 'locale' ? locale : undefined),
@@ -761,7 +761,7 @@ test('a blank new session opens the workspace list from the header corner', asyn
   const locale = {
     bind: () => key => key,
     register: () => {},
-    getLocale: () => ({ id: 'zh' }),
+    getLocale: () => ({ active: 'zh' }),
   }
   const ctx = {
     get: name => (name === 'locale' ? locale : undefined),

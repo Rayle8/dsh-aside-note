@@ -25,12 +25,34 @@ export function fill(template: string, vars?: Record<string, any>): string {
  * literal objects, so a stricter key type waits until those call sites settle.
  */
 export function makeSay(ctx: DshClientCtx, getLocaleId: () => string) {
-  const locale = ctx.get('locale')
-  const bound = locale && typeof locale.bind === 'function' ? locale.bind(NS) : null
+  let boundService: unknown
+  let bound: ((key: string) => unknown) | null = null
+  let hasSynced = false
+  /**
+   * Bind lazily and re-bind when the service identity changes: a client-plugin
+   * reload can replace the locale service after this closure was created, and a
+   * binding captured from the old one would silently stop translating.
+   */
+  const translate = () => {
+    let locale: DshLocaleService | undefined
+    try {
+      locale = ctx.get('locale')
+    } catch {
+      // A disposed plugin context may no longer resolve services; the bundled
+      // dictionaries still answer, so treat it as "no service".
+      return null
+    }
+    if (hasSynced && locale === boundService) return bound
+    hasSynced = true
+    boundService = locale
+    bound = locale && typeof locale.bind === 'function' ? locale.bind(NS) : null
+    return bound
+  }
   return (key: string) => {
-    if (bound) {
+    const boundTranslate = translate()
+    if (boundTranslate) {
       try {
-        const value = bound(key)
+        const value = boundTranslate(key)
         if (typeof value === 'string' && value && value !== key) return value
       } catch {
         /* fall through */

@@ -106,8 +106,18 @@ function apply(ctx: DshClientCtx) {
 
   const localeId = () => {
     try {
-      const current = locale && typeof locale.getLocale === 'function' ? locale.getLocale() : null
-      const id = current && (current.id || current.locale)
+      // Prefer the live service so a client-plugin reload cannot pin an old one.
+      const service = ctx.get('locale') || locale
+      const current = service && typeof service.getSnapshot === 'function'
+        ? service.getSnapshot()
+        : service && typeof service.getLocale === 'function'
+          ? service.getLocale()
+          : null
+      // LocaleSnapshot carries `active`; older shapes carried `id` or the bare
+      // string. Read all of them so a service change can never pin English.
+      const id = typeof current === 'string'
+        ? current
+        : current && (current.active || current.id || current.locale)
       return typeof id === 'string' && id ? id : 'en'
     } catch {
       return 'en'
