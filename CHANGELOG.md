@@ -6,6 +6,8 @@ This file records user-visible changes only. Screenshots, marketplace listing ma
 
 ## next-released
 
+## 1.2.0
+
 <!-- app-update-notes:en:start -->
 ### Changed
 - **Stable release:** 1.2.0 is the first stable release of the host-file storage introduced in 1.2.0-beta.1; no code changes since that beta.
