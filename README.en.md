@@ -103,7 +103,7 @@ Click a note's forward button to append it to the current chat input as a list i
 - **Note actions**: add, complete, copy, edit by double-click or pencil, and delete; clearing completed notes asks for confirmation, and completed notes expand for review.
 - **One-click forward**: each note is appended to the **currently open conversation's** composer as a `-` item, with the customizable prefix written only when the composer is empty — nothing is sent automatically. The forward button gains a check per list, and clicking it again removes the mark.
 - **Remembered state**: add and edit drafts are saved per workspace (per session outside a workspace), so switching conversations or the Workspace/Session switch never loses them; submitting still writes the list selected at that moment. Drafts are restored when the panel reopens, and the open/completed expand state plus the scope choice are remembered too.
-- **Panel size**: drag the left edge for width and the bottom handle for height, double-click either to reset; both persist in the browser.
+- **Panel size**: drag the left edge for width and the bottom handle for height, double-click either to reset; both are device-local state kept in the browser and never written to the host note file.
 - **List regions**: **Open** and **Completed** each keep a sticky header and its own scroll, and expanding completed never compresses open; completed notes show creation and completion times, newest completion first.
 - **Settings**: send shortcut (Enter or ⌘/Ctrl+Enter), forward prefix, and About (version, check, author, source), saved automatically.
 - **Update notice**: a newer release puts a dot on the settings button, and Settings › About shows the notes and the update action; see [Update notice](#update-notice).
@@ -214,7 +214,7 @@ The file is owned by DSH's storage stack (`ctx.storageDomain` plus the JSON back
 - Available: existing browser notes are migrated once when the host is empty, and every later read/write uses the host. The old `localStorage` copy is kept untouched as a recovery source and is **never switched back to automatically**.
 - Unavailable (older host, a profile without storage, a damaged file): this page keeps using browser storage and says so, then retries on the next start; notes written meanwhile are migrated once the host works.
 
-State that stays in browser `localStorage`: panel width/height, section expansion, the anonymous-statistics switch, the RUM visitor id, the first-open marker, and unsaved drafts (shared per workspace/session, so drafts do not cross browsers).
+Device-local state that stays in browser `localStorage` (the notes themselves no longer live there): panel width/height, section expansion, the anonymous-statistics switch, the RUM visitor id, the first-open marker, and unsaved drafts (shared per workspace/session, so drafts do not cross browsers).
 
 Known limits: two DSH processes sharing one `$DSH_HOME` have no cross-process write lock, so the last writer wins; a damaged or unsupported file surfaces an error instead of being rebuilt automatically — back it up before repairing. Keys from much older builds (`dsh.aside-notes.*`) are not read; rename them to the matching `dsh.aside-note.*` keys before upgrading.
 
@@ -303,5 +303,5 @@ Loaded in an isolated DSH profile and driven through headless Chrome:
 - records survive a refresh, and the panel header switches between the workspace list and the current session's list;
 - the npmjs → npmmirror → GitHub Release fallback, the one-hour cache, and the version comparison are covered by the contract tests, and the jsdom test drives the visible update notice; the live notice needs a published npm package or a GitHub Release.
 
-`npm run check` passes: lint, typecheck, build, and 197 tests, including jsdom integration tests that drive the whole panel, expand the release notes, run an update through a mocked market, and check the busy/no-market fallback.
-`npm run catalog:check` binds 64 stable case ids to those tests; see [the test catalog](./tests/catalog/README.md).
+`npm run check` passes: lint, typecheck, build, and 218 tests, including jsdom integration tests that drive the whole panel, expand the release notes, run an update through a mocked market, and check the busy/no-market fallback.
+`npm run catalog:check` binds 74 stable case ids to those tests; see [the test catalog](./tests/catalog/README.md).

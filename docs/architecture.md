@@ -111,14 +111,7 @@ docs/assets/             # README 截图（preview-* 与 features/）
 
 - `dsh.aside-note`、`.workspaces`、`.drafts` 读取前先校验；解析失败或字段类型不对，原始字符串先写到 `<键>.corrupt`（同一键只保留最后一份损坏内容），再把该键当作空清单继续，下一次写入不会静默覆盖证据。
 - 写入不是整份覆盖：`writeSessionRecord` / `writeWorkspaceRecord` 先读回最新记录，再按 id 合并（`storage/merge.ts`）。两个标签页同时记便笺时双方新增都保留；同一条目冲突取 `updatedAt` 较新的一方；本页相对上次读取删除的条目不被并发写入复活（反向可能复活，宁可复活不丢）。
-- 本地存储按浏览器 origin 隔离：桌面端与 `http://127.0.0.1:<port>` 是不同 origin 的两份数据；仅当整站存储被拒绝时 `storage()` 才返回 `null`，更常见的是写失败（配额/磁盘/profile 只读）返回 `false`。迁移到宿主后这一层只作为回退与恢复来源。
-
-- `sessions` 与 `workspaces` 是**平级两张表**：会话属于哪个工作区由 DSH 的工作区注册表提供，文件不存归属；工作区清单是独立副本，首次见到工作区时把成员会话已有的便笺并入一次（`seededSessionIds` 防复活）。
-- `forwarded` 键是 `ws:<workspaceId>` 或会话 ID；`global` 存范围选择、发送快捷键、转发前缀、迁移标记。
-- 浏览器在宿主之外仍保留设备本地状态（`localStorage`）：面板宽高、分区展开、匿名统计开关、RUM 访客 ID、首次打开标记、未提交草稿（`dsh.aside-note.drafts`，按工作区/会话共享）。
-- 领域 `version` 是当前格式版本；读旧版本要配 `compatibleVersions`，删字段前必须重写所有记录（官方无值迁移 runner）。
-- 每次写入整文件替换，因此单份清单有上限（300 条 × 280 字）且数据量远小于文件系统压力。
-
+- 本地存储按浏览器 origin 隔离：桌面端与 `http://127.0.0.1:<port>` 是不同 origin 的两份数据；仅当整站存储被拒绝时 `storage()` 才返回 `null`，更常见的是写失败（配额/磁盘/profile 只读）返回 `false`。迁移到宿主后这一层只作为恢复来源，不会自动回退。
 
 ## 5. 构建与产物
 

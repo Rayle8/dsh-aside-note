@@ -3,7 +3,7 @@
 //
 // env: TOKEN (required), PORT (default 61399), PROMPT, TITLE (optional)
 import { connect, evaluate, sleep } from './lib/cdp.mjs'
-import { NOTES, NOTES_KEY, anchorExpression } from './lib/notes.mjs'
+import { NOTES, anchorExpression } from './lib/notes.mjs'
 
 const port = process.env.PORT || 61399
 const token = process.env.TOKEN
@@ -72,8 +72,10 @@ await evaluate(session, `(() => {
 await sleep(1500)
 
 // Anchor the notes to the plan's ages; capture.mjs re-anchors before each theme.
+// The helper writes through the host store when the app has switched to it and
+// falls back to localStorage when the host is unavailable.
 if (!(await evaluate(session, anchorExpression()))) {
-  throw new Error(`no note store at ${NOTES_KEY}`)
+  throw new Error('no note store to anchor')
 }
 
 console.log(await evaluate(session, `document.querySelector('.dsh-an-popover')?.innerText ?? 'panel closed'`))

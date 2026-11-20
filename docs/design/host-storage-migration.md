@@ -198,7 +198,7 @@ const noteSchema = z.object({
 
 const itemsRecord = z.object({
   updatedAt: z.number(),
-  items: z.array(noteSchema).max(300),
+  items: z.array(noteSchema),
 })
 
 const sessionRecord = itemsRecord.extend({
@@ -305,7 +305,7 @@ export const SPEC = defineDomain({
 
 领域 `aside_note` 用 `single` 布局：**所有层级、所有工作区、所有会话都在这一个 `aside_note.json` 里**，靠「表名 + 记录键」区分，不是「一个工作区/会话一个文件」。
 
-- 数据量估算：单份清单上限 300 条 × 280 字 ≈ 85 KB 理论上限，实际远小于此；整份文件通常只有几 KB 到几十 KB，每次写入整文件原子替换，成本可忽略。
+- 数据量估算：清单条数不设上限（400 条仍可展示与新增）；按 400 条 × 280 字估算约 110 KB，实际远小于此；整份文件通常只有几 KB 到几十 KB，每次写入整文件原子替换，成本可忽略。
 - 好处：备份/查看/迁移只需拷一个文件；整文件原子替换不会出现「一半新一半旧」。
 - 代价：文件损坏或版本戳不支持时整个领域打不开（面板报错而不是静默丢一条）；这也是 §12-D2 备选 `per-record` 布局（目录树、一条记录一个文件）想解决的问题，本期按「单文件 + 明确报错 + 浏览器旧数据可恢复」处理。
 

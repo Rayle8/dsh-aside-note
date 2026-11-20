@@ -83,9 +83,9 @@ npm test
 | `settings` | 先折叠两个分区，再点标题右侧设置按钮 | 706 |
 | `actions` | 鼠标移到第一条便笺上，显示复制/转发/编辑/删除 | 550 |
 | `clear` | 点「清除已完成」，出现二次确认条 | 603 |
-| `empty` | 临时清空两个便笺 store（会话 + 工作区）并刷新，打开面板 | 381 |
+| `empty` | 临时清空便笺 store（宿主文件；回落模式才是会话 + 工作区两个 `localStorage` 键）并刷新，打开面板 | 381 |
 
-1.1.0 起便笺可以存在两个地方：会话记录（`dsh.aside-note`）与同工作区共享的清单（`dsh.aside-note.workspaces`）。面板默认停在**工作区**，所以演示便笺由 `bootstrap.mjs` 写进工作区 store；页脚在两种范围下都只写「便笺数据仅保存在本地」，范围看标题下方的「工作区 / 会话」切换。`lib/notes.mjs` 因此对两个 store 一起重锚时间、一起清空（空状态）再原样恢复；改便笺内容仍然只改 `NOTES` 这一处。
+1.2.0 起便笺的默认位置是宿主文件（`$DSH_HOME/storages/aside_note.json`）：会话记录与同工作区共享的清单都在同一次快照里。面板默认停在**工作区**，所以演示便笺由 `bootstrap.mjs` 写进工作区清单；页脚在两种范围下都只写「便笺数据仅保存在本地」，范围看标题下方的「工作区 / 会话」切换。`lib/notes.mjs` 因此通过宿主存储接口一起重锚时间、一起清空（空状态）再原样恢复；宿主不可用时退回 `dsh.aside-note` / `dsh.aside-note.workspaces` 两个浏览器键。改便笺内容仍然只改 `NOTES` 这一处。
 
 明暗两轮必须**用同一批便笺、同一组时间**，否则两张图并排会露馅。`lib/notes.mjs` 的 `NOTES` 是唯一数据源，改内容只改这一处；`capture.mjs` 在拍每个主题前用同一份计划**重新锚定时间**，所以暗色不会因为晚跑一分钟就变成「47 分钟前」。
 
@@ -161,7 +161,7 @@ Windows 上把 `python3` 换成 `PYTHON` 指向的解释器，并带上 `SHOT_VI
 | 页面出现 `Failed to load plugins` | 偶发的 client bundle 加载失败；`capture.mjs` 的 `waitApp()` 会检测并重载，最多 5 次 |
 | 面板没出现 | 当前会话不是演示会话。`run.sh` 用新 profile，刷新后会自动恢复到最近会话；手工调试时确认 `dsh.sessions.current` |
 | 悬停不出现行操作 | 必须用 CDP `Input.dispatchMouseEvent` 真实移动鼠标；`element.hover()` 不触发 `:hover` |
-| 便笺时间显示「刚刚」 | `bootstrap.mjs` 的回拨发生在写 localStorage 之后没有刷新；`capture.mjs` 开头会 reload，手工操作时要手动刷新 |
+| 便笺时间显示「刚刚」 | `bootstrap.mjs` 通过宿主存储接口回拨时间（宿主不可用时才退回 `localStorage`），回拨后没有刷新；`capture.mjs` 开头会 reload，手工操作时要手动刷新 |
 | 端口占用 | `PORT` / `CDP_PORT` 换一个；`run.sh` / `run.ps1` 退出时会按端口清理残留进程 |
 | 功能图四周留白不对 / 面板比预期窄 | 内容区不是 1440×900。Windows 上 headless 的 `--window-size` 会被边框吃掉像素，`run.ps1` 已用 `SHOT_VIEWPORT=1440x900@4` 固定；手工跑时记得也带上这个变量 |
 | 入口特写裁歪了 | 头部图标不再右对齐，或窗口不是 1440 宽；调整 `crop.py` 的 `BADGE_BOX`，必要时重拍头部条 |

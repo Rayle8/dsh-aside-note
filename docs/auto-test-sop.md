@@ -157,7 +157,7 @@ REPO="$REPO" APP_URL="$APP_URL" OUT="$OUT/assets" LOGS="$OUT/logs" \
   node "$WORK/ui-smoke.mjs"; UI_EXIT=$?
 ```
 
-脚本走真实 UI：清空插件本地存储并重载 → 需要时发一条消息让对话头出现 → 点头部入口 →
+脚本走真实 UI：清空宿主便笺（回落模式才清浏览器存储）并重载 → 需要时发一条消息让对话头出现 → 点头部入口 →
 打开面板 → 在真实输入框写一条便笺并回车 → 断言列表/持久化/角标 → 整窗截图 → 按面板矩形裁特写。
 7 项检查全部输出到 `logs/ui.log` 与 `assets/checks.json`。
 
@@ -188,7 +188,7 @@ rm -rf "$WORK/chrome" "$WORK/chrome.log"       # 浏览器现场约 80MB
 | 2 | 头部入口挂载（`.dsh-an-headerBtn`） | `headerEntry` 没跑，或当前没有对话（先发一条消息） |
 | 3 | 面板可打开（`.dsh-an-popover`） | 渲染/挂载逻辑坏了，或入口点击被拦 |
 | 4 | 便笺经 UI 写入后出现在列表（`.dsh-an-row`） | 输入框事件或 store 写入坏了 |
-| 5 | 便笺持久化到 `dsh.aside-note.workspaces` | 存储层坏了，或 scope 选错（会话/工作区） |
+| 5 | 便笺持久化到宿主文件（回落模式才在 `dsh.aside-note.workspaces`） | 存储层坏了，或 scope 选错（会话/工作区） |
 | 6 | 角标显示未完成数 `1` | 计数刷新时序或 `header.tooltip` 文案回归 |
 | 7 | 入口 `aria-label` 带计数 | i18n 文案缺 key |
 
@@ -286,8 +286,32 @@ const pressEnter = async () => {
 const NOTE = '自动化冒烟：面板入口、输入与列表渲染正常'
 
 await clickText('继续')
-// Deterministic start: wipe the plugin's local store, then reload.
-await evaluate(s, `(() => { localStorage.removeItem('dsh.aside-note.workspaces'); localStorage.removeItem('dsh.aside-note.drafts'); return true })()`)
+// Deterministic start: wipe the host note store (falling back to the browser
+// record when the host route is unavailable), then reload.
+await evaluate(s, `(async () => {
+  const store = '/dsh-aside-note/store'
+  try {
+    const res = await fetch(store, { headers: { accept: 'application/json' } })
+    if (res.ok) {
+      const body = await res.json()
+      const data = body && body.ok ? body.data : null
+      for (const [kind, table] of [['session', data?.sessions], ['workspace', data?.workspaces]]) {
+        for (const [listKey, record] of Object.entries(table || {})) {
+          const ids = (Array.isArray(record.items) ? record.items : []).map(item => item.id)
+          if (ids.length === 0) continue
+          await fetch(store, {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({ op: 'list.patch', kind, listKey, order: [], upserts: [], deletes: ids }),
+          })
+        }
+      }
+    }
+  } catch {}
+  localStorage.removeItem('dsh.aside-note.workspaces')
+  localStorage.removeItem('dsh.aside-note.drafts')
+  return true
+})()`)
 await s.send('Page.reload')
 await sleep(7000)
 await clickText('继续')
@@ -317,7 +341,17 @@ await pressEnter()
 await sleep(2500)
 
 check('note rendered in the list', await evaluate(s, `[...document.querySelectorAll('.dsh-an-row')].some(r => r.innerText.includes(${JSON.stringify(NOTE)}))`))
-check('note persisted to localStorage', await evaluate(s, `(localStorage.getItem('dsh.aside-note.workspaces') || '').includes(${JSON.stringify(NOTE)})`))
+const persisted = await evaluate(s, `(async () => {
+  try {
+    const res = await fetch('/dsh-aside-note/store', { headers: { accept: 'application/json' } })
+    if (res.ok) {
+      const body = await res.json()
+      return JSON.stringify(body.data || {}).includes(${JSON.stringify(NOTE)})
+    }
+  } catch {}
+  return (localStorage.getItem('dsh.aside-note.workspaces') || '').includes(${JSON.stringify(NOTE)})
+})()`)
+check('note persisted to host store', persisted)
 check('header badge shows the open count', await evaluate(s, `document.querySelector('.dsh-an-headerCount')?.textContent?.trim() === '1'`))
 check('entry tooltip carries the count', await evaluate(s, `/1 项未完成/.test(document.querySelector('.dsh-an-headerBtn')?.getAttribute('aria-label') || '')`))
 
