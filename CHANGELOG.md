@@ -6,6 +6,8 @@ This file records user-visible changes only. Screenshots, marketplace listing ma
 
 ## next-released
 
+## 1.2.1
+
 <!-- app-update-notes:en:start -->
 ### Changed
 - **Host requirement declared:** the plugin now declares which DSH versions it supports — `engines.dsh`: `>=0.2.1-alpha.3 <0.3.0-0`. The plugin market shows this on the card instead of "no host requirement declared", and a host outside the range is reported as incompatible before install. No plugin behaviour changes.

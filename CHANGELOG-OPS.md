@@ -15,6 +15,8 @@
 
 ## next-released
 
+## 1.2.1
+
 - **市场上架：** `package.json` 增加 `engines.dsh`（`>=0.2.1-alpha.3 <0.3.0-0`），插件市场不再显示「未声明宿主要求」。下限取自实际用到的能力：`conversation.hero.options` 插槽自 0.2.1-alpha.3 起才有，宿主文件存储依赖的 `storageDomain` 在 0.2.1 线已默认随 profile 装配；上限按当前验证过的 0.2.x 线收敛。
 
 ## 1.2.0-beta.1
