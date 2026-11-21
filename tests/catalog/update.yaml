@@ -112,6 +112,56 @@ cases:
     suites: [pr, nightly, release]
     tags: [update, fallback]
 
+  - id: UPD-009
+    title: 未通过 DSH 鉴权时拒绝更新探测和安装
+    priority: P1
+    class: D
+    rules: [R-UPD-AUTH]
+    risk: privacy
+    expected:
+      - 未认证和不受信任的请求分别返回 DSH 给出的拒绝状态
+      - 不读取配置或安装请求体，也不调用安装器
+    automation:
+      - type: unit
+        file: tests/host-route.test.mjs
+        test: UPD-009 未通过 DSH 鉴权时拒绝更新探测和安装
+        status: automated
+    suites: [pr, nightly, release]
+    tags: [update, host-route, auth]
+
+  - id: UPD-010
+    title: 已认证请求没有 Origin 时仍可探测和安装
+    priority: P1
+    class: B
+    rules: [R-UPD-AUTH]
+    risk: ux
+    expected:
+      - DSH 确认身份后，即使没有 Origin，探测和安装仍正常处理
+    automation:
+      - type: unit
+        file: tests/host-route.test.mjs
+        test: UPD-010 已认证请求没有 Origin 时仍可探测和安装
+        status: automated
+    suites: [pr, nightly, release]
+    tags: [update, host-route, auth]
+
+  - id: UPD-011
+    title: DSH 鉴权不可用时拒绝更新探测和安装
+    priority: P1
+    class: E
+    rules: [R-UPD-AUTH]
+    risk: privacy
+    expected:
+      - DSH 鉴权服务缺失、不支持鉴权或报错时拒绝两个端点的请求
+      - 不读取配置或调用安装器
+    automation:
+      - type: unit
+        file: tests/host-route.test.mjs
+        test: UPD-011 DSH 鉴权不可用时拒绝更新探测和安装
+        status: automated
+    suites: [pr, nightly, release]
+    tags: [update, host-route, auth]
+
   - id: UPD-006
     title: 缓存 1 小时后重新探测
     priority: P2

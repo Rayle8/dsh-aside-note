@@ -555,6 +555,19 @@ features:
         technique: [故障注入]
         reviewed: { by: "reviewed-in-chat", at: '2026-11-18', hash: '3bc5aa64954f74b1' }
 
+      - id: R-UPD-AUTH
+        statement: 宿主更新探测和安装必须通过 DSH 的请求鉴权；鉴权不可用时拒绝请求。
+        failure: 未认证请求可以读取宿主配置详情或触发插件安装。
+        kind: rule
+        branches:
+          - kind: valid
+            text: DSH 已认证的请求继续探测或安装，即使代理省略 Origin
+          - kind: invalid
+            text: DSH 拒绝请求时保留其拒绝状态，不读配置、不安装
+          - kind: boundary
+            text: 鉴权服务缺失或报错时，拒绝请求且不继续处理
+        technique: [决策表, 故障注入]
+
   - id: package
     title: 产物与卸载
     owner: package

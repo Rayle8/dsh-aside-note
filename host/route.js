@@ -7,15 +7,13 @@
  * This route runs inside the host, where DSH's installer and the profile's
  * package manager are both reachable.
  *
- * The surface is deliberately tiny and same-origin: one read, one mutation.
+ * Both endpoints require DSH request authentication.
  */
 import { UpdateError, applyUpdate, manualCommand } from './apply-update.js'
 import { runProcess } from './exec.js'
 import { PACKAGE, dependencySpec, installMode, installedVersion, isProfileDir, profileDirOf } from './profile.js'
 import { compareVersions, isExactVersion, isPrerelease } from './versions.js'
-import { sameOrigin, sendJson } from './http.js'
-
-export { sameOrigin }
+import { sendJson } from './http.js'
 
 export const PROBE_PATH = '/dsh-aside-note/update/probe'
 export const APPLY_PATH = '/dsh-aside-note/update/apply'
@@ -175,6 +173,18 @@ export function registerUpdateRoutes(server, options) {
   /** @type {{ promise?: Promise<unknown> }} */
   const state = {}
 
+  const requestRejection = request => {
+    try {
+      const connection = ctx.get('connection')
+      if (typeof connection?.requestRejection === 'function') {
+        return connection.requestRejection(request)
+      }
+    } catch {
+      // Refuse the request when the host cannot authenticate it.
+    }
+    return 403
+  }
+
   const resolveProfile = () => {
     const dir = profileDirOf(ctx.get('profileContext'))
     return isProfileDir(dir) ? dir : undefined
@@ -199,8 +209,9 @@ export function registerUpdateRoutes(server, options) {
         sendJson(response, 405, { ok: false, code: 'METHOD_NOT_ALLOWED' })
         return
       }
-      if (!sameOrigin(request)) {
-        sendJson(response, 403, { ok: false, code: 'UPDATE_FORBIDDEN' })
+      const rejection = requestRejection(request)
+      if (rejection !== undefined) {
+        sendJson(response, rejection, { ok: false, code: 'UPDATE_FORBIDDEN' })
         return
       }
       const dir = resolveProfile()
@@ -242,8 +253,9 @@ export function registerUpdateRoutes(server, options) {
         sendJson(response, 405, { ok: false, code: 'METHOD_NOT_ALLOWED' })
         return
       }
-      if (!sameOrigin(request)) {
-        sendJson(response, 403, { ok: false, code: 'UPDATE_FORBIDDEN' })
+      const rejection = requestRejection(request)
+      if (rejection !== undefined) {
+        sendJson(response, rejection, { ok: false, code: 'UPDATE_FORBIDDEN' })
         return
       }
       if (state.promise !== undefined) {

@@ -155,7 +155,7 @@ docs/assets/             # README 截图（preview-* 与 features/）
 
 装完回读 `node_modules/dsh-aside-note/package.json`，必须等于目标版本，否则报 `RESOLVED_VERSION_MISMATCH`。成功返回 `restartRequired: true`——DSH 不重载已加载的包，新版本在下次启动生效。
 
-端点只有两个，同源、POST 才可写：`GET /dsh-aside-note/update/probe`、`POST /dsh-aside-note/update/apply`（body `{ target }`）。`link:` 安装会被直接拒绝：覆盖 checkout 的依赖声明等于把工作副本悄悄换成 registry 版本。
+`GET /dsh-aside-note/update/probe` 查询版本，`POST /dsh-aside-note/update/apply` 接收 `{ target }` 并安装。两个端点都通过 DSH 检查请求来源和会话，鉴权不可用时拒绝请求。`link:` 安装会被直接拒绝，避免用 registry 版本替换工作副本。
 
 自 1.1.2-beta.7 起，客户端不再保留插件市场客户端或探测：宿主没有路由、或拒绝码属于「终端命令能绕过」的一类时，卡片直接给出手动命令。命令由宿主生成，带目标版本与 profile 目录；预发布还会固定 `npx` 的 npmjs registry，避免装回稳定版。
 

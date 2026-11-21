@@ -1,10 +1,4 @@
-/**
- * Shared HTTP plumbing for the plugin's same-origin host routes.
- *
- * Both the update endpoints and the note store answer only same-origin pages;
- * the Desktop shell's proxy may strip `Origin`, so an absent header is allowed
- * and a present one must name this Host (same rule the plugin market applies).
- */
+/** Shared HTTP helpers for the plugin's host routes. */
 
 /**
  * @param {import('node:http').ServerResponse} response

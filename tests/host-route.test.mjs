@@ -32,7 +32,7 @@ function makeProfile(t) {
 }
 
 /** Mount the routes on a stand-in for the host web server. */
-function mount(dir, installer) {
+function mount(dir, installer, { connection = { requestRejection: () => undefined }, onProfileRead = () => {} } = {}) {
   const routes = new Map()
   const server = {
     register(route) {
@@ -42,8 +42,12 @@ function mount(dir, installer) {
   }
   const ctx = {
     get: name => {
-      if (name === 'profileContext') return { dir }
+      if (name === 'profileContext') {
+        onProfileRead()
+        return { dir }
+      }
       if (name === 'pluginManager') return installer
+      if (name === 'connection') return connection ?? undefined
       return undefined
     },
   }
@@ -52,7 +56,7 @@ function mount(dir, installer) {
 }
 
 /** Call one mounted handler and collect what it answered. */
-async function call(routes, path, { method = 'POST', headers = ORIGIN, body } = {}) {
+async function call(routes, path, { method = 'POST', headers = ORIGIN, body, onBodyRead = () => {} } = {}) {
   const handler = routes.get(path)
   assert.ok(handler, `no route at ${path}`)
   const payload = body === undefined ? '' : JSON.stringify(body)
@@ -60,6 +64,7 @@ async function call(routes, path, { method = 'POST', headers = ORIGIN, body } = 
     method,
     headers,
     async *[Symbol.asyncIterator]() {
+      onBodyRead()
       if (payload !== '') yield Buffer.from(payload)
     },
   }
@@ -93,14 +98,87 @@ test('an install through the route reports the verified result', async t => {
 test('a cross-site request cannot start an install', async t => {
   const dir = makeProfile(t)
   let installed = false
-  const routes = mount(dir, { installBundle: async () => { installed = true; return { application: 'applied' } } })
+  const routes = mount(dir, { installBundle: async () => { installed = true; return { application: 'applied' } } }, {
+    connection: { requestRejection: request => request.headers['sec-fetch-site'] === 'cross-site' ? 403 : undefined },
+  })
   const answer = await call(routes, APPLY_PATH, {
-    headers: { host: '127.0.0.1:61433', origin: 'https://evil.example', 'sec-fetch-site': 'cross-site' },
+    headers: { host: '127.0.0.1:61433', origin: 'https://different.example', 'sec-fetch-site': 'cross-site' },
     body: { target: '1.1.2' },
   })
   assert.equal(answer.status, 403)
   assert.equal(answer.body.code, 'UPDATE_FORBIDDEN')
   assert.equal(installed, false)
+})
+
+const updateRequests = [
+  { path: PROBE_PATH, method: 'GET' },
+  { path: APPLY_PATH, method: 'POST', body: { target: '1.1.2' } },
+]
+
+test('UPD-009 未通过 DSH 鉴权时拒绝更新探测和安装', async t => {
+  const dir = makeProfile(t)
+  const onProfileRead = t.mock.fn()
+  const onBodyRead = t.mock.fn()
+  const installBundle = t.mock.fn()
+  for (const [status, headers] of [
+    [401, ORIGIN],
+    [401, { host: ORIGIN.host }],
+    [403, { host: 'different.example' }],
+  ]) {
+    const connection = {
+      requestRejection: t.mock.fn(function (request) {
+        assert.equal(this, connection)
+        assert.equal(request.headers, headers)
+        return status
+      }),
+    }
+    const routes = mount(dir, { installBundle }, { connection, onProfileRead })
+    for (const { path, ...options } of updateRequests) {
+      const answer = await call(routes, path, { ...options, headers, onBodyRead })
+      assert.deepEqual(answer, { status, body: { ok: false, code: 'UPDATE_FORBIDDEN' } })
+    }
+    assert.equal(connection.requestRejection.mock.callCount(), updateRequests.length)
+  }
+  assert.equal(onProfileRead.mock.callCount(), 0)
+  assert.equal(onBodyRead.mock.callCount(), 0)
+  assert.equal(installBundle.mock.callCount(), 0)
+})
+
+test('UPD-010 已认证请求没有 Origin 时仍可探测和安装', async t => {
+  const dir = makeProfile(t)
+  const headers = { host: ORIGIN.host }
+  t.mock.method(globalThis, 'fetch', async () => ({ ok: true, json: async () => ({ version: '1.1.2' }) }))
+  const installBundle = t.mock.fn(async () => {
+    writeFileSync(join(dir, 'node_modules', 'dsh-aside-note', 'package.json'), JSON.stringify({ version: '1.1.2' }))
+    return { application: 'applied' }
+  })
+  const routes = mount(dir, { installBundle })
+
+  const probe = await call(routes, PROBE_PATH, { method: 'GET', headers })
+  assert.equal(probe.status, 200)
+  assert.equal(probe.body.installed, '1.1.1')
+  assert.equal(probe.body.latest, '1.1.2')
+  assert.equal(probe.body.updateSupported, true)
+
+  const apply = await call(routes, APPLY_PATH, { headers, body: { target: '1.1.2' } })
+  assert.equal(apply.status, 200)
+  assert.equal(apply.body.installedVersion, '1.1.2')
+  assert.equal(installBundle.mock.callCount(), 1)
+})
+
+test('UPD-011 DSH 鉴权不可用时拒绝更新探测和安装', async t => {
+  const dir = makeProfile(t)
+  const onProfileRead = t.mock.fn()
+  const installBundle = t.mock.fn()
+  for (const connection of [null, {}, { requestRejection: () => { throw new Error('connection unavailable') } }]) {
+    const routes = mount(dir, { installBundle }, { connection, onProfileRead })
+    for (const { path, ...options } of updateRequests) {
+      const answer = await call(routes, path, options)
+      assert.deepEqual(answer, { status: 403, body: { ok: false, code: 'UPDATE_FORBIDDEN' } })
+    }
+  }
+  assert.equal(onProfileRead.mock.callCount(), 0)
+  assert.equal(installBundle.mock.callCount(), 0)
 })
 
 test('a range is not a target', async t => {
@@ -147,6 +225,7 @@ test('a second click during an install is answered busy', async t => {
 })
 
 test('the probe reports the profile and refuses a checkout install', async t => {
+  t.mock.method(globalThis, 'fetch', async () => ({ ok: false }))
   const dir = makeProfile(t)
   writeFileSync(join(dir, 'package.json'), JSON.stringify({
     name: 'dsh-profile-desktop',
