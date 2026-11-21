@@ -32,6 +32,8 @@ Clicking the entry opens a fixed panel on the right. A blank new session has no 
 
 AsideNote installs into a DSH profile as the npm package `dsh-aside-note`. Pick one: hand the prompt to an agent, or run a single command.
 
+Requires **DSH 0.2.1-alpha.3 or newer** (the 0.2.x line): the panel uses the `conversation.hero.options` slot introduced there, and host-file storage relies on `storageDomain`. Older hosts are flagged incompatible by the plugin market.
+
 ### Install with an agent
 
 Give your agent this block:

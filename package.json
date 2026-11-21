@@ -23,6 +23,7 @@
     "productivity"
   ],
   "engines": {
+    "dsh": ">=0.2.1-alpha.3 <0.3.0-0",
     "node": "^22.18.0 || >=24.11.0"
   },
   "main": "index.js",

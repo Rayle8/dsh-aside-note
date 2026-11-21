@@ -15,6 +15,8 @@
 
 ## next-released
 
+- **市场上架：** `package.json` 增加 `engines.dsh`（`>=0.2.1-alpha.3 <0.3.0-0`），插件市场不再显示「未声明宿主要求」。下限取自实际用到的能力：`conversation.hero.options` 插槽自 0.2.1-alpha.3 起才有，宿主文件存储依赖的 `storageDomain` 在 0.2.1 线已默认随 profile 装配；上限按当前验证过的 0.2.x 线收敛。
+
 ## 1.2.0-beta.1
 
 - **测试基建：** 引入测试案例目录 `tests/catalog/`（8 个业务域、64 个稳定 ID 的案例，全部自动化）与校验器 `tools/catalog/check.mjs`，CI 增加 `npm run catalog:check`；`tests/bundle.test.mjs` 的 4 个 jsdom 集成用例拆成按案例 ID 命名的 46 个子用例，单点失败不再掩盖后续场景，`npm test` 由 130 个用例增至 197 个。字段与 ID 规则见 [`tests/catalog/README.md`](./tests/catalog/README.md)，整体流程见 [`docs/testing.md`](./docs/testing.md)。

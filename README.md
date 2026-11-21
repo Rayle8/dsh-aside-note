@@ -32,6 +32,8 @@
 
 旁边记以 npm 包 `dsh-aside-note` 装进 DSH profile。两种方式选一个：把提示词交给 agent，或自己执行一条命令。
 
+需要 **DSH 0.2.1-alpha.3 或更新版本**（0.2.x 线）：界面用了该版本才有的 `conversation.hero.options` 插槽，便笺的宿主文件存储也依赖 `storageDomain`。更旧的宿主会被插件市场标为不兼容。
+
 ### 通过 agent 安装
 
 把下面这段发给你的 agent：

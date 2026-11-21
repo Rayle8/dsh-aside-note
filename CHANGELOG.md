@@ -6,6 +6,16 @@ This file records user-visible changes only. Screenshots, marketplace listing ma
 
 ## next-released
 
+<!-- app-update-notes:en:start -->
+### Changed
+- **Host requirement declared:** the plugin now declares which DSH versions it supports — `engines.dsh`: `>=0.2.1-alpha.3 <0.3.0-0`. The plugin market shows this on the card instead of "no host requirement declared", and a host outside the range is reported as incompatible before install. No plugin behaviour changes.
+<!-- app-update-notes:en:end -->
+
+<!-- app-update-notes:zh:start -->
+### 变更
+- **声明宿主版本要求：** 插件在 manifest 里声明支持的 DSH 版本——`engines.dsh`：`>=0.2.1-alpha.3 <0.3.0-0`。插件市场会在卡片上显示这条要求，而不是「未声明宿主要求」；范围外的宿主会在安装前被标为不兼容。插件行为没有变化。
+<!-- app-update-notes:zh:end -->
+
 ## 1.2.0
 
 <!-- app-update-notes:en:start -->
