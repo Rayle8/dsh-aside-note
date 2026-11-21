@@ -452,3 +452,37 @@ cases:
         status: automated
     suites: [pr, nightly, release]
     tags: [host, settings, path, clipboard]
+
+  - id: STORE-029
+    title: 迁移上传未完成时保留会话草稿
+    priority: P1
+    class: F
+    rules: [R-STORE-BOOT-WRITES]
+    risk: data_loss
+    expected:
+      - 迁移已取得旧快照但尚未完成时，提交保留草稿，且旧记录不变
+      - 切换到宿主后重试，便笺只写入宿主清单
+    automation:
+      - type: integration
+        file: tests/host-bundle.test.mjs
+        test: STORE-029 迁移上传未完成时保留会话草稿
+        status: automated
+    suites: [pr, nightly, release]
+    tags: [host, migration, concurrency]
+
+  - id: STORE-030
+    title: 已迁移后的工作区等待宿主快照再初始化
+    priority: P1
+    class: F
+    rules: [R-STORE-BOOT-WRITES]
+    risk: data_loss
+    expected:
+      - 宿主首次读取未完成时，工作区不初始化浏览器清单，提交保留草稿
+      - 宿主就绪后用宿主会话记录初始化工作区，重试写入只影响宿主
+    automation:
+      - type: integration
+        file: tests/host-bundle.test.mjs
+        test: STORE-030 已迁移后的工作区等待宿主快照再初始化
+        status: automated
+    suites: [pr, nightly, release]
+    tags: [host, workspace, concurrency]

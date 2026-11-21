@@ -107,8 +107,9 @@ export function readSessionRecord(sessionId) {
 export async function writeSessionRecord(sessionId, record, base = null) {
   const key = sessionId ? String(sessionId) : ''
   if (!key) return false
-  if (storageMode() === 'error') return false
-  if (storageMode() === 'host') {
+  const mode = storageMode()
+  if (mode === 'probing' || mode === 'error') return false
+  if (mode === 'host') {
     return commitList('session', key, normalizeItems(record && record.items))
   }
   const store = readLocalStore()

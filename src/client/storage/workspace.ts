@@ -9,6 +9,7 @@
  */
 import { WORKSPACE_STORAGE_KEY } from '../constants'
 import { normalizeItems } from '../domain/items'
+import { bootStorage } from './boot'
 import { setAsideUnreadable, storage } from './codec'
 import { notifyTodoChange } from './events'
 import { mergeItems } from './merge'
@@ -123,8 +124,9 @@ export function readWorkspaceRecord(workspaceId) {
 export async function writeWorkspaceRecord(workspaceId, record, base = null) {
   const key = text(workspaceId)
   if (!key) return false
-  if (storageMode() === 'error') return false
-  if (storageMode() === 'host') {
+  const mode = storageMode()
+  if (mode === 'probing' || mode === 'error') return false
+  if (mode === 'host') {
     return commitList('workspace', key, normalizeItems(record && record.items))
   }
   const store = readLocalStore()
@@ -149,8 +151,12 @@ export async function writeWorkspaceRecord(workspaceId, record, base = null) {
 export async function ensureWorkspaceRecord(workspaceId, sessionIds) {
   const key = text(workspaceId)
   if (!key) return false
-  if (storageMode() === 'error') return false
-  if (storageMode() === 'host') return ensureWorkspace(key, Array.isArray(sessionIds) ? sessionIds : [])
+  // Seeding has no user draft or captured note data. It can wait for the
+  // authoritative store and read the member lists when that store is ready.
+  if (storageMode() === 'probing') await bootStorage()
+  const mode = storageMode()
+  if (mode === 'probing' || mode === 'error') return false
+  if (mode === 'host') return ensureWorkspace(key, Array.isArray(sessionIds) ? sessionIds : [])
 
   const workspaceStore = readLocalStore()
   const previous = workspaceStore.workspaces[key]

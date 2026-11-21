@@ -70,6 +70,7 @@ async function setup(options = {}) {
     const method = init.method || 'GET'
     calls.push({ url, method })
     if (url === STORE_PATH) {
+      await options.beforeStore?.(method, init.body)
       if (options.storeDown) {
         return json(503, {
           ok: false,
@@ -155,7 +156,7 @@ async function setup(options = {}) {
     window.document.body.appendChild(container)
     const reactRoot = ReactDOMClient.createRoot(container)
     await act(async () => {
-      reactRoot.render(React.createElement(capture, { sessionId: 'session-1' }))
+      reactRoot.render(React.createElement(capture, { sessionId: 'session-1', ...options.props }))
     })
     const button = window.document.querySelector('._headerUtilities > .dsh-an-headerBtn')
     return { button, reactRoot, settle }
@@ -196,6 +197,61 @@ test('STORE-019 首次启动把浏览器便笺迁移到宿主并写模式标记'
   const legacy = JSON.parse(ctx.window.localStorage.getItem(SESSION_KEY))
   assert.equal(legacy.sessions['session-1'].items.length, 1, 'host mode never writes the legacy browser store')
   assert.match(popover.querySelector('.dsh-an-popFoot').textContent, /DSH 本地文件/)
+})
+
+test('STORE-029 迁移上传未完成时保留会话草稿', async t => {
+  const migration = Promise.withResolvers()
+  const started = Promise.withResolvers()
+  const ctx = await setup({
+    legacyNote: true,
+    beforeStore: (method, body) => {
+      if (method !== 'POST' || JSON.parse(body).op !== 'migrate') return
+      started.resolve()
+      return migration.promise
+    },
+  })
+  t.after(() => { migration.resolve(); ctx.window.close() })
+  await started.promise
+
+  const { button } = await ctx.openPanel()
+  await ctx.act(async () => { button.click() })
+  const before = ctx.window.localStorage.getItem(SESSION_KEY)
+  const popover = await ctx.addNote('迁移中的草稿')
+  assert.equal(popover.querySelector('.dsh-an-input').value, '迁移中的草稿')
+  assert.equal(ctx.window.localStorage.getItem(SESSION_KEY), before)
+
+  await ctx.act(async () => { migration.resolve() })
+  assert.equal(ctx.window.localStorage.getItem(MODE_KEY), 'host')
+  await ctx.act(async () => { popover.querySelector('.dsh-an-addBtn').click() })
+  const snapshot = await ctx.store.snapshot()
+  assert.deepEqual(snapshot.data.sessions['session-1'].items.map(item => item.text), ['迁移中的草稿', '旧便笺'])
+  assert.equal(ctx.window.localStorage.getItem(SESSION_KEY), before)
+})
+
+test('STORE-030 已迁移后的工作区等待宿主快照再初始化', async t => {
+  const probe = Promise.withResolvers()
+  const workspaceKey = 'dsh.aside-note.workspaces'
+  const note = { id: 'host-1', text: '宿主便笺', done: false, createdAt: 2, updatedAt: 2 }
+  const workspaces = [{ workspaceId: 'ws-1', title: '工作区', path: '/repo', sessionIds: ['session-1'] }]
+  const ctx = await setup({
+    legacyNote: true,
+    markedHost: true,
+    hostSeed: { sessions: { 'session-1': [note] } },
+    beforeStore: method => method === 'GET' ? probe.promise : undefined,
+    props: { useWorkspaces: select => select({ items: workspaces, phase: 'ready' }) },
+  })
+  t.after(() => { probe.resolve(); ctx.window.close() })
+  const { button } = await ctx.openPanel()
+  await ctx.act(async () => { button.click() })
+  const popover = await ctx.addNote('探测中的草稿')
+  assert.equal(popover.querySelector('.dsh-an-input').value, '探测中的草稿')
+  assert.equal(ctx.window.localStorage.getItem(workspaceKey), null)
+
+  await ctx.act(async () => { probe.resolve() })
+  assert.deepEqual((await ctx.store.snapshot()).data.workspaces['ws-1'].items.map(item => item.text), ['宿主便笺'])
+  await ctx.act(async () => { popover.querySelector('.dsh-an-addBtn').click() })
+  assert.deepEqual((await ctx.store.snapshot()).data.workspaces['ws-1'].items.map(item => item.text), ['探测中的草稿', '宿主便笺'])
+  assert.equal(ctx.window.localStorage.getItem(workspaceKey), null)
 })
 
 test('STORE-020 宿主不可用时不切换并保留浏览器写入', async t => {

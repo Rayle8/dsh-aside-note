@@ -87,8 +87,8 @@ async function runBoot(): Promise<StorageMode> {
     return refuse(failureOf(error))
   }
 
-  // Read the browser store only after the probe: anything typed while the host
-  // was being checked must be part of the migration.
+  // Take the legacy snapshot after the probe succeeds. Note writes remain
+  // blocked until the new authoritative snapshot is ready.
   const legacy = readLegacySnapshot()
   const incomplete = snapshot.data.prefs?.migration?.complete === false
   let migrated = 0
@@ -132,6 +132,8 @@ export function bootStorage(): Promise<StorageMode> {
 
 /** Force a new probe (settings retry button). */
 export function retryStorage(): Promise<StorageMode> {
+  if (storageMode() === 'probing') return bootStorage()
+  if (storageMode() === 'local') setStorageMode('probing')
   booting = runBoot().catch(error => refuse(failureOf(error)))
   return booting
 }

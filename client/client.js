@@ -6713,6 +6713,8 @@ function bootStorage() {
 }
 /** Force a new probe (settings retry button). */
 function retryStorage() {
+	if (storageMode() === "probing") return bootStorage();
+	if (storageMode() === "local") setStorageMode("probing");
 	booting = runBoot().catch((error) => refuse(failureOf(error)));
 	return booting;
 }
@@ -7139,8 +7141,9 @@ function readSessionRecord(sessionId) {
 async function writeSessionRecord(sessionId, record, base = null) {
 	const key = sessionId ? String(sessionId) : "";
 	if (!key) return false;
-	if (storageMode() === "error") return false;
-	if (storageMode() === "host") return commitList("session", key, normalizeItems(record && record.items));
+	const mode = storageMode();
+	if (mode === "probing" || mode === "error") return false;
+	if (mode === "host") return commitList("session", key, normalizeItems(record && record.items));
 	const store = readLocalStore$1();
 	const previous = store.sessions[key];
 	store.sessions[key] = {
@@ -7264,8 +7267,9 @@ function readWorkspaceRecord(workspaceId) {
 async function writeWorkspaceRecord(workspaceId, record, base = null) {
 	const key = text$1(workspaceId);
 	if (!key) return false;
-	if (storageMode() === "error") return false;
-	if (storageMode() === "host") return commitList("workspace", key, normalizeItems(record && record.items));
+	const mode = storageMode();
+	if (mode === "probing" || mode === "error") return false;
+	if (mode === "host") return commitList("workspace", key, normalizeItems(record && record.items));
 	const store = readLocalStore();
 	const previous = store.workspaces[key];
 	const seededSource = Array.isArray(record.seededSessionIds) ? record : previous;
@@ -7284,8 +7288,10 @@ async function writeWorkspaceRecord(workspaceId, record, base = null) {
 async function ensureWorkspaceRecord(workspaceId, sessionIds) {
 	const key = text$1(workspaceId);
 	if (!key) return false;
-	if (storageMode() === "error") return false;
-	if (storageMode() === "host") return ensureWorkspace(key, Array.isArray(sessionIds) ? sessionIds : []);
+	if (storageMode() === "probing") await bootStorage();
+	const mode = storageMode();
+	if (mode === "probing" || mode === "error") return false;
+	if (mode === "host") return ensureWorkspace(key, Array.isArray(sessionIds) ? sessionIds : []);
 	const previous = readLocalStore().workspaces[key];
 	const seeded = new Set(seededOf(previous));
 	const items = normalizeItems(previous && previous.items);
