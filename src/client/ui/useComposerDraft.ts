@@ -8,6 +8,9 @@ import { reportEvent } from '../rum'
 export function useComposerDraft({ draftKey, commit, report, sendShortcut, scopeKind }) {
   const key = draftKey ? String(draftKey) : ''
   const [draft, setDraft] = React.useState(() => readScopeDrafts(key).add)
+  const draftRef = React.useRef({ value: draft })
+  const submittingRef = React.useRef(false)
+  const [isSubmitting, setIsSubmitting] = React.useState(false)
   const addRef = React.useRef(null)
   const composingRef = React.useRef(false)
 
@@ -36,19 +39,35 @@ export function useComposerDraft({ draftKey, commit, report, sendShortcut, scope
     }
   }, [])
 
+  const updateDraft = value => {
+    draftRef.current = { value }
+    setDraft(value)
+    saveAddDraft(key, value)
+  }
+
   const add = async () => {
-    const text = draft.trim().slice(0, MAX_TEXT)
-    if (!text) return
-    const now = Date.now()
-    const ok = await commit(currentItems => [{ id: uid(), text, done: false, createdAt: now, updatedAt: now }, ...currentItems])
-    // The draft is only cleared once the note is actually stored.
-    if (!ok) {
-      report('saveFailed')
-      return
+    const submitted = draftRef.current
+    const text = submitted.value.trim().slice(0, MAX_TEXT)
+    if (!text || submittingRef.current) return
+    submittingRef.current = true
+    setIsSubmitting(true)
+    try {
+      const now = Date.now()
+      const ok = await commit(currentItems => [{ id: uid(), text, done: false, createdAt: now, updatedAt: now }, ...currentItems])
+      if (!ok) {
+        report('saveFailed')
+        return
+      }
+      if (draftRef.current === submitted) {
+        draftRef.current = { value: '' }
+        setDraft('')
+        if (readScopeDrafts(key).add === submitted.value.slice(0, MAX_TEXT)) clearAddDraft(key)
+      }
+      reportEvent('note_created', { ext1: scopeKind })
+    } finally {
+      submittingRef.current = false
+      setIsSubmitting(false)
     }
-    setDraft('')
-    clearAddDraft(key)
-    reportEvent('note_created', { ext1: scopeKind })
   }
 
   const insertDraftNewline = node => {
@@ -56,8 +75,7 @@ export function useComposerDraft({ draftKey, commit, report, sendShortcut, scope
     const start = node.selectionStart === null ? node.value.length : node.selectionStart
     const end = node.selectionEnd === null ? start : node.selectionEnd
     const next = `${node.value.slice(0, start)}\n${node.value.slice(end)}`
-    setDraft(next)
-    saveAddDraft(key, next)
+    updateDraft(next)
     window.requestAnimationFrame(() => {
       node.selectionStart = start + 1
       node.selectionEnd = start + 1
@@ -67,8 +85,7 @@ export function useComposerDraft({ draftKey, commit, report, sendShortcut, scope
 
   const onDraftChange = event => {
     const value = event.target.value
-    setDraft(value)
-    saveAddDraft(key, value)
+    updateDraft(value)
     resizeAdd(event.target)
   }
 
@@ -99,5 +116,5 @@ export function useComposerDraft({ draftKey, commit, report, sendShortcut, scope
     }
   }
 
-  return { draft, addRef, composingRef, add, onDraftChange, onDraftKeyDown }
+  return { draft, isSubmitting, addRef, composingRef, add, onDraftChange, onDraftKeyDown }
 }

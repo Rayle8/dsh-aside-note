@@ -104,7 +104,7 @@ export function MemoPopover(props) {
   // registry answer is cached for an hour across panel opens.
   const update = useUpdateCenter(localeId)
   const newerVersion = update.latestVersion
-  const { draft, addRef, composingRef, add, onDraftChange, onDraftKeyDown } = useComposerDraft({
+  const { draft, isSubmitting, addRef, composingRef, add, onDraftChange, onDraftKeyDown } = useComposerDraft({
     draftKey,
     commit,
     report,
@@ -282,6 +282,7 @@ export function MemoPopover(props) {
     h(ComposerForm, {
       say,
       draft,
+      isSubmitting,
       inputRef: addRef,
       sendShortcut,
       onDraftChange,

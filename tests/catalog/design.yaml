@@ -97,6 +97,17 @@ features:
         technique: [故障注入]
         reviewed: { by: "reviewed-in-chat", at: '2026-11-18', hash: 'e5cfb069b9bd1701' }
 
+      - id: R-NOTE-PENDING-DRAFT
+        statement: 新增便笺保存期间只接受一次提交；保存完成仅清除当次提交且未再修改的草稿。
+        failure: 保存期间误触产生重复便笺，或旧回包抹掉正在输入的下一条草稿。
+        kind: consistency
+        branches:
+          - kind: valid
+            text: 保存成功后清除未变更的草稿
+          - kind: boundary
+            text: 重复点击或按键不再提交，保存等待期间的新输入仍可继续编辑和保存
+        technique: [时序, 状态迁移]
+
   - id: scope
     title: 清单范围与归属
     owner: scope
@@ -160,6 +171,17 @@ features:
             text: 切换范围不会把已输入内容写进另一个清单
         technique: [决策表]
         reviewed: { by: "reviewed-in-chat", at: '2026-11-18', hash: '0509b1d051780454' }
+
+      - id: R-SCOPE-QUEUED-WRITE
+        statement: 异步便笺操作入队时绑定发起时的清单，执行时读取该清单的最新记录。
+        failure: 等待上一笔写入时切换范围，排队操作修改了另一个清单。
+        kind: consistency
+        branches:
+          - kind: valid
+            text: 排队清空只影响确认时的清单，另一清单及其视图保持正确
+          - kind: invalid
+            text: 排队期间切换范围，清空误删当前清单的记录
+        technique: [时序, 状态迁移]
 
   - id: store
     title: 存储、草稿与并发

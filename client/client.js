@@ -7617,8 +7617,6 @@ function useMemoStore(scope) {
 	};
 	const [record, setRecord] = react.default.useState(() => readScope(scopeRef.current));
 	const [syncError, setSyncError] = react.default.useState(false);
-	const recordRef = react.default.useRef(record);
-	recordRef.current = record;
 	const chainRef = react.default.useRef(Promise.resolve());
 	react.default.useEffect(() => {
 		setRecord(readScope(scopeRef.current));
@@ -7641,11 +7639,12 @@ function useMemoStore(scope) {
 		record,
 		syncError,
 		commit: react.default.useCallback((updater) => {
+			const target = {
+				kind,
+				id
+			};
 			const run = chainRef.current.then(async () => {
-				const current = recordRef.current || {
-					items: [],
-					updatedAt: 0
-				};
+				const current = readScope(target);
 				const base = current.items || [];
 				const nextItems = normalizeItems(updater(base));
 				const next = {
@@ -7653,17 +7652,17 @@ function useMemoStore(scope) {
 					items: nextItems,
 					updatedAt: Date.now()
 				};
-				const ok = await writeScope(scopeRef.current, next, base);
+				const ok = await writeScope(target, next, base);
+				const active = scopeRef.current;
+				if (active.kind !== target.kind || active.id !== target.id) return ok;
 				setSyncError(!ok);
 				if (!ok) return false;
-				const stored = readScope(scopeRef.current);
-				recordRef.current = stored;
-				setRecord(stored);
+				setRecord(readScope(target));
 				return true;
 			});
 			chainRef.current = run.then(() => void 0, () => void 0);
 			return run;
-		}, [])
+		}, [kind, id])
 	};
 }
 
@@ -8942,6 +8941,9 @@ function useUpdateCenter(localeId) {
 function useComposerDraft({ draftKey, commit, report, sendShortcut, scopeKind }) {
 	const key = draftKey ? String(draftKey) : "";
 	const [draft, setDraft] = react.default.useState(() => readScopeDrafts(key).add);
+	const draftRef = react.default.useRef({ value: draft });
+	const submittingRef = react.default.useRef(false);
+	const [isSubmitting, setIsSubmitting] = react.default.useState(false);
 	const addRef = react.default.useRef(null);
 	const composingRef = react.default.useRef(false);
 	const resizeAdd = (node) => {
@@ -8962,31 +8964,46 @@ function useComposerDraft({ draftKey, commit, report, sendShortcut, scopeKind })
 			node.setSelectionRange(end, end);
 		} catch {}
 	}, []);
+	const updateDraft = (value) => {
+		draftRef.current = { value };
+		setDraft(value);
+		saveAddDraft(key, value);
+	};
 	const add = async () => {
-		const text = draft.trim().slice(0, 280);
-		if (!text) return;
-		const now = Date.now();
-		if (!await commit((currentItems) => [{
-			id: uid(),
-			text,
-			done: false,
-			createdAt: now,
-			updatedAt: now
-		}, ...currentItems])) {
-			report("saveFailed");
-			return;
+		const submitted = draftRef.current;
+		const text = submitted.value.trim().slice(0, 280);
+		if (!text || submittingRef.current) return;
+		submittingRef.current = true;
+		setIsSubmitting(true);
+		try {
+			const now = Date.now();
+			if (!await commit((currentItems) => [{
+				id: uid(),
+				text,
+				done: false,
+				createdAt: now,
+				updatedAt: now
+			}, ...currentItems])) {
+				report("saveFailed");
+				return;
+			}
+			if (draftRef.current === submitted) {
+				draftRef.current = { value: "" };
+				setDraft("");
+				if (readScopeDrafts(key).add === submitted.value.slice(0, 280)) clearAddDraft(key);
+			}
+			reportEvent("note_created", { ext1: scopeKind });
+		} finally {
+			submittingRef.current = false;
+			setIsSubmitting(false);
 		}
-		setDraft("");
-		clearAddDraft(key);
-		reportEvent("note_created", { ext1: scopeKind });
 	};
 	const insertDraftNewline = (node) => {
 		if (!node) return;
 		const start = node.selectionStart === null ? node.value.length : node.selectionStart;
 		const end = node.selectionEnd === null ? start : node.selectionEnd;
 		const next = `${node.value.slice(0, start)}\n${node.value.slice(end)}`;
-		setDraft(next);
-		saveAddDraft(key, next);
+		updateDraft(next);
 		window.requestAnimationFrame(() => {
 			node.selectionStart = start + 1;
 			node.selectionEnd = start + 1;
@@ -8995,8 +9012,7 @@ function useComposerDraft({ draftKey, commit, report, sendShortcut, scopeKind })
 	};
 	const onDraftChange = (event) => {
 		const value = event.target.value;
-		setDraft(value);
-		saveAddDraft(key, value);
+		updateDraft(value);
 		resizeAdd(event.target);
 	};
 	const onDraftKeyDown = (event) => {
@@ -9024,6 +9040,7 @@ function useComposerDraft({ draftKey, commit, report, sendShortcut, scopeKind })
 	};
 	return {
 		draft,
+		isSubmitting,
 		addRef,
 		composingRef,
 		add,
@@ -9847,7 +9864,7 @@ function SettingsPanel(props) {
 /** The add form: one growing textarea, the shortcut hint and the submit button. */
 const h$5 = react.default.createElement;
 function ComposerForm(props) {
-	const { say, draft, inputRef, sendShortcut, onDraftChange, onCompositionStart, onCompositionEnd, onKeyDown, onSubmit } = props;
+	const { say, draft, isSubmitting, inputRef, sendShortcut, onDraftChange, onCompositionStart, onCompositionEnd, onKeyDown, onSubmit } = props;
 	return h$5("form", {
 		className: "dsh-an-add",
 		onSubmit
@@ -9866,7 +9883,7 @@ function ComposerForm(props) {
 	}), h$5("div", { className: "dsh-an-addFoot" }, h$5("span", { className: "dsh-an-addShortcut" }, say(sendShortcut === "enter" ? "add.shortcutEnter" : "add.shortcut", { mod: MOD_LABEL })), h$5("button", {
 		type: "submit",
 		className: "dsh-an-addBtn",
-		disabled: !draft.trim()
+		disabled: isSubmitting || !draft.trim()
 	}, say("add.action"))));
 }
 
@@ -9992,7 +10009,7 @@ function MemoPopover(props) {
 	const { showSettings, setShowSettings, sendShortcut, chooseShortcut, forwardPrefix, changeForwardPrefix, resetForwardPrefix, prefixRef, analyticsEnabled, toggleAnalytics } = usePanelSettings();
 	const update = useUpdateCenter(localeId);
 	const newerVersion = update.latestVersion;
-	const { draft, addRef, composingRef, add, onDraftChange, onDraftKeyDown } = useComposerDraft({
+	const { draft, isSubmitting, addRef, composingRef, add, onDraftChange, onDraftKeyDown } = useComposerDraft({
 		draftKey,
 		commit,
 		report,
@@ -10139,6 +10156,7 @@ function MemoPopover(props) {
 	})) : null, h$1(ComposerForm, {
 		say,
 		draft,
+		isSubmitting,
 		inputRef: addRef,
 		sendShortcut,
 		onDraftChange,

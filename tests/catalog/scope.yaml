@@ -230,3 +230,20 @@ cases:
         status: automated
     suites: [pr, nightly, release]
     tags: [scope-switch, draft]
+
+  - id: SCOPE-014
+    title: 切换范围后排队清空仍只影响原清单
+    priority: P1
+    class: F
+    rules: [R-SCOPE-QUEUED-WRITE]
+    risk: data_loss
+    expected:
+      - 工作区写入等待时确认清空，再切换到会话，只有工作区已完成便笺被清空
+      - 当前会话列表及角标仍反映会话自己的记录
+    automation:
+      - type: integration
+        file: tests/async-note-save.test.mjs
+        test: SCOPE-014 切换范围后排队清空仍只影响原清单
+        status: automated
+    suites: [pr, nightly, release]
+    tags: [scope-switch, host, concurrency]

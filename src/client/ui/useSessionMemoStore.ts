@@ -29,8 +29,6 @@ export function useMemoStore(scope) {
 
   const [record, setRecord] = React.useState(() => readScope(scopeRef.current))
   const [syncError, setSyncError] = React.useState(false)
-  const recordRef = React.useRef(record)
-  recordRef.current = record
   // A host write is durable-or-fail; two quick clicks must not compute from the
   // same stale list and clobber each other's result.
   const chainRef = React.useRef<Promise<unknown>>(Promise.resolve())
@@ -58,8 +56,9 @@ export function useMemoStore(scope) {
   // deleted stays on screen next to the failure toast, instead of the panel
   // reporting success for something the store never accepted.
   const commit = React.useCallback(updater => {
+    const target = { kind, id }
     const run = chainRef.current.then(async () => {
-      const current = recordRef.current || { items: [], updatedAt: 0 }
+      const current = readScope(target)
       const base = current.items || []
       const nextItems = normalizeItems(updater(base))
       // Spread the current record so workspace-only fields (seededSessionIds)
@@ -68,19 +67,17 @@ export function useMemoStore(scope) {
       // The store merges with the latest record (host: atomically; local: by
       // id), so a note another tab added while this one was typing survives.
       // `base` lets the local merge tell this tab's deletions from additions.
-      const ok = await writeScope(scopeRef.current, next, base)
+      const ok = await writeScope(target, next, base)
+      const active = scopeRef.current
+      if (active.kind !== target.kind || active.id !== target.id) return ok
       setSyncError(!ok)
       if (!ok) return false
-      // Render what was actually stored: the merge may have pulled in notes
-      // this tab had not seen yet (and the host owns the final timestamps).
-      const stored = readScope(scopeRef.current)
-      recordRef.current = stored
-      setRecord(stored)
+      setRecord(readScope(target))
       return true
     })
     chainRef.current = run.then(() => undefined, () => undefined)
     return run
-  }, [])
+  }, [kind, id])
 
   return { record, syncError, commit }
 }

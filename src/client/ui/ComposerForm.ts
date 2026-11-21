@@ -5,7 +5,7 @@ import { MAX_TEXT, MOD_LABEL } from '../constants'
 const h = React.createElement
 
 export function ComposerForm(props) {
-  const { say, draft, inputRef, sendShortcut, onDraftChange, onCompositionStart, onCompositionEnd, onKeyDown, onSubmit } = props
+  const { say, draft, isSubmitting, inputRef, sendShortcut, onDraftChange, onCompositionStart, onCompositionEnd, onKeyDown, onSubmit } = props
   return h(
     'form',
     { className: 'dsh-an-add', onSubmit },
@@ -26,7 +26,7 @@ export function ComposerForm(props) {
       'div',
       { className: 'dsh-an-addFoot' },
       h('span', { className: 'dsh-an-addShortcut' }, say(sendShortcut === 'enter' ? 'add.shortcutEnter' : 'add.shortcut', { mod: MOD_LABEL })),
-      h('button', { type: 'submit', className: 'dsh-an-addBtn', disabled: !draft.trim() }, say('add.action')),
+      h('button', { type: 'submit', className: 'dsh-an-addBtn', disabled: isSubmitting || !draft.trim() }, say('add.action')),
     ),
   )
 }

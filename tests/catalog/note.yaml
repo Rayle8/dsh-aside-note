@@ -158,3 +158,21 @@ cases:
         status: automated
     suites: [nightly, release]
     tags: [time, copy]
+
+  - id: NOTE-010
+    title: 保存回包保留下一份草稿且不重复提交
+    priority: P1
+    class: F
+    rules: [R-NOTE-PENDING-DRAFT]
+    risk: data_loss
+    expected:
+      - 保存等待期间重复点击或按键只产生一次写入
+      - 用户在等待期间输入下一份草稿，前一次保存完成后新草稿仍在界面和浏览器存储
+      - 可单独提交新草稿，成功后清空当次草稿
+    automation:
+      - type: integration
+        file: tests/async-note-save.test.mjs
+        test: NOTE-010 保存回包保留下一份草稿且不重复提交
+        status: automated
+    suites: [pr, nightly, release]
+    tags: [host, draft, concurrency]
