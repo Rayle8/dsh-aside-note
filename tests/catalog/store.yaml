@@ -232,6 +232,40 @@ cases:
     suites: [pr, nightly, release]
     tags: [concurrency, sync]
 
+  - id: STORE-031
+    title: 反序保存回包后标签页仍显示最新清单
+    priority: P1
+    class: F
+    rules: [R-STORE-SYNC-ORDER]
+    risk: data_loss
+    expected:
+      - 两个标签页按顺序持久化、反序收到回包时，两页最终显示宿主的最新清单
+      - 收到较晚的旧回包时，宿主已保存的便笺不会从另一页消失
+    automation:
+      - type: integration
+        file: tests/host-sync-order.test.mjs
+        test: STORE-031 反序保存回包后标签页仍显示最新清单
+        status: automated
+    suites: [pr, nightly, release]
+    tags: [host, cross-tab, concurrency]
+
+  - id: STORE-032
+    title: 同步读取期间本页写入后重新确认宿主状态
+    priority: P1
+    class: F
+    rules: [R-STORE-SYNC-ORDER]
+    risk: data_loss
+    expected:
+      - 另一页的通知触发读取，读取未完成时本页保存新便笺
+      - 晚到的旧快照不覆盖本页新便笺，标签页最终与宿主一致
+    automation:
+      - type: integration
+        file: tests/host-sync-order.test.mjs
+        test: STORE-032 同步读取期间本页写入后重新确认宿主状态
+        status: automated
+    suites: [pr, nightly, release]
+    tags: [host, cross-tab, concurrency]
+
   - id: STORE-017
     title: 畸形记录被清洗而不是渲染成乱码
     priority: P1

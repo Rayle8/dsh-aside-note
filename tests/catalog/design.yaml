@@ -291,6 +291,17 @@ features:
         technique: [并发测试]
         reviewed: { by: "reviewed-in-chat", at: '2026-11-18', hash: '7a11e51e90661dbf' }
 
+      - id: R-STORE-SYNC-ORDER
+        statement: 宿主模式同步必须以宿主最新快照为准，旧写入回包或过期快照不得覆盖另一标签页已完成的更新。
+        failure: 两个标签页的保存响应反序到达时，已保存的较新便笺从一个或两个面板消失。
+        kind: consistency
+        branches:
+          - kind: valid
+            text: 同一清单反序回包后，两页显示宿主的同一最新清单
+          - kind: boundary
+            text: 读取快照期间发生本地写入或收到新通知时，重新从宿主读取再刷新
+        technique: [并发测试, 时序]
+
       - id: R-STORE-READ-FAIL
         statement: 存储读不到时：未切换的浏览器回退按空清单继续，面板仍能打开；已切换的宿主模式进入错误态并停止写入，不得改为读取浏览器旧数据。
         failure: 一次存储不可读就让面板打不开，用户连新便笺都记不了；或已切换后把浏览器旧数据当成宿主便笺展示。

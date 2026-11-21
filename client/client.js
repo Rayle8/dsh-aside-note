@@ -4555,9 +4555,10 @@ function notifyStoreError(failure) {
 */
 let mode = "probing";
 let data = null;
-let revision = 0;
 let failure = null;
-const pending = /* @__PURE__ */ new Map();
+let pendingWrites = 0;
+let refreshRequested = false;
+let refreshing = false;
 let channel = null;
 let listening = false;
 /** Current mode; `probing` means boot has not decided yet. */
@@ -4570,6 +4571,7 @@ function hostAuthoritative() {
 }
 function setStorageMode(next) {
 	mode = next;
+	if (next === "host") refreshHost();
 }
 /** The last host failure, for the settings surface. */
 function storageFailure() {
@@ -4579,9 +4581,8 @@ function setStorageFailure(next) {
 	failure = next;
 }
 /** Replace the cache with a fresh host snapshot. */
-function hydrateHost(next, rev) {
+function hydrateHost(next) {
 	data = next;
-	if (Number.isFinite(rev) && rev > revision) revision = rev;
 }
 /** One host table, or an empty map. */
 function hostTable(name) {
@@ -4596,9 +4597,6 @@ function hostRecord(name, key) {
 function hostPrefs() {
 	return data?.prefs ?? {};
 }
-function bumpHostRevision(rev) {
-	if (typeof rev === "number" && Number.isFinite(rev) && rev > revision) revision = rev;
-}
 /** Merge one record into the cache and wake same-tab readers. */
 function applyHostRecord(name, key, value) {
 	if (!data || !key) return;
@@ -4612,17 +4610,29 @@ function applyHostPrefs(prefs) {
 	data.prefs = prefs && typeof prefs === "object" ? prefs : {};
 	notifyTodoChange();
 }
-/** Mark one key busy so a remote broadcast cannot stomp an in-flight write. */
-function beginPending(key) {
-	pending.set(key, (pending.get(key) ?? 0) + 1);
+/** Include the local cache update or rollback in the lifetime of a write. */
+function beginPending() {
+	pendingWrites += 1;
+	if (refreshing) refreshRequested = true;
 }
-function endPending(key) {
-	const count = (pending.get(key) ?? 0) - 1;
-	if (count > 0) pending.set(key, count);
-	else pending.delete(key);
+function endPending() {
+	pendingWrites -= 1;
+	refreshHost();
 }
-function isPending(key) {
-	return (pending.get(key) ?? 0) > 0;
+async function refreshHost() {
+	if (mode !== "host" || pendingWrites !== 0 || refreshing || !refreshRequested) return;
+	refreshing = true;
+	refreshRequested = false;
+	try {
+		const { data: snapshot } = await fetchSnapshot();
+		if (mode === "host" && !refreshRequested) {
+			hydrateHost(snapshot);
+			notifyTodoChange();
+		}
+	} catch {} finally {
+		refreshing = false;
+		if (refreshRequested) refreshHost();
+	}
 }
 function ensureChannel() {
 	if (channel) return channel;
@@ -4662,22 +4672,9 @@ function startCrossTabSync() {
 	listening = true;
 	bus.onmessage = (event) => {
 		const message = event?.data;
-		if (!message || typeof message !== "object" || mode !== "host") return;
-		bumpHostRevision(message.rev);
-		if (message.kind === "prefs") {
-			if (!isPending("prefs")) applyHostPrefs(message.prefs);
-			return;
-		}
-		if (message.kind === "record" && typeof message.name === "string" && typeof message.key === "string") {
-			const table = message.name;
-			if (![
-				"sessions",
-				"workspaces",
-				"forwarded"
-			].includes(table)) return;
-			if (isPending(`${table}:${message.key}`)) return;
-			applyHostRecord(table, message.key, message.value);
-		}
+		if (mode === "local" || message?.kind !== "prefs" && message?.kind !== "record") return;
+		refreshRequested = true;
+		refreshHost();
 	};
 }
 
@@ -4695,8 +4692,8 @@ const chains = /* @__PURE__ */ new Map();
 function serialize(key, task) {
 	const run = (chains.get(key) ?? Promise.resolve()).then(task, task);
 	chains.set(key, run.then(() => void 0, () => void 0));
-	beginPending(key);
-	return run.finally(() => endPending(key));
+	beginPending();
+	return run.finally(endPending);
 }
 function report(error) {
 	const failure = {
@@ -4736,17 +4733,18 @@ async function commitList(kind, listKey, nextItems) {
 	const order = nextItems.map((item) => item.id);
 	if (upserts.length === 0 && deletes.length === 0) return true;
 	try {
-		const result = await serialize(`${table}:${listKey}`, () => postOp({
-			op: "list.patch",
-			kind,
-			listKey,
-			order,
-			upserts,
-			deletes
-		}));
-		applyHostRecord(table, listKey, result.record);
-		bumpHostRevision(result.rev);
-		broadcastRecord(table, listKey, result.record, result.rev);
+		await serialize(`${table}:${listKey}`, async () => {
+			const result = await postOp({
+				op: "list.patch",
+				kind,
+				listKey,
+				order,
+				upserts,
+				deletes
+			});
+			applyHostRecord(table, listKey, result.record);
+			broadcastRecord(table, listKey, result.record, result.rev);
+		});
 		return true;
 	} catch (error) {
 		const failure = {
@@ -4768,14 +4766,15 @@ async function ensureWorkspace(workspaceId, sessionIds) {
 	const pendingMembers = (Array.isArray(sessionIds) ? sessionIds : []).filter((id) => id && !seeded.has(id));
 	if (current && pendingMembers.length === 0) return true;
 	try {
-		const result = await serialize(`workspaces:${workspaceId}`, () => postOp({
-			op: "list.ensure",
-			workspaceId,
-			sessionIds: Array.isArray(sessionIds) ? sessionIds : []
-		}));
-		applyHostRecord("workspaces", workspaceId, result.record);
-		bumpHostRevision(result.rev);
-		broadcastRecord("workspaces", workspaceId, result.record, result.rev);
+		await serialize(`workspaces:${workspaceId}`, async () => {
+			const result = await postOp({
+				op: "list.ensure",
+				workspaceId,
+				sessionIds: Array.isArray(sessionIds) ? sessionIds : []
+			});
+			applyHostRecord("workspaces", workspaceId, result.record);
+			broadcastRecord("workspaces", workspaceId, result.record, result.rev);
+		});
 		return true;
 	} catch (error) {
 		report(error);
@@ -4794,18 +4793,20 @@ function setForward(listKey, itemId, on) {
 	if (on) next[itemId] = true;
 	else delete next[itemId];
 	applyHostRecord("forwarded", listKey, Object.keys(next).length ? next : void 0);
-	serialize(`forwarded:${listKey}`, () => postOp({
-		op: "forward.set",
-		listKey,
-		itemId,
-		on
-	})).then((result) => {
-		applyHostRecord("forwarded", listKey, result.record);
-		bumpHostRevision(result.rev);
-		broadcastRecord("forwarded", listKey, result.record, result.rev);
-	}).catch((error) => {
-		if (sameJson(hostRecord("forwarded", listKey), Object.keys(next).length ? next : void 0)) applyHostRecord("forwarded", listKey, Object.keys(previous).length ? previous : void 0);
-		report(error);
+	serialize(`forwarded:${listKey}`, async () => {
+		try {
+			const result = await postOp({
+				op: "forward.set",
+				listKey,
+				itemId,
+				on
+			});
+			applyHostRecord("forwarded", listKey, result.record);
+			broadcastRecord("forwarded", listKey, result.record, result.rev);
+		} catch (error) {
+			if (sameJson(hostRecord("forwarded", listKey), Object.keys(next).length ? next : void 0)) applyHostRecord("forwarded", listKey, Object.keys(previous).length ? previous : void 0);
+			report(error);
+		}
 	});
 	return true;
 }
@@ -4823,16 +4824,18 @@ function setPrefs(patch) {
 		else next.forwardPrefix = String(patch.forwardPrefix).slice(0, 80);
 	}
 	applyHostPrefs(next);
-	serialize("prefs", () => postOp({
-		op: "prefs.set",
-		patch
-	})).then((result) => {
-		applyHostPrefs(result.prefs);
-		bumpHostRevision(result.rev);
-		broadcastPrefs(result.prefs, result.rev);
-	}).catch((error) => {
-		if (sameJson(hostPrefs(), next)) applyHostPrefs(previous);
-		report(error);
+	serialize("prefs", async () => {
+		try {
+			const result = await postOp({
+				op: "prefs.set",
+				patch
+			});
+			applyHostPrefs(result.prefs);
+			broadcastPrefs(result.prefs, result.rev);
+		} catch (error) {
+			if (sameJson(hostPrefs(), next)) applyHostPrefs(previous);
+			report(error);
+		}
 	});
 	return true;
 }
@@ -4843,7 +4846,6 @@ async function migrate(snapshot) {
 		snapshot,
 		source: "localStorage"
 	});
-	bumpHostRevision(result.rev);
 	return { migrated: Number.isFinite(result.migrated) ? Number(result.migrated) : 0 };
 }
 
@@ -6651,7 +6653,7 @@ async function runBoot() {
 	startCrossTabSync();
 	if (hostModeMarked()) try {
 		const snapshot = await fetchSnapshot();
-		hydrateHost(snapshot.data, snapshot.rev);
+		hydrateHost(snapshot.data);
 		setStorageFailure(null);
 		setStorageMode("host");
 		notifyStoreReady();
@@ -6699,7 +6701,7 @@ async function runBoot() {
 	} catch (error) {
 		return refuse(failureOf(error));
 	}
-	hydrateHost(snapshot.data, snapshot.rev);
+	hydrateHost(snapshot.data);
 	markHostMode();
 	setStorageFailure(null);
 	setStorageMode("host");

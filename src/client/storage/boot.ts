@@ -62,7 +62,7 @@ async function runBoot(): Promise<StorageMode> {
   if (marked) {
     try {
       const snapshot = await fetchSnapshot()
-      hydrateHost(snapshot.data, snapshot.rev)
+      hydrateHost(snapshot.data)
       setStorageFailure(null)
       setStorageMode('host')
       notifyStoreReady()
@@ -116,7 +116,7 @@ async function runBoot(): Promise<StorageMode> {
     return refuse(failureOf(error))
   }
 
-  hydrateHost(snapshot.data, snapshot.rev)
+  hydrateHost(snapshot.data)
   markHostMode()
   setStorageFailure(null)
   setStorageMode('host')

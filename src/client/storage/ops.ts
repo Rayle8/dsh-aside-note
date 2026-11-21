@@ -15,7 +15,6 @@ import {
   beginPending,
   broadcastPrefs,
   broadcastRecord,
-  bumpHostRevision,
   endPending,
   hostPrefs,
   hostRecord,
@@ -30,8 +29,8 @@ function serialize<T>(key: string, task: () => Promise<T>): Promise<T> {
   const tail = chains.get(key) ?? Promise.resolve()
   const run = tail.then(task, task)
   chains.set(key, run.then(() => undefined, () => undefined))
-  beginPending(key)
-  return run.finally(() => endPending(key))
+  beginPending()
+  return run.finally(endPending)
 }
 
 function report(error: unknown) {
@@ -75,17 +74,11 @@ export async function commitList(kind: 'workspace' | 'session', listKey: string,
   if (upserts.length === 0 && deletes.length === 0) return true
 
   try {
-    const result = await serialize(`${table}:${listKey}`, () => postOp({
-      op: 'list.patch',
-      kind,
-      listKey,
-      order,
-      upserts,
-      deletes,
-    }))
-    applyHostRecord(table, listKey, result.record)
-    bumpHostRevision(result.rev)
-    broadcastRecord(table, listKey, result.record, result.rev)
+    await serialize(`${table}:${listKey}`, async () => {
+      const result = await postOp({ op: 'list.patch', kind, listKey, order, upserts, deletes })
+      applyHostRecord(table, listKey, result.record)
+      broadcastRecord(table, listKey, result.record, result.rev)
+    })
     return true
   } catch (error) {
     // The caller already shows `saveFailed`; record the reason for Settings.
@@ -106,14 +99,13 @@ export async function ensureWorkspace(workspaceId: string, sessionIds: string[])
   const pendingMembers = (Array.isArray(sessionIds) ? sessionIds : []).filter(id => id && !seeded.has(id))
   if (current && pendingMembers.length === 0) return true
   try {
-    const result = await serialize(`workspaces:${workspaceId}`, () => postOp({
-      op: 'list.ensure',
-      workspaceId,
-      sessionIds: Array.isArray(sessionIds) ? sessionIds : [],
-    }))
-    applyHostRecord('workspaces', workspaceId, result.record)
-    bumpHostRevision(result.rev)
-    broadcastRecord('workspaces', workspaceId, result.record, result.rev)
+    await serialize(`workspaces:${workspaceId}`, async () => {
+      const result = await postOp({
+        op: 'list.ensure', workspaceId, sessionIds: Array.isArray(sessionIds) ? sessionIds : [],
+      })
+      applyHostRecord('workspaces', workspaceId, result.record)
+      broadcastRecord('workspaces', workspaceId, result.record, result.rev)
+    })
     return true
   } catch (error) {
     report(error)
@@ -134,19 +126,19 @@ export function setForward(listKey: string, itemId: string, on: boolean): boolea
   else delete next[itemId]
   applyHostRecord('forwarded', listKey, Object.keys(next).length ? next : undefined)
 
-  void serialize(`forwarded:${listKey}`, () => postOp({ op: 'forward.set', listKey, itemId, on }))
-    .then(result => {
+  void serialize(`forwarded:${listKey}`, async () => {
+    try {
+      const result = await postOp({ op: 'forward.set', listKey, itemId, on })
       applyHostRecord('forwarded', listKey, result.record)
-      bumpHostRevision(result.rev)
       broadcastRecord('forwarded', listKey, result.record, result.rev)
-    })
-    .catch(error => {
+    } catch (error) {
       // Roll back only when this tab's optimistic value is still displayed.
       if (sameJson(hostRecord('forwarded', listKey), Object.keys(next).length ? next : undefined)) {
         applyHostRecord('forwarded', listKey, Object.keys(previous).length ? previous : undefined)
       }
       report(error)
-    })
+    }
+  })
   return true
 }
 
@@ -162,22 +154,21 @@ export function setPrefs(patch: Record<string, any>): boolean {
   }
   applyHostPrefs(next)
 
-  void serialize('prefs', () => postOp({ op: 'prefs.set', patch }))
-    .then(result => {
+  void serialize('prefs', async () => {
+    try {
+      const result = await postOp({ op: 'prefs.set', patch })
       applyHostPrefs(result.prefs)
-      bumpHostRevision(result.rev)
       broadcastPrefs(result.prefs, result.rev)
-    })
-    .catch(error => {
+    } catch (error) {
       if (sameJson(hostPrefs(), next)) applyHostPrefs(previous)
       report(error)
-    })
+    }
+  })
   return true
 }
 
 /** Upload the pre-switch browser store; safe to re-run after an interruption. */
 export async function migrate(snapshot: unknown): Promise<{ migrated: number }> {
   const result = await postOp({ op: 'migrate', snapshot, source: 'localStorage' })
-  bumpHostRevision(result.rev)
   return { migrated: Number.isFinite(result.migrated) ? Number(result.migrated) : 0 }
 }

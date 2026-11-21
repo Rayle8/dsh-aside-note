@@ -7,6 +7,7 @@
  * place that answers "which one is authoritative right now".
  */
 import { notifyTodoChange } from './events'
+import { fetchSnapshot } from './host-client'
 
 export type StorageMode = 'probing' | 'host' | 'local' | 'error'
 
@@ -26,9 +27,10 @@ export interface HostData {
 
 let mode: StorageMode = 'probing'
 let data: HostData | null = null
-let revision = 0
 let failure: HostFailure | null = null
-const pending = new Map<string, number>()
+let pendingWrites = 0
+let refreshRequested = false
+let refreshing = false
 
 let channel: BroadcastChannel | null = null
 let listening = false
@@ -45,6 +47,7 @@ export function hostAuthoritative(): boolean {
 
 export function setStorageMode(next: StorageMode) {
   mode = next
+  if (next === 'host') void refreshHost()
 }
 
 /** The last host failure, for the settings surface. */
@@ -57,9 +60,8 @@ export function setStorageFailure(next: HostFailure | null) {
 }
 
 /** Replace the cache with a fresh host snapshot. */
-export function hydrateHost(next: HostData, rev: number) {
+export function hydrateHost(next: HostData) {
   data = next
-  if (Number.isFinite(rev) && rev > revision) revision = rev
 }
 
 /** Host snapshot, or null before hydration. */
@@ -83,14 +85,6 @@ export function hostPrefs(): Record<string, any> {
   return data?.prefs ?? {}
 }
 
-export function hostRevision(): number {
-  return revision
-}
-
-export function bumpHostRevision(rev: unknown) {
-  if (typeof rev === 'number' && Number.isFinite(rev) && rev > revision) revision = rev
-}
-
 /** Merge one record into the cache and wake same-tab readers. */
 export function applyHostRecord(name: 'sessions' | 'workspaces' | 'forwarded', key: string, value: any) {
   if (!data || !key) return
@@ -106,19 +100,34 @@ export function applyHostPrefs(prefs: Record<string, any>) {
   notifyTodoChange()
 }
 
-/** Mark one key busy so a remote broadcast cannot stomp an in-flight write. */
-export function beginPending(key: string) {
-  pending.set(key, (pending.get(key) ?? 0) + 1)
+/** Include the local cache update or rollback in the lifetime of a write. */
+export function beginPending() {
+  pendingWrites += 1
+  if (refreshing) refreshRequested = true
 }
 
-export function endPending(key: string) {
-  const count = (pending.get(key) ?? 0) - 1
-  if (count > 0) pending.set(key, count)
-  else pending.delete(key)
+export function endPending() {
+  pendingWrites -= 1
+  void refreshHost()
 }
 
-export function isPending(key: string) {
-  return (pending.get(key) ?? 0) > 0
+async function refreshHost() {
+  if (mode !== 'host' || pendingWrites !== 0 || refreshing || !refreshRequested) return
+  refreshing = true
+  refreshRequested = false
+  try {
+    const { data: snapshot } = await fetchSnapshot()
+    // A write or notification during GET can make even a successful response stale.
+    if (mode === 'host' && !refreshRequested) {
+      hydrateHost(snapshot)
+      notifyTodoChange()
+    }
+  } catch {
+    // Keep the last usable view. The next notification can try again.
+  } finally {
+    refreshing = false
+    if (refreshRequested) void refreshHost()
+  }
 }
 
 function ensureChannel(): BroadcastChannel | null {
@@ -157,17 +166,10 @@ export function startCrossTabSync() {
   listening = true
   bus.onmessage = event => {
     const message = event?.data
-    if (!message || typeof message !== 'object' || mode !== 'host') return
-    bumpHostRevision(message.rev)
-    if (message.kind === 'prefs') {
-      if (!isPending('prefs')) applyHostPrefs(message.prefs)
-      return
-    }
-    if (message.kind === 'record' && typeof message.name === 'string' && typeof message.key === 'string') {
-      const table = message.name as 'sessions' | 'workspaces' | 'forwarded'
-      if (!['sessions', 'workspaces', 'forwarded'].includes(table)) return
-      if (isPending(`${table}:${message.key}`)) return
-      applyHostRecord(table, message.key, message.value)
-    }
+    if (mode === 'local' || (message?.kind !== 'prefs' && message?.kind !== 'record')) return
+    // A notification can outlive the response that carried its record. The
+    // payload stays compatible with older tabs; new tabs always read the host.
+    refreshRequested = true
+    void refreshHost()
   }
 }
